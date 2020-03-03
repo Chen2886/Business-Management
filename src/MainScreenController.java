@@ -54,7 +54,7 @@ public class MainScreenController implements Initializable  {
 		});
 
 		addButton.setOnAction(event -> {
-			System.out.println("add pressed");
+			addOrder();
 		});
 		quitButton.setOnAction(actionEvent -> {
 			System.exit(1);
@@ -104,8 +104,7 @@ public class MainScreenController implements Initializable  {
 			}
 		}
 
-		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> cellFactory =
-				new Callback<>() {
+		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> cellFactory = new Callback<>() {
 					@Override
 					public TableCell<MatOrder, String> call(TableColumn<MatOrder, String> matOrderStringTableColumn) {
 						TableCell<MatOrder, String> cell = new TableCell<>() {
@@ -119,26 +118,22 @@ public class MainScreenController implements Initializable  {
 								super.updateItem(item, empty);
 								if (empty) {
 									setGraphic(null);
-									setText(null);
 								} else {
-									edit.setOnAction(event -> {
-										modifyMatOrder(getTableView().getItems().get(getIndex()));
-									});
-									delete.setOnAction(event -> {
-										deleteMatOrder(getTableView().getItems().get(getIndex()));
-									});
+									edit.setOnAction(event -> modifyMatOrder(getTableView().getItems().get(getIndex())));
+									delete.setOnAction(event -> deleteMatOrder(getTableView().getItems().get(getIndex())));
 									edit.getStyleClass().add("actionButtons");
 									delete.getStyleClass().add("actionButtons");
 									actionButtons.setSpacing(5);
 									actionButtons.setAlignment(Pos.CENTER);
 									setGraphic(actionButtons);
-									setText(null);
 								}
+								setText(null);
 							}
 						};
 						return cell;
 					}
 				};
+
 		actionColumn.setCellFactory(cellFactory);
 
 		matTableView.setItems(selectedMatOrders);
@@ -181,6 +176,31 @@ public class MainScreenController implements Initializable  {
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("编辑订单");
+			stage.setScene(new Scene(newScene));
+			stage.showAndWait();
+			matTableView.getItems().removeAll();
+			matTableView.getItems().setAll(DatabaseUtil.GetAllMatOrders());
+			matTableView.refresh();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	private void addOrder() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatAddOrder.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			MatAddOrderController matAddOrderController = loader.getController();
+			matAddOrderController.initData(stage);
+
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("添加订单");
 			stage.setScene(new Scene(newScene));
 			stage.showAndWait();
 			matTableView.getItems().removeAll();
