@@ -459,7 +459,71 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         }
     }
-    
-    
+
+    /**
+     * Insert an order into the database
+     * @param order specified order
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void AddMatOrder(MatOrder order) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "INSERT INTO [materialManagement] (sku, name, type, orderDateYear, " +
+                    "orderDateMonth, orderDateDay, unitAmount, amount, kgAmount, unitPrice, totalPrice, sellerId, " +
+                    "companyName, contactName, mobile, landLine, fax, accountNum, bankAddress, address, paymentDateYear," +
+                    "paymentDateMonth, paymentDateDay, arrivalDateYear, arrivalDateMonth, arrivalDateDay, " +
+                    "invoiceDateYear, invoiceDateMonth, invoiceDateDay, invoice, signed, skuSeller, note, serialNum) " +
+                    "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, order.getSku());
+            preparedStatement.setString(2, order.getName());
+            preparedStatement.setString(3, order.getType());
+            preparedStatement.setInt(4, order.getOrderDate().getY());
+            preparedStatement.setInt(5, order.getOrderDate().getM());
+            preparedStatement.setInt(6, order.getOrderDate().getD());
+            preparedStatement.setDouble(7, order.getUnitAmount());
+            preparedStatement.setDouble(8, order.getAmount());
+            preparedStatement.setDouble(9, order.getKgAmount());
+            preparedStatement.setDouble(10, order.getUnitPrice());
+            preparedStatement.setDouble(11, order.getTotalPrice());
+            preparedStatement.setInt(12, order.getSeller().getSellerId());
+            preparedStatement.setString(13, order.getSeller().getCompanyName());
+            preparedStatement.setString(14, order.getSeller().getContactName());
+            preparedStatement.setString(15, order.getSeller().getMobile());
+            preparedStatement.setString(16, order.getSeller().getLandLine());
+            preparedStatement.setString(17, order.getSeller().getFax());
+            preparedStatement.setString(18, order.getSeller().getAccountNum());
+            preparedStatement.setString(19, order.getSeller().getBankAddress());
+            preparedStatement.setString(20, order.getSeller().getAddress());
+
+            preparedStatement.setString(21, order.getPaymentDate() == null ? "" : String.valueOf(order.getPaymentDate().getY()));
+            preparedStatement.setString(22, order.getPaymentDate() == null ? "" : String.valueOf(order.getPaymentDate().getM()));
+            preparedStatement.setString(23, order.getPaymentDate() == null ? "" : String.valueOf(order.getPaymentDate().getD()));
+
+            preparedStatement.setString(24, order.getArrivalDate() == null ? "" : String.valueOf(order.getArrivalDate().getY()));
+            preparedStatement.setString(25, order.getArrivalDate() == null ? "" : String.valueOf(order.getArrivalDate().getM()));
+            preparedStatement.setString(26, order.getArrivalDate() == null ? "" : String.valueOf(order.getArrivalDate().getD()));
+
+            preparedStatement.setString(27, order.getInvoiceDate() == null ? "" : String.valueOf(order.getInvoiceDate().getY()));
+            preparedStatement.setString(28, order.getInvoiceDate() == null ? "" : String.valueOf(order.getInvoiceDate().getM()));
+            preparedStatement.setString(29, order.getInvoiceDate() == null ? "" : String.valueOf(order.getInvoiceDate().getD()));
+
+            preparedStatement.setString(30, order.getInvoice() == null ? "" : order.getInvoice());
+            preparedStatement.setString(31, order.getSigned() == null ? "" : order.getSigned());
+            preparedStatement.setString(32, order.getSkuSeller() == null ? "" : order.getSkuSeller());
+            preparedStatement.setString(33, order.getNote() == null ? "" : order.getNote());
+            preparedStatement.setInt(34, order.getSerialNum());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
 
 }
