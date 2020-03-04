@@ -2,7 +2,7 @@ import java.io.*;
 
 public class MatSellerId {
 	private static int sellerId;
-	private static String filepath = "sellerId.txt";
+	private static String filepath = "MatSellerId.txt";
 
 	public static void initMatSellerId() {
 		try {

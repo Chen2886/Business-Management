@@ -2,7 +2,7 @@ import java.io.*;
 
 public class MatSerialNum {
 	private static int serialNum;
-	private static final String filepath = "serial.txt";
+	private static final String filepath = "MatSerial.txt";
 
 	/**
 	 * called when program first start, make sure file exists.

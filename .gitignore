@@ -5,3 +5,6 @@
 .idea/vcs.xml
 .idea/workspace.xml
 /.idea/
+BusinessCashFlow.db
+MatSellerId.txt
+MatSerial.txt

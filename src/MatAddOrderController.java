@@ -179,7 +179,7 @@ public class MatAddOrderController {
 	 * Obtain all the new information, update order, and push it to database
 	 */
 	private void AddOrder() {
-		MatOrder newOrder = new MatOrder(-1, "");
+		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
 		int i = 0;
 
 		String sku = ((TextField) inputArrayList.get(i++)).getText();
