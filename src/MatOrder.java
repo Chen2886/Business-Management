@@ -249,7 +249,6 @@ public class MatOrder {
 		returnVal = addFormat((skuSeller == null || skuSeller.equals("")) ? "" : skuSeller, returnVal);
 		returnVal = addFormat(seller == null ? "" : seller.toString(false), returnVal);
 		returnVal = addFormat((note == null || note.equals("")) ? "" : note, returnVal);
-		System.out.println(returnVal);
 		return returnVal;
 	}
 

@@ -86,6 +86,17 @@
     -fx-border-color: black;
 }
 
-.edit-grid {
+.search-text-field {
+    -fx-border-color: black;
+    -fx-border-width: 0 0 2 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: grey;
+}
 
+.search-text-field:hover {
+    -fx-text-fill: black;
+}
+
+.search-text-field:focused {
+    -fx-text-fill: black;
 }

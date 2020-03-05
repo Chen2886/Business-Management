@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -10,12 +11,15 @@
       <ListView fx:id="leftListView" prefHeight="950.0" prefWidth="135.0" styleClass="sidebar" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="100.0" />
       <HBox alignment="CENTER" layoutX="135.0" prefHeight="100.0" spacing="10.0" styleClass="sidebar" stylesheets="@stylesheet.css" AnchorPane.leftAnchor="135.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-             <TextField promptText="搜索" style="-fx-background-color: transparent; -fx-text-fill: #fff;" HBox.hgrow="ALWAYS">
+            <ImageView fx:id="searchImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+             <TextField fx:id="searchBarTextField" styleClass="search-text-field" stylesheets="@stylesheet.css" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="25.0" />
-               </font></TextField>
+               </font>
+             </TextField>
+             <Button fx:id="searchButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0" prefWidth="150.0" stylesheets="@stylesheet.css" text="高级搜索">
+             </Button>
              <Button fx:id="addButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0" prefWidth="129.0" stylesheets="@stylesheet.css" text="添加" />
-             <Button fx:id="searchButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0" prefWidth="129.0" stylesheets="@stylesheet.css" text="搜索" />
              <Button fx:id="quitButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0" prefWidth="129.0" stylesheets="@stylesheet.css" text="退出" />
          </children>
          <padding>

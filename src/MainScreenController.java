@@ -1,19 +1,25 @@
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.fxml.*;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.Callback;
 
+import java.io.FileInputStream;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ResourceBundle;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+
 
 public class MainScreenController implements Initializable {
 
@@ -28,19 +34,21 @@ public class MainScreenController implements Initializable {
 			"signed", "skuSeller", "company", "contact", "mobile", "land", "fax", "account",
 			"bank", "address", "note"};
 
-	private ObservableList<MatOrder> allMatOrders;
+	private ObservableList<MatOrder> allMatOrderList;
 
 	@FXML TableView<ProductOrder> orderTableView;
 	@FXML TableView<MatOrder> matTableView;
 	@FXML Button searchButton;
 	@FXML Button addButton;
 	@FXML Button quitButton;
+	@FXML TextField searchBarTextField;
+	@FXML ImageView searchImageView;
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		try {
-			allMatOrders = DatabaseUtil.GetAllMatOrders();
-			fillMatTable(allMatOrders);
+			allMatOrderList = DatabaseUtil.GetAllMatOrders();
+			fillMatTable(allMatOrderList);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -60,6 +68,29 @@ public class MainScreenController implements Initializable {
 		quitButton.setOnAction(actionEvent -> {
 			System.exit(1);
 		});
+
+		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+			if (newValue.equals("")) {
+				matTableView.setItems(allMatOrderList);
+			} else {
+				ObservableList<MatOrder> tableMatOrderList = FXCollections.observableArrayList(allMatOrderList);
+				tableMatOrderList.removeIf(order -> !order.toString().contains(newValue));
+				matTableView.getItems().removeAll();
+				matTableView.setItems(tableMatOrderList);
+			}
+		});
+
+		try {
+			FileInputStream input = new FileInputStream("src/iconmonstr-magnifier-4-240.png");
+			Image searchBarImage = new Image(input);
+			searchImageView.setImage(searchBarImage);
+		} catch (Exception e) {
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+
 
 	}
 
@@ -154,8 +185,9 @@ public class MainScreenController implements Initializable {
 	private void deleteMatOrder(MatOrder selectedOrder) {
 		if (ConfirmBox.display("确认", "确定删除？", "确定", "删除")) {
 			try {
-				DatabaseUtil.DeleteMatOrder(selectedOrder.getSerialNum());
-				allMatOrders.remove(selectedOrder);
+				allMatOrderList = DatabaseUtil.GetAllMatOrders();
+				matTableView.getItems().removeAll();
+				matTableView.getItems().setAll(allMatOrderList);
 			} catch (SQLException e) {
 				AlertBox.display("错误", "无法删除");
 				e.printStackTrace();
@@ -180,7 +212,8 @@ public class MainScreenController implements Initializable {
 			stage.setScene(new Scene(newScene));
 			stage.showAndWait();
 			matTableView.getItems().removeAll();
-			matTableView.getItems().setAll(DatabaseUtil.GetAllMatOrders());
+			allMatOrderList = DatabaseUtil.GetAllMatOrders();
+			matTableView.getItems().setAll(allMatOrderList);
 			matTableView.refresh();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -205,7 +238,8 @@ public class MainScreenController implements Initializable {
 			stage.setScene(new Scene(newScene));
 			stage.showAndWait();
 			matTableView.getItems().removeAll();
-			matTableView.getItems().setAll(DatabaseUtil.GetAllMatOrders());
+			allMatOrderList = DatabaseUtil.GetAllMatOrders();
+			matTableView.getItems().setAll(allMatOrderList);
 			matTableView.refresh();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
