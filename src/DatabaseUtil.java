@@ -526,4 +526,71 @@ public class DatabaseUtil {
         }
     }
 
+    /**
+     * Return a list of all sellers avaliable
+     * @return all sellers in the database
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static ObservableList<MatOrder> ExecuteCommand(String SQLCommand) throws SQLException {
+        ObservableList<MatOrder> orderObservableList = FXCollections.observableArrayList();
+        try {
+            ConnectToDB();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SQLCommand);
+            while (resultSet.next()) {
+
+                // new seller
+                MatSeller seller = new MatSeller(resultSet.getInt("sellerId"),
+                        resultSet.getString("companyName"));
+                seller.setContactName(resultSet.getString("contactName"));
+                seller.setMobile(resultSet.getString("mobile"));
+                seller.setLandLine(resultSet.getString("landLine"));
+                seller.setFax(resultSet.getString("fax"));
+                seller.setAccountNum(resultSet.getString("accountNum"));
+                seller.setBankAddress(resultSet.getString("bankAddress"));
+                seller.setAddress(resultSet.getString("address"));
+
+                // new order
+                MatOrder newOrder = new MatOrder(resultSet.getInt("serialNum"),
+                        resultSet.getString("sku"));
+                newOrder.setName(resultSet.getString("name"));
+                newOrder.setType(resultSet.getString("type"));
+                newOrder.setInvoice(resultSet.getString("invoice"));
+                newOrder.setSigned(resultSet.getString("signed"));
+                newOrder.setSkuSeller(resultSet.getString("skuSeller"));
+                newOrder.setNote(resultSet.getString("note"));
+                newOrder.setOrderDate(new Date(resultSet.getInt("orderDateYear"),
+                        resultSet.getInt("orderDateMonth"),
+                        resultSet.getInt("orderDateDay")));
+                newOrder.setPaymentDate(new Date(resultSet.getInt("paymentDateYear"),
+                        resultSet.getInt("paymentDateMonth"),
+                        resultSet.getInt("paymentDateDay")));
+                newOrder.setArrivalDate(new Date(resultSet.getInt("arrivalDateYear"),
+                        resultSet.getInt("arrivalDateMonth"),
+                        resultSet.getInt("arrivalDateDay")));
+                newOrder.setInvoiceDate(new Date(resultSet.getInt("invoiceDateYear"),
+                        resultSet.getInt("invoiceDateMonth"),
+                        resultSet.getInt("invoiceDateDay")));
+                newOrder.setSeller(seller);
+                newOrder.setUnitAmount(resultSet.getDouble("unitAmount"));
+                newOrder.setAmount(resultSet.getDouble("amount"));
+                newOrder.setKgAmount();
+                newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
+                newOrder.setTotalPrice();
+
+                // adding order
+                orderObservableList.add(newOrder);
+            }
+            CloseConnectionToDB();
+            return orderObservableList;
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
 }
