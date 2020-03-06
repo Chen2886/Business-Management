@@ -1,21 +1,18 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.apache.xmlbeans.impl.soap.Text;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 public class MatAddOrderController {
 
@@ -31,8 +28,9 @@ public class MatAddOrderController {
 
 	@FXML GridPane MatEditOrderGrid;
 	@FXML Label editOrderTitleLabel;
-	@FXML Button cancelButton;
-	@FXML Button completeButton;
+	@FXML Button matCancelButton;
+	@FXML Button matCompleteButton;
+	@FXML Button matContinueButton;
 
 	Stage currentStage;
 	ObservableList<MatSeller> allSeller;
@@ -44,13 +42,17 @@ public class MatAddOrderController {
 	public void init() {
 		editOrderTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-		cancelButton.setOnAction(actionEvent -> {
+		matCancelButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display("确认", "确定取消？此订单不会被保存", "确认", "取消"))
 				currentStage.close();
 		});
 
-		completeButton.setOnAction(actionEvent -> {
+		matCompleteButton.setOnAction(actionEvent -> {
 			AddOrder();
+		});
+
+		matContinueButton.setOnAction(actionEvent -> {
+			ContinueOrder();
 		});
 
 
@@ -183,50 +185,55 @@ public class MatAddOrderController {
 		int i = 0;
 
 		String sku = ((TextField) inputArrayList.get(i++)).getText();
-		if (sku.equals("")) {
-			AlertBox.display("错误", "没有输入订单编号");
-			return;
-		} else {
-			newOrder.setSku(sku);
-		}
+		newOrder.setSku(sku);
 
 		// mat name
 		String nameOfMat = ((TextField) inputArrayList.get(i++)).getText();
-		if (nameOfMat.equals("")) {
-			AlertBox.display("错误", "没有输入原料名称");
-			return;
-		} else {
-			newOrder.setName(nameOfMat);
+		newOrder.setName(nameOfMat);
+
+		if (sku.equals("") || nameOfMat.equals("")) {
+			if (ConfirmBox.display("数据错误","没有输入数据，结束输入？", "是", "否" )) currentStage.close();
+			else return;
 		}
 
 		// mat type
-		newOrder.setType(((ComboBox) inputArrayList.get(i++)).getValue().toString());
+		try {
+			newOrder.setType(((ComboBox) inputArrayList.get(i++)).getValue().toString());
+		} catch (NullPointerException ignored) {}
 
-		newOrder.setOrderDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		i++;
+		try {
+			newOrder.setOrderDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+			i++;
+		try {
+			newOrder.setPaymentDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+			i++;
+		try {
+			newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+			i++;
 
-		newOrder.setPaymentDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		i++;
+		try {
+			newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+			i++;
 
-		newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		i++;
-
-		newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		i++;
-
-		newOrder.setInvoice(((TextField) inputArrayList.get(i++)).getText());
+		try {
+			newOrder.setInvoice(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
 
 		try {
 			newOrder.setUnitAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
@@ -238,17 +245,24 @@ public class MatAddOrderController {
 			newOrder.setKgAmount();
 			newOrder.setTotalPrice();
 		} catch (Exception e) {
-			AlertBox.display("错误", "数字格式输入错误");
-			return;
+			AlertBox.display("错误", "数字格式输入错误, 数字为0");
 		}
 
-		newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());
+		try {
+			newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
 
-		newOrder.setSkuSeller(((TextField) inputArrayList.get(i++)).getText());
+		try {
+			newOrder.setSkuSeller(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
 
-		newOrder.setNote(((TextField) inputArrayList.get(i++)).getText());
+		try {
+			newOrder.setNote(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
 
-		newOrder.setSeller(FindSeller(((ComboBox) inputArrayList.get(i)).getValue().toString()));
+		try {
+			newOrder.setSeller(FindSeller(((ComboBox) inputArrayList.get(i)).getValue().toString()));
+		} catch (NullPointerException ignored) {}
 
 		try {
 			DatabaseUtil.AddMatOrder(newOrder);
@@ -256,8 +270,113 @@ public class MatAddOrderController {
 		} catch (SQLException e) {
 			AlertBox.display("错误", "无法更新");
 		}
-
 	}
+
+	/**
+	 * Obtain all the new information, update order, and push it to database
+	 */
+	private void ContinueOrder() {
+		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
+		int i = 0;
+
+		String sku = ((TextField) inputArrayList.get(i++)).getText();
+		newOrder.setSku(sku);
+
+		// mat name
+		String nameOfMat = ((TextField) inputArrayList.get(i++)).getText();
+		newOrder.setName(nameOfMat);
+
+		if (sku.equals("") && nameOfMat.equals("")) currentStage.close();
+
+		// mat type
+		try {
+			newOrder.setType(((ComboBox) inputArrayList.get(i++)).getValue().toString());
+		} catch (NullPointerException ignored) {}
+
+		try {
+			newOrder.setOrderDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+		i++;
+		try {
+			newOrder.setPaymentDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+		i++;
+		try {
+			newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+		i++;
+
+		try {
+			newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+		i++;
+
+		try {
+			newOrder.setInvoice(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
+
+		try {
+			newOrder.setUnitAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			i++;
+			newOrder.setAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			i++;
+			newOrder.setUnitPrice(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			i++;
+			newOrder.setKgAmount();
+			newOrder.setTotalPrice();
+		} catch (Exception e) {
+			AlertBox.display("错误", "数字格式输入错误, 数字为0");
+		}
+
+		try {
+			newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
+
+		try {
+			newOrder.setSkuSeller(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
+
+		try {
+			newOrder.setNote(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
+
+		try {
+			newOrder.setSeller(FindSeller(((ComboBox) inputArrayList.get(i)).getValue().toString()));
+		} catch (NullPointerException ignored) {}
+
+		try {
+			DatabaseUtil.AddMatOrder(newOrder);
+			clearFields();
+		} catch (SQLException e) {
+			AlertBox.display("错误", "无法更新");
+		}
+	}
+
+	/**
+	 * Clear all input area
+	 */
+	private void clearFields() {
+		for (int i = 0; i < inputArrayList.size(); i++) {
+			if (i != 0 && i != 3) {
+				if (inputArrayList.get(i) instanceof TextField) ((TextField) inputArrayList.get(i)).clear();
+				if (inputArrayList.get(i) instanceof DatePicker) ((DatePicker) inputArrayList.get(i)).setValue(null);
+				if (inputArrayList.get(i) instanceof ComboBox) ((ComboBox) inputArrayList.get(i)).getSelectionModel().select(null);
+			}
+		}
+	}
+
 
 	/**
 	 * Given a company name, find the seller within the all seller array list

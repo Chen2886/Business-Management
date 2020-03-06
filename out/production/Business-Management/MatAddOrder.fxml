@@ -7,48 +7,70 @@
 
 <AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MatAddOrderController">
    <children>
-      <GridPane fx:id="MatEditOrderGrid" layoutX="14.0" layoutY="14.0" prefHeight="453.0" prefWidth="920.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
-         <columnConstraints>
-            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-         </rowConstraints>
-         <children>
-            <Label fx:id="editOrderTitleLabel" alignment="CENTER" contentDisplay="CENTER" text="添加订单" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Label>
-         </children>
-      </GridPane>
-      <HBox layoutX="800.0" layoutY="480.0" prefHeight="75.0" prefWidth="131.0" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="460.0">
-         <children>
-            <Button fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="取消" textAlignment="RIGHT">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-            <Button fx:id="completeButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="完成" textAlignment="RIGHT">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
-         </children>
-      </HBox>
+      <TabPane prefHeight="475.0" prefWidth="1006.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <tabs>
+            <Tab closable="false" text="添加原料订单">
+               <content>
+                  <VBox alignment="CENTER_RIGHT" prefHeight="453.0" prefWidth="1000.0" spacing="10.0">
+                     <GridPane fx:id="MatEditOrderGrid" hgap="10.0" vgap="10.0" VBox.vgrow="ALWAYS">
+                        <padding>
+                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                        <columnConstraints>
+                           <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                        </rowConstraints>
+                        <children>
+                           <Label fx:id="editOrderTitleLabel" alignment="CENTER" contentDisplay="CENTER" text="添加订单" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+                              <font>
+                                 <Font size="30.0" />
+                              </font>
+                           </Label>
+                        </children>
+                     </GridPane>
+                     <HBox layoutX="800.0" layoutY="480.0" prefHeight="-Infinity" prefWidth="-Infinity" spacing="10.0" alignment="CENTER_RIGHT">
+                        <children>
+                           <Button fx:id="matCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="取消" textAlignment="CENTER">
+                              <font>
+                                 <Font size="18.0" />
+                              </font>
+                           </Button>
+                           <Button fx:id="matCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="完成" textAlignment="CENTER">
+                              <font>
+                                 <Font size="18.0" />
+                              </font>
+                           </Button>
+                           <Button fx:id="matContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="保存并继续添加" textAlignment="CENTER">
+                              <font>
+                                 <Font size="18.0" />
+                              </font>
+                           </Button>
+                        </children>
+                        <VBox.margin>
+                           <Insets />
+                        </VBox.margin>
+                     </HBox>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab closable="false" text="添加供应商" />
+         </tabs>
+      </TabPane>
    </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
 </AnchorPane>

@@ -238,33 +238,45 @@ public class MatEditOrderController  {
 		}
 
 		// mat type
-		newOrder.setType(((ComboBox) inputArrayList.get(i++)).getValue().toString());
+		try {
+			newOrder.setType(((ComboBox) inputArrayList.get(i++)).getValue().toString());
+		} catch (NullPointerException ignored) {}
 
-		newOrder.setOrderDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
+		try {
+			newOrder.setOrderDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+		i++;
+
+		try {
+			newOrder.setPaymentDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+		i++;
+
+		try {
+		newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
 				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
 						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
 						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
 		i++;
 
-		newOrder.setPaymentDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
+		try {
+		newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
 				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
 						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
 						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
 		i++;
 
-		newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		i++;
-
-		newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		i++;
-
+		try {
 		newOrder.setInvoice(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
 
 		try {
 			newOrder.setUnitAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
@@ -276,17 +288,24 @@ public class MatEditOrderController  {
 			newOrder.setKgAmount();
 			newOrder.setTotalPrice();
 		} catch (Exception e) {
-			AlertBox.display("错误", "数字格式输入错误");
-			return;
+			AlertBox.display("错误", "数字格式输入错误，数字为0");
 		}
 
-		newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());
+		try {
+			newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
 
-		newOrder.setSkuSeller(((TextField) inputArrayList.get(i++)).getText());
+		try {
+			newOrder.setSkuSeller(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
 
-		newOrder.setNote(((TextField) inputArrayList.get(i++)).getText());
+		try {
+			newOrder.setNote(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {}
 
-		newOrder.setSeller(FindSeller(((ComboBox) inputArrayList.get(i)).getValue().toString()));
+		try {
+			newOrder.setSeller(FindSeller(((ComboBox) inputArrayList.get(i)).getValue().toString()));
+		} catch (NullPointerException ignored) {}
 
 		try {
 			DatabaseUtil.UpdateMatOrder(newOrder);

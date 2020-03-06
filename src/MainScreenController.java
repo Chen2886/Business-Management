@@ -82,7 +82,7 @@ public class MainScreenController implements Initializable {
 			} else {
 				ObservableList<MatOrder> tableMatOrderList = FXCollections.observableArrayList(allMatOrderList);
 				tableMatOrderList.removeIf(order -> !order.toString().contains(newValue));
-				matTableView.getItems().removeAll();
+				matTableView.getItems().clear();
 				matTableView.setItems(tableMatOrderList);
 			}
 		});
@@ -190,10 +190,11 @@ public class MainScreenController implements Initializable {
 	}
 
 	private void deleteMatOrder(MatOrder selectedOrder) {
-		if (ConfirmBox.display("确认", "确定删除？", "确定", "删除")) {
+		if (ConfirmBox.display("确认", "确定删除？", "确定", "取消")) {
 			try {
+				DatabaseUtil.DeleteMatOrder(selectedOrder.getSerialNum());
 				allMatOrderList = DatabaseUtil.GetAllMatOrders();
-				matTableView.getItems().removeAll();
+				matTableView.getItems().clear();
 				matTableView.getItems().setAll(allMatOrderList);
 			} catch (SQLException e) {
 				AlertBox.display("错误", "无法删除");
@@ -218,7 +219,7 @@ public class MainScreenController implements Initializable {
 			stage.setTitle("编辑订单");
 			stage.setScene(new Scene(newScene));
 			stage.showAndWait();
-			matTableView.getItems().removeAll();
+			matTableView.getItems().clear();
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			matTableView.getItems().setAll(allMatOrderList);
 			matTableView.refresh();
@@ -244,7 +245,7 @@ public class MainScreenController implements Initializable {
 			stage.setTitle("添加订单");
 			stage.setScene(new Scene(newScene));
 			stage.showAndWait();
-			matTableView.getItems().removeAll();
+			matTableView.getItems().clear();
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			matTableView.getItems().setAll(allMatOrderList);
 			matTableView.refresh();
