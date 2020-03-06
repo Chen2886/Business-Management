@@ -35,17 +35,21 @@ public class MainScreenController implements Initializable {
 			"bank", "address", "note"};
 
 	private ObservableList<MatOrder> allMatOrderList;
+	private ObservableList<MatOrder> searchList;
+	public boolean alreadyInitialize = false;
 
 	@FXML TableView<ProductOrder> orderTableView;
 	@FXML TableView<MatOrder> matTableView;
 	@FXML Button searchButton;
 	@FXML Button addButton;
 	@FXML Button quitButton;
+	@FXML Button resetButton;
 	@FXML TextField searchBarTextField;
 	@FXML ImageView searchImageView;
 
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+
 		try {
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			fillMatTable(allMatOrderList);
@@ -59,7 +63,7 @@ public class MainScreenController implements Initializable {
 		}
 
 		searchButton.setOnAction(event -> {
-			System.out.println("search pressed");
+			searchOrder();
 		});
 
 		addButton.setOnAction(event -> {
@@ -67,6 +71,9 @@ public class MainScreenController implements Initializable {
 		});
 		quitButton.setOnAction(actionEvent -> {
 			System.exit(1);
+		});
+		resetButton.setOnAction(actionEvent -> {
+			resetTable();
 		});
 
 		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -98,7 +105,7 @@ public class MainScreenController implements Initializable {
 	 * Filling of the material table
 	 * @param selectedMatOrders the orders specified
 	 */
-	private void fillMatTable(ObservableList<MatOrder> selectedMatOrders) {
+	public void fillMatTable(ObservableList<MatOrder> selectedMatOrders) {
 		Collection<TableColumn<MatOrder, ?>> orderColumnArrayList = new ArrayList<>();
 
 		TableColumn actionColumn = new TableColumn("动作");
@@ -248,6 +255,50 @@ public class MainScreenController implements Initializable {
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
 		}
+	}
+
+	private void searchOrder() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatSearchOrder.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			MatSearchOrderController matSearchOrderController = loader.getController();
+			matSearchOrderController.initData(stage, this);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("搜索订单");
+			stage.setScene(new Scene(newScene));
+			stage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	private void resetTable() {
+		try {
+			searchBarTextField.setText("");
+			matTableView.getItems().clear();
+			allMatOrderList = DatabaseUtil.GetAllMatOrders();
+			matTableView.getItems().setAll(allMatOrderList);
+			matTableView.refresh();
+			alreadyInitialize = false;
+		} catch (Exception e) {
+			AlertBox.display("错误", "无法摘取信息");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	public void setSearchList(ObservableList<MatOrder> newList) {
+		searchList = FXCollections.observableArrayList(newList);
+		matTableView.getItems().clear();
+		matTableView.getItems().setAll(searchList);
 	}
 
 }
