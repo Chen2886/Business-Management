@@ -186,11 +186,11 @@ public class MatSearchOrderController {
 
                 try {
                     if (startDate.getValue() == null && endDate.getValue() != null) {
-                        AlertBox.display("错误","没有输入结束日期");
+                        AlertBox.display("错误","没有输入开始日期");
                         throw new NullPointerException();
                     }
                     else if (startDate.getValue() != null && endDate.getValue() == null) {
-                        AlertBox.display("错误","没有输入开始日期");
+                        AlertBox.display("错误","没有输入结束日期");
                         throw new NullPointerException();
                     }
                     else if (startDate.getValue() == null && endDate.getValue() == null) {

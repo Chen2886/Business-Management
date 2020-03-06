@@ -266,7 +266,7 @@ public class DatabaseUtil {
     }
     
     public static ObservableList<MatOrder> GetAllMatOrders() throws SQLException {
-        String SQLCommand = "SELECT * FROM materialManagement";
+        String SQLCommand = "SELECT * FROM materialManagement ORDER BY sku DESC";
         ObservableList<MatOrder> orderObservableList = FXCollections.observableArrayList();
         try {
             ConnectToDB();
@@ -419,15 +419,27 @@ public class DatabaseUtil {
             preparedStatement.setDouble(9, matOrder.getKgAmount());
             preparedStatement.setDouble(10, matOrder.getUnitPrice());
             preparedStatement.setDouble(11, matOrder.getTotalPrice());
-            preparedStatement.setInt(12, matOrder.getSeller().getSellerId());
-            preparedStatement.setString(13, matOrder.getSeller().getCompanyName());
-            preparedStatement.setString(14, matOrder.getSeller().getContactName());
-            preparedStatement.setString(15, matOrder.getSeller().getMobile());
-            preparedStatement.setString(16, matOrder.getSeller().getLandLine());
-            preparedStatement.setString(17, matOrder.getSeller().getFax());
-            preparedStatement.setString(18, matOrder.getSeller().getAccountNum());
-            preparedStatement.setString(19, matOrder.getSeller().getBankAddress());
-            preparedStatement.setString(20, matOrder.getSeller().getAddress());
+            if (matOrder.getSeller() != null) {
+                preparedStatement.setInt(12, matOrder.getSeller().getSellerId());
+                preparedStatement.setString(13, matOrder.getSeller().getCompanyName());
+                preparedStatement.setString(14, matOrder.getSeller().getContactName());
+                preparedStatement.setString(15, matOrder.getSeller().getMobile());
+                preparedStatement.setString(16, matOrder.getSeller().getLandLine());
+                preparedStatement.setString(17, matOrder.getSeller().getFax());
+                preparedStatement.setString(18, matOrder.getSeller().getAccountNum());
+                preparedStatement.setString(19, matOrder.getSeller().getBankAddress());
+                preparedStatement.setString(20, matOrder.getSeller().getAddress());
+            } else {
+                preparedStatement.setInt(12, 0);
+                preparedStatement.setString(13, "");
+                preparedStatement.setString(14, "");
+                preparedStatement.setString(15, "");
+                preparedStatement.setString(16, "");
+                preparedStatement.setString(17, "");
+                preparedStatement.setString(18, "");
+                preparedStatement.setString(19, "");
+                preparedStatement.setString(20, "");
+            }
 
             preparedStatement.setString(21, matOrder.getPaymentDate() == null ? "" : String.valueOf(matOrder.getPaymentDate().getY()));
             preparedStatement.setString(22, matOrder.getPaymentDate() == null ? "" : String.valueOf(matOrder.getPaymentDate().getM()));
@@ -486,15 +498,27 @@ public class DatabaseUtil {
             preparedStatement.setDouble(9, order.getKgAmount());
             preparedStatement.setDouble(10, order.getUnitPrice());
             preparedStatement.setDouble(11, order.getTotalPrice());
-            preparedStatement.setInt(12, order.getSeller().getSellerId());
-            preparedStatement.setString(13, order.getSeller().getCompanyName());
-            preparedStatement.setString(14, order.getSeller().getContactName());
-            preparedStatement.setString(15, order.getSeller().getMobile());
-            preparedStatement.setString(16, order.getSeller().getLandLine());
-            preparedStatement.setString(17, order.getSeller().getFax());
-            preparedStatement.setString(18, order.getSeller().getAccountNum());
-            preparedStatement.setString(19, order.getSeller().getBankAddress());
-            preparedStatement.setString(20, order.getSeller().getAddress());
+            if (order.getSeller() != null) {
+                preparedStatement.setInt(12, order.getSeller().getSellerId());
+                preparedStatement.setString(13, order.getSeller().getCompanyName());
+                preparedStatement.setString(14, order.getSeller().getContactName());
+                preparedStatement.setString(15, order.getSeller().getMobile());
+                preparedStatement.setString(16, order.getSeller().getLandLine());
+                preparedStatement.setString(17, order.getSeller().getFax());
+                preparedStatement.setString(18, order.getSeller().getAccountNum());
+                preparedStatement.setString(19, order.getSeller().getBankAddress());
+                preparedStatement.setString(20, order.getSeller().getAddress());
+            } else {
+                preparedStatement.setInt(12, -1);
+                preparedStatement.setString(13, "");
+                preparedStatement.setString(14, "");
+                preparedStatement.setString(15, "");
+                preparedStatement.setString(16, "");
+                preparedStatement.setString(17, "");
+                preparedStatement.setString(18, "");
+                preparedStatement.setString(19, "");
+                preparedStatement.setString(20, "");
+            }
 
             preparedStatement.setString(21, order.getPaymentDate() == null ? "" : String.valueOf(order.getPaymentDate().getY()));
             preparedStatement.setString(22, order.getPaymentDate() == null ? "" : String.valueOf(order.getPaymentDate().getM()));
