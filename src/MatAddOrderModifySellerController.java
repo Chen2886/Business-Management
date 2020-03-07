@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class MatAddOrderController {
+public class MatAddOrderModifySellerController {
 
 	// table headers
 	private static final String[] tableHeaders = new String[] {"订单号", "原料名称", "类别", "订单日期", "付款日期",
@@ -36,16 +36,22 @@ public class MatAddOrderController {
 	private static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
 	// material section
+	// add mat order
 	@FXML GridPane matAddOrderGrid;
-	@FXML GridPane matSellerAddOrderGrid;
 	@FXML Label matAddOrderTitleLabel;
-	@FXML Label matAddSellerTitleLabel;
 	@FXML Button matCancelButton;
 	@FXML Button matCompleteButton;
 	@FXML Button matContinueButton;
-	@FXML Button matSellerCancelButton;
-	@FXML Button matSellerCompleteButton;
-	@FXML Button matSellerContinueButton;
+
+	// add mat seller
+	@FXML GridPane matAddSellerAddOrderGrid;
+	@FXML Label matAddSellerTitleLabel;
+	@FXML Button matAddSellerCancelButton;
+	@FXML Button matAddSellerCompleteButton;
+	@FXML Button matAddSellerContinueButton;
+
+	// edit mat seller
+
 
 	Stage currentStage;
 	ObservableList<MatSeller> allMatSeller;
@@ -64,7 +70,7 @@ public class MatAddOrderController {
 				currentStage.close();
 		});
 
-		matSellerCancelButton.setOnAction(actionEvent -> {
+		matAddSellerCancelButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display("确认", "确定取消？此供应商不会被保存", "确认", "取消"))
 				currentStage.close();
 		});
@@ -73,7 +79,7 @@ public class MatAddOrderController {
 			AddOrder();
 		});
 
-		matSellerCompleteButton.setOnAction(actionEvent -> {
+		matAddSellerCompleteButton.setOnAction(actionEvent -> {
 			AddSeller();
 		});
 
@@ -81,7 +87,7 @@ public class MatAddOrderController {
 			ContinueOrder();
 		});
 
-		matSellerContinueButton.setOnAction(actionEvent -> {
+		matAddSellerContinueButton.setOnAction(actionEvent -> {
 			ContinueSeller();
 		});
 
@@ -226,10 +232,10 @@ public class MatAddOrderController {
 		}
 
 		// * setting up grid properties
-		matSellerAddOrderGrid.setVgap(10);
-		matSellerAddOrderGrid.setHgap(10);
-		matSellerAddOrderGrid.getChildren().addAll(matSellerLabelArray);
-		matSellerAddOrderGrid.getChildren().addAll(matSellerInputArray);
+		matAddSellerAddOrderGrid.setVgap(10);
+		matAddSellerAddOrderGrid.setHgap(10);
+		matAddSellerAddOrderGrid.getChildren().addAll(matSellerLabelArray);
+		matAddSellerAddOrderGrid.getChildren().addAll(matSellerInputArray);
 	}
 
 	/**

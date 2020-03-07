@@ -276,12 +276,12 @@ public class MainScreenController implements Initializable {
 	 */
 	private void addOrder() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatAddOrder.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatAddOrderModifySeller.fxml"));
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-			MatAddOrderController matAddOrderController = loader.getController();
-			matAddOrderController.initData(stage);
+			MatAddOrderModifySellerController matAddOrderModifySellerController = loader.getController();
+			matAddOrderModifySellerController.initData(stage);
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加订单");
