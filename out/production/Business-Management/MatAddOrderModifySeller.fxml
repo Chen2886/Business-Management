@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MatAddOrderController">
+<AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MatAddOrderModifySellerController">
    <children>
       <TabPane prefHeight="475.0" prefWidth="1006.0" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <tabs>
@@ -71,7 +71,7 @@
             <Tab closable="false" styleClass="add-order-tab" text="添加供应商">
                <content>
                   <VBox alignment="CENTER" prefHeight="453.0" prefWidth="600.0" spacing="10.0">
-                     <GridPane fx:id="matSellerAddOrderGrid" alignment="CENTER" hgap="10.0" vgap="10.0" VBox.vgrow="ALWAYS">
+                     <GridPane fx:id="matAddSellerGrid" alignment="CENTER" hgap="10.0" vgap="10.0" VBox.vgrow="ALWAYS">
                         <padding>
                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                         </padding>
@@ -98,17 +98,68 @@
                      </GridPane>
                      <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="-Infinity" prefWidth="-Infinity" spacing="10.0">
                         <children>
-                           <Button fx:id="matSellerCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="取消" textAlignment="CENTER">
+                           <Button fx:id="matAddSellerCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="取消" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matSellerCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="完成" textAlignment="CENTER">
+                           <Button fx:id="matAddSellerCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="完成" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matSellerContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="保存并继续添加" textAlignment="CENTER">
+                           <Button fx:id="matAddSellerContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="保存并继续添加" textAlignment="CENTER">
+                              <font>
+                                 <Font size="18.0" />
+                              </font>
+                           </Button>
+                        </children>
+                        <VBox.margin>
+                           <Insets />
+                        </VBox.margin>
+                     </HBox>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab closable="false" styleClass="add-order-tab" text="编辑供应商">
+               <content>
+                  <VBox alignment="CENTER" prefHeight="453.0" prefWidth="600.0" spacing="10.0">
+                     <GridPane fx:id="matEditSellerGrid" alignment="CENTER" hgap="10.0" vgap="10.0" VBox.vgrow="ALWAYS">
+                        <padding>
+                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                        <columnConstraints>
+                           <ColumnConstraints fx:id="problematicColumnOne" halignment="RIGHT" hgrow="ALWAYS" />
+                           <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
+                           <ColumnConstraints fx:id="problematicColumnTwo" halignment="RIGHT" hgrow="ALWAYS" />
+                           <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
+                        </columnConstraints>
+                        <rowConstraints>
+                           <RowConstraints vgrow="ALWAYS" />
+                           <RowConstraints vgrow="ALWAYS" />
+                           <RowConstraints vgrow="ALWAYS" />
+                           <RowConstraints vgrow="ALWAYS" />
+                           <RowConstraints vgrow="ALWAYS" />
+                        </rowConstraints>
+                        <children>
+                           <Label fx:id="matEditSellerTitleLabel" alignment="CENTER" contentDisplay="CENTER" text="编辑供应商" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+                              <font>
+                                 <Font size="30.0" />
+                              </font>
+                           </Label>
+                        </children>
+                     </GridPane>
+                     <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="-Infinity" prefWidth="-Infinity" spacing="10.0">
+                        <children>
+                           <Button fx:id="matEditSellerCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="取消/重置页面" textAlignment="CENTER">
+                              <font>
+                                 <Font size="18.0" />
+                              </font>
+                           </Button>
+                           <Button fx:id="matEditSellerCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="完成" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>

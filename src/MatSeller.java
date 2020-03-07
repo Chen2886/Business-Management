@@ -12,6 +12,13 @@ public class MatSeller {
 	public MatSeller(int sellerId, String companyName) {
 		this.sellerId = sellerId;
 		this.companyName = companyName;
+		this.contactName = "";
+		this.mobile = "";
+		this.landLine = "";
+		this.fax = "";
+		this.accountNum = "";
+		this.bankAddress = "";
+		this.address = "";
 	}
 
 	public int getSellerId() {
@@ -89,6 +96,21 @@ public class MatSeller {
 	public String toString(boolean includeSellerId) {
 		String returnVal = "";
 		if (includeSellerId) returnVal = addFormat(String.valueOf(sellerId), returnVal);
+		returnVal = addFormat(companyName, returnVal);
+		returnVal = addFormat(contactName, returnVal);
+		returnVal = addFormat(mobile, returnVal);
+		returnVal = addFormat(landLine, returnVal);
+		returnVal = addFormat(fax, returnVal);
+		returnVal = addFormat(accountNum, returnVal);
+		returnVal = addFormat(bankAddress, returnVal);
+		returnVal = addFormat(address, returnVal);
+		return returnVal;
+	}
+
+	@Override
+	public String toString() {
+		String returnVal = "";
+		returnVal = addFormat(String.valueOf(sellerId), returnVal);
 		returnVal = addFormat(companyName, returnVal);
 		returnVal = addFormat(contactName, returnVal);
 		returnVal = addFormat(mobile, returnVal);
