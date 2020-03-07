@@ -74,11 +74,26 @@
 }
 
 // change size of tabs
-.tab {
+.main-screen-tab {
     -fx-pref-width: 745;
     -fx-font-size: 20px;
     -fx-alignment: center;
 }
+
+.main-screen-tab:hover {
+    -fx-cursor: hand;
+}
+
+.add-order-tab {
+    -fx-pref-width: 480;
+    -fx-font-size: 20px;
+    -fx-alignment: center;
+}
+
+.add-order-tab:hover {
+    -fx-cursor: hand;
+}
+
 
 .edit-grid {
     -fx-border-style: solid inside;
@@ -98,5 +113,9 @@
 }
 
 .search-text-field:focused {
+    -fx-text-fill: black;
+}
+
+.default-button {
     -fx-text-fill: black;
 }
