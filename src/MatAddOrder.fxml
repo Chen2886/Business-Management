@@ -31,7 +31,6 @@
                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                         </rowConstraints>
                         <children>
                            <Label fx:id="matAddOrderTitleLabel" alignment="CENTER" contentDisplay="CENTER" text="添加订单" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">

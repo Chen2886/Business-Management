@@ -1,14 +1,10 @@
-import javafx.beans.Observable;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.Callback;
@@ -49,9 +45,27 @@ public class MainScreenController implements Initializable {
 	@FXML TextField searchBarTextField;
 	@FXML ImageView searchImageView;
 
+	/**
+	 * Call to fill the table with all orders, set up actions for all buttons, set up search bars, set up image view
+	 * @param url N/A
+	 * @param resourceBundle N/A
+	 */
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 
+		// setting up the image for search bar
+		try {
+			FileInputStream input = new FileInputStream("src/iconmonstr-magnifier-4-240.png");
+			Image searchBarImage = new Image(input);
+			searchImageView.setImage(searchBarImage);
+		} catch (Exception e) {
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+
+		// filling the table
 		try {
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			tempQuickSearchMatOrderList = FXCollections.observableArrayList();
@@ -73,13 +87,16 @@ public class MainScreenController implements Initializable {
 		addButton.setOnAction(event -> {
 			addOrder();
 		});
+
 		quitButton.setOnAction(actionEvent -> {
 			System.exit(1);
 		});
+
 		resetButton.setOnAction(actionEvent -> {
 			resetTable();
 		});
 
+		// listener for search bar text field
 		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
 			if (newValue == null || newValue.equals("")) {
 				matTableView.getItems().clear();
@@ -96,27 +113,15 @@ public class MainScreenController implements Initializable {
 				tempQuickSearchMatOrderList.removeIf(new Predicate<MatOrder>() {
 					@Override
 					public boolean test(MatOrder matOrder) {
+
+						// remove if order doesn't contain the new value
 						if (!matOrder.toString().contains(newValue)) return true;
 						else return false;
-
 					}
 				});
 				matTableView.setItems(tempQuickSearchMatOrderList);
 			}
 		});
-
-		try {
-			FileInputStream input = new FileInputStream("src/iconmonstr-magnifier-4-240.png");
-			Image searchBarImage = new Image(input);
-			searchImageView.setImage(searchBarImage);
-		} catch (Exception e) {
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
-		}
-
-
 	}
 
 	/**
@@ -124,12 +129,16 @@ public class MainScreenController implements Initializable {
 	 * @param selectedMatOrders the orders specified
 	 */
 	public void fillMatTable(ObservableList<MatOrder> selectedMatOrders) {
+
+		// array of columns
 		Collection<TableColumn<MatOrder, ?>> orderColumnArrayList = new ArrayList<>();
 
+		// setting up first action column
 		TableColumn actionColumn = new TableColumn("动作");
 		actionColumn.setSortable(false);
 		orderColumnArrayList.add(actionColumn);
 
+		// loop to set up all regular columns
 		for (int i = 0; i < tableHeaders.length; i++) {
 			if (i == 8 || i == 9 || i == 10 || i == 11 || i == 12) {
 				// Doubles
@@ -161,6 +170,7 @@ public class MainScreenController implements Initializable {
 			}
 		}
 
+		// Setting a call back to handle the first column of action buttons
 		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> cellFactory = new Callback<>() {
 					@Override
 					public TableCell<MatOrder, String> call(TableColumn<MatOrder, String> matOrderStringTableColumn) {
@@ -193,8 +203,11 @@ public class MainScreenController implements Initializable {
 
 		actionColumn.setCellFactory(cellFactory);
 
+		// filling the table
 		matTableView.setItems(selectedMatOrders);
 		matTableView.getColumns().setAll(orderColumnArrayList);
+
+		// if double clicked, enable edit
 		matTableView.setRowFactory( tv -> {
 			TableRow<MatOrder> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
@@ -207,6 +220,10 @@ public class MainScreenController implements Initializable {
 		});
 	}
 
+	/**
+	 * Helper function to delete order
+	 * @param selectedOrder the order to be deleted
+	 */
 	private void deleteMatOrder(MatOrder selectedOrder) {
 		if (ConfirmBox.display("确认", "确定删除？", "确定", "取消")) {
 			try {
@@ -224,6 +241,10 @@ public class MainScreenController implements Initializable {
 		}
 	}
 
+	/**
+	 * Helper function set up new window to modify order
+	 * @param selectedOrder the order to be updated
+	 */
 	private void modifyMatOrder(MatOrder selectedOrder) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatEditOrder.fxml"));
@@ -250,6 +271,9 @@ public class MainScreenController implements Initializable {
 		}
 	}
 
+	/**
+	 * Helper function to set up window to add an order
+	 */
 	private void addOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatAddOrder.fxml"));
@@ -276,6 +300,9 @@ public class MainScreenController implements Initializable {
 		}
 	}
 
+	/**
+	 * Helper function to set up window for advance/precision searching
+	 */
 	private void searchOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatSearchOrder.fxml"));
@@ -297,6 +324,9 @@ public class MainScreenController implements Initializable {
 		}
 	}
 
+	/**
+	 * Helper function to reset the table to all orders
+	 */
 	private void resetTable() {
 		try {
 			searchBarTextField.setText("");
@@ -314,6 +344,10 @@ public class MainScreenController implements Initializable {
 		}
 	}
 
+	/**
+	 * Public function for other controller to call, to set the table with new list
+	 * @param newList
+	 */
 	public void setSearchList(ObservableList<MatOrder> newList) {
 		searchList = FXCollections.observableArrayList(newList);
 		matTableView.getItems().clear();
