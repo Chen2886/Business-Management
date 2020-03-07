@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 
 public class MainScreenController implements Initializable {
@@ -35,6 +36,7 @@ public class MainScreenController implements Initializable {
 			"bank", "address", "note"};
 
 	private ObservableList<MatOrder> allMatOrderList;
+	private ObservableList<MatOrder> tempQuickSearchMatOrderList;
 	private ObservableList<MatOrder> searchList;
 	public boolean alreadyInitialize = false;
 
@@ -52,6 +54,8 @@ public class MainScreenController implements Initializable {
 
 		try {
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
+			tempQuickSearchMatOrderList = FXCollections.observableArrayList();
+			tempQuickSearchMatOrderList.addAll(allMatOrderList);
 			fillMatTable(allMatOrderList);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -77,13 +81,27 @@ public class MainScreenController implements Initializable {
 		});
 
 		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-			if (newValue.equals("")) {
-				matTableView.setItems(allMatOrderList);
-			} else {
-				ObservableList<MatOrder> tableMatOrderList = FXCollections.observableArrayList(allMatOrderList);
-				tableMatOrderList.removeIf(order -> !order.toString().contains(newValue));
+			if (newValue == null || newValue.equals("")) {
 				matTableView.getItems().clear();
-				matTableView.setItems(tableMatOrderList);
+				tempQuickSearchMatOrderList = FXCollections.observableArrayList(allMatOrderList);
+				matTableView.setItems(tempQuickSearchMatOrderList);
+			} else {
+
+				// if user deleted char
+				if (newValue.length() < oldValue.length()) {
+					matTableView.getItems().clear();
+					tempQuickSearchMatOrderList = FXCollections.observableArrayList(allMatOrderList);
+				}
+
+				tempQuickSearchMatOrderList.removeIf(new Predicate<MatOrder>() {
+					@Override
+					public boolean test(MatOrder matOrder) {
+						if (!matOrder.toString().contains(newValue)) return true;
+						else return false;
+
+					}
+				});
+				matTableView.setItems(tempQuickSearchMatOrderList);
 			}
 		});
 

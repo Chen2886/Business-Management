@@ -550,6 +550,33 @@ public class DatabaseUtil {
         }
     }
 
+    public static void AddMatSeller(MatSeller seller) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "INSERT INTO [seller] (sellerId, companyName, contactName, mobile, landLine, fax," +
+                    "accountNum, bankAddress, address) VALUES(?,?,?,?,?,?,?,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, seller.getSellerId());
+            preparedStatement.setString(2, seller.getCompanyName());
+            preparedStatement.setString(3, seller.getContactName());
+            preparedStatement.setString(4, seller.getMobile());
+            preparedStatement.setString(5, seller.getLandLine());
+            preparedStatement.setString(6, seller.getFax());
+            preparedStatement.setString(7, seller.getAccountNum());
+            preparedStatement.setString(8, seller.getBankAddress());
+            preparedStatement.setString(9, seller.getAddress());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
     /**
      * Return a list of all sellers avaliable
      * @return all sellers in the database

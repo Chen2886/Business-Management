@@ -1,12 +1,12 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.apache.xmlbeans.impl.soap.Text;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -23,27 +23,49 @@ public class MatAddOrderController {
 	// all property listed
 	private static final String[] propertyHeaders = new String[]{"sku", "name", "type", "orderDate", "paymentDate",
 			"arrivalDate", "invoiceDate", "invoice", "unitAmount", "amount", "unitPrice", "signed", "skuSeller", "note", "seller"};
+
+	// all seller property listed
+	private static final String[] sellerPropertyHeaders = new String[]{"CompanyName", "ContactName", "Mobile", "LandLine", "Fax",
+			"AccountNum", "BankAddress", "Address"};
+
+	// seller table headers
+	private static final String[] sellerTableHeaders = new String[]{"供应商",
+			"联系人", "手机", "座机", "传真", "供应商账号", "供应商银行地址", "供应商地址"};
+
 	// all types
 	private static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
-	@FXML GridPane MatEditOrderGrid;
-	@FXML Label editOrderTitleLabel;
+	// material section
+	@FXML GridPane matAddOrderGrid;
+	@FXML GridPane matSellerAddOrderGrid;
+	@FXML Label matAddOrderTitleLabel;
+	@FXML Label matAddSellerTitleLabel;
 	@FXML Button matCancelButton;
 	@FXML Button matCompleteButton;
 	@FXML Button matContinueButton;
+	@FXML Button matSellerCancelButton;
+	@FXML Button matSellerCompleteButton;
+	@FXML Button matSellerContinueButton;
 
 	Stage currentStage;
-	ObservableList<MatSeller> allSeller;
-	ArrayList<Node> inputArrayList;
+	ObservableList<MatSeller> allMatSeller;
+	ArrayList<Node> matOrderInputArray;
+	ArrayList<TextField> matSellerInputArray;
 
 	/**
 	 * Initialize all the element on the screen
 	 */
 	public void init() {
-		editOrderTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		matAddOrderTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		matAddSellerTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
 		matCancelButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display("确认", "确定取消？此订单不会被保存", "确认", "取消"))
+				currentStage.close();
+		});
+
+		matSellerCancelButton.setOnAction(actionEvent -> {
+			if (ConfirmBox.display("确认", "确定取消？此供应商不会被保存", "确认", "取消"))
 				currentStage.close();
 		});
 
@@ -51,8 +73,16 @@ public class MatAddOrderController {
 			AddOrder();
 		});
 
+		matSellerCompleteButton.setOnAction(actionEvent -> {
+			AddSeller();
+		});
+
 		matContinueButton.setOnAction(actionEvent -> {
 			ContinueOrder();
+		});
+
+		matSellerContinueButton.setOnAction(actionEvent -> {
+			ContinueSeller();
 		});
 
 
@@ -60,7 +90,7 @@ public class MatAddOrderController {
 		int col = 0;
 
 		// setting up all the labels
-		ArrayList<Label> labelArrayList = new ArrayList<>();
+		ArrayList<Label> matOrderLabelArray = new ArrayList<>();
 		for(int i = 0; i < tableHeaders.length; i++) {
 			Label newLabel = new Label(tableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;" +
@@ -68,7 +98,7 @@ public class MatAddOrderController {
 
 			newLabel.setMaxWidth(Double.MAX_VALUE);
 			GridPane.setConstraints(newLabel, col, row++);
-			labelArrayList.add(newLabel);
+			matOrderLabelArray.add(newLabel);
 			if ((i + 7) % 6 == 0) {
 				row = 1;
 				col += 2;
@@ -78,7 +108,7 @@ public class MatAddOrderController {
 		row = 1;
 		col = 1;
 		// setting up all the text field
-		inputArrayList = new ArrayList<>();
+		matOrderInputArray = new ArrayList<>();
 		for(int i = 0; i < propertyHeaders.length; i++) {
 
 			// type of mat, combo box
@@ -87,28 +117,28 @@ public class MatAddOrderController {
 				newComboBox.getItems().setAll(matOfType);
 				newComboBox.setMaxWidth(Double.MAX_VALUE);
 				GridPane.setConstraints(newComboBox, col, row++);
-				inputArrayList.add(newComboBox);
+				matOrderInputArray.add(newComboBox);
 			}
 
 			// seller, combo box
 			else if (i == propertyHeaders.length - 1) {
 				ComboBox<String> sellerComboBox = new ComboBox<>();
 				try {
-					allSeller = DatabaseUtil.GetAllMatSellers();
+					allMatSeller = DatabaseUtil.GetAllMatSellers();
 				} catch (SQLException e) {
 					sellerComboBox.setMaxWidth(Double.MAX_VALUE);
-					inputArrayList.add(sellerComboBox);
-					allSeller = FXCollections.observableArrayList();
+					matOrderInputArray.add(sellerComboBox);
+					allMatSeller = FXCollections.observableArrayList();
 				}
 
-				String[] allSellerCompany = new String[allSeller.size()];
-				for (int j = 0; j < allSeller.size(); j++) {
-					allSellerCompany[j] = allSeller.get(j).getCompanyName();
+				String[] allSellerCompany = new String[allMatSeller.size()];
+				for (int j = 0; j < allMatSeller.size(); j++) {
+					allSellerCompany[j] = allMatSeller.get(j).getCompanyName();
 				}
 				sellerComboBox.getItems().setAll(allSellerCompany);
 				sellerComboBox.setMaxWidth(Double.MAX_VALUE);
 				GridPane.setConstraints(sellerComboBox, col, row++);
-				inputArrayList.add(sellerComboBox);
+				matOrderInputArray.add(sellerComboBox);
 			}
 
 			// dates, date picker
@@ -137,7 +167,7 @@ public class MatAddOrderController {
 
 
 				GridPane.setConstraints(datePicker, col, row++);
-				inputArrayList.add(datePicker);
+				matOrderInputArray.add(datePicker);
 			}
 
 			// regular text field
@@ -146,7 +176,7 @@ public class MatAddOrderController {
 				Method getters;
 				newTextField.setMaxWidth(Double.MAX_VALUE);
 				GridPane.setConstraints(newTextField, col, row++);
-				inputArrayList.add(newTextField);
+				matOrderInputArray.add(newTextField);
 
 			}
 
@@ -157,10 +187,51 @@ public class MatAddOrderController {
 		}
 
 		// * setting up grid properties
-		MatEditOrderGrid.setVgap(10);
-		MatEditOrderGrid.setHgap(10);
-		MatEditOrderGrid.getChildren().addAll(labelArrayList);
-		MatEditOrderGrid.getChildren().addAll(inputArrayList);
+		matAddOrderGrid.setVgap(10);
+		matAddOrderGrid.setHgap(10);
+		matAddOrderGrid.getChildren().addAll(matOrderLabelArray);
+		matAddOrderGrid.getChildren().addAll(matOrderInputArray);
+
+
+		// * setting up seller labels
+		// setting up all the labels
+		ArrayList<Label> matSellerLabelArray = new ArrayList<>();
+		matSellerInputArray = new ArrayList<>();
+		row = 1;
+		col = 0;
+		for(int i = 0; i < sellerTableHeaders.length; i++) {
+			Label newLabel = new Label(sellerTableHeaders[i]);
+			newLabel.setStyle("-fx-font-size: 20px;");
+
+			GridPane.setConstraints(newLabel, col, row++);
+			matSellerLabelArray.add(newLabel);
+			if ((i + 5) % 4 == 0) {
+				row = 1;
+				col += 2;
+			}
+		}
+
+		row = 1;
+		col = 1;
+		// * setting up seller text field
+		for (int i = 0; i <sellerTableHeaders.length; i++) {
+			TextField newTextField = new TextField();
+			Method getters;
+			newTextField.setMaxWidth(Double.MAX_VALUE);
+			newTextField.setAlignment(Pos.CENTER);
+			GridPane.setConstraints(newTextField, col, row++);
+			matSellerInputArray.add(newTextField);
+			if ((i + 5) % 4 == 0) {
+				row = 1;
+				col += 2;
+			}
+		}
+
+		// * setting up grid properties
+		matSellerAddOrderGrid.setVgap(10);
+		matSellerAddOrderGrid.setHgap(10);
+		matSellerAddOrderGrid.getChildren().addAll(matSellerLabelArray);
+		matSellerAddOrderGrid.getChildren().addAll(matSellerInputArray);
 	}
 
 	/**
@@ -184,11 +255,11 @@ public class MatAddOrderController {
 		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
 		int i = 0;
 
-		String sku = ((TextField) inputArrayList.get(i++)).getText();
+		String sku = ((TextField) matOrderInputArray.get(i++)).getText();
 		newOrder.setSku(sku);
 
 		// mat name
-		String nameOfMat = ((TextField) inputArrayList.get(i++)).getText();
+		String nameOfMat = ((TextField) matOrderInputArray.get(i++)).getText();
 		newOrder.setName(nameOfMat);
 
 		if (sku.equals("") || nameOfMat.equals("")) {
@@ -198,49 +269,49 @@ public class MatAddOrderController {
 
 		// mat type
 		try {
-			newOrder.setType(((ComboBox) inputArrayList.get(i++)).getValue().toString());
+			newOrder.setType(((ComboBox) matOrderInputArray.get(i++)).getValue().toString());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setOrderDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+			newOrder.setOrderDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
 			i++;
 		try {
-			newOrder.setPaymentDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
 			i++;
 		try {
-			newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
-			i++;
-
-		try {
-			newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? null :
-					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
 			i++;
 
 		try {
-			newOrder.setInvoice(((TextField) inputArrayList.get(i++)).getText());
+			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+			i++;
+
+		try {
+			newOrder.setInvoice(((TextField) matOrderInputArray.get(i++)).getText());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setUnitAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			newOrder.setUnitAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
 			i++;
-			newOrder.setAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			newOrder.setAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
 			i++;
-			newOrder.setUnitPrice(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			newOrder.setUnitPrice(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
 			i++;
 			newOrder.setKgAmount();
 			newOrder.setTotalPrice();
@@ -249,19 +320,19 @@ public class MatAddOrderController {
 		}
 
 		try {
-			newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());
+			newOrder.setSigned(((TextField) matOrderInputArray.get(i++)).getText());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setSkuSeller(((TextField) inputArrayList.get(i++)).getText());
+			newOrder.setSkuSeller(((TextField) matOrderInputArray.get(i++)).getText());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setNote(((TextField) inputArrayList.get(i++)).getText());
+			newOrder.setNote(((TextField) matOrderInputArray.get(i++)).getText());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setSeller(FindSeller(((ComboBox) inputArrayList.get(i)).getValue().toString()));
+			newOrder.setSeller(FindSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
 		} catch (NullPointerException ignored) {}
 
 		try {
@@ -279,60 +350,60 @@ public class MatAddOrderController {
 		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
 		int i = 0;
 
-		String sku = ((TextField) inputArrayList.get(i++)).getText();
+		String sku = ((TextField) matOrderInputArray.get(i++)).getText();
 		newOrder.setSku(sku);
 
 		// mat name
-		String nameOfMat = ((TextField) inputArrayList.get(i++)).getText();
+		String nameOfMat = ((TextField) matOrderInputArray.get(i++)).getText();
 		newOrder.setName(nameOfMat);
 
 		if (sku.equals("") && nameOfMat.equals("")) currentStage.close();
 
 		// mat type
 		try {
-			newOrder.setType(((ComboBox) inputArrayList.get(i++)).getValue().toString());
+			newOrder.setType(((ComboBox) matOrderInputArray.get(i++)).getValue().toString());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setOrderDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
-					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+			newOrder.setOrderDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
 		i++;
 		try {
-			newOrder.setPaymentDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
-					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
 		i++;
 		try {
-			newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
-					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
-		i++;
-
-		try {
-			newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
-					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
 		i++;
 
 		try {
-			newOrder.setInvoice(((TextField) inputArrayList.get(i++)).getText());
+			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
+							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {}
+		i++;
+
+		try {
+			newOrder.setInvoice(((TextField) matOrderInputArray.get(i++)).getText());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setUnitAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			newOrder.setUnitAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
 			i++;
-			newOrder.setAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			newOrder.setAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
 			i++;
-			newOrder.setUnitPrice(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+			newOrder.setUnitPrice(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
 			i++;
 			newOrder.setKgAmount();
 			newOrder.setTotalPrice();
@@ -341,19 +412,19 @@ public class MatAddOrderController {
 		}
 
 		try {
-			newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());
+			newOrder.setSigned(((TextField) matOrderInputArray.get(i++)).getText());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setSkuSeller(((TextField) inputArrayList.get(i++)).getText());
+			newOrder.setSkuSeller(((TextField) matOrderInputArray.get(i++)).getText());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setNote(((TextField) inputArrayList.get(i++)).getText());
+			newOrder.setNote(((TextField) matOrderInputArray.get(i++)).getText());
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setSeller(FindSeller(((ComboBox) inputArrayList.get(i)).getValue().toString()));
+			newOrder.setSeller(FindSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
 		} catch (NullPointerException ignored) {}
 
 		try {
@@ -368,11 +439,11 @@ public class MatAddOrderController {
 	 * Clear all input area
 	 */
 	private void clearFields() {
-		for (int i = 0; i < inputArrayList.size(); i++) {
+		for (int i = 0; i < matOrderInputArray.size(); i++) {
 			if (i != 0 && i != 3) {
-				if (inputArrayList.get(i) instanceof TextField) ((TextField) inputArrayList.get(i)).clear();
-				if (inputArrayList.get(i) instanceof DatePicker) ((DatePicker) inputArrayList.get(i)).setValue(null);
-				if (inputArrayList.get(i) instanceof ComboBox) ((ComboBox) inputArrayList.get(i)).getSelectionModel().select(null);
+				if (matOrderInputArray.get(i) instanceof TextField) ((TextField) matOrderInputArray.get(i)).clear();
+				if (matOrderInputArray.get(i) instanceof DatePicker) ((DatePicker) matOrderInputArray.get(i)).setValue(null);
+				if (matOrderInputArray.get(i) instanceof ComboBox) ((ComboBox) matOrderInputArray.get(i)).getSelectionModel().select(null);
 			}
 		}
 	}
@@ -384,7 +455,7 @@ public class MatAddOrderController {
 	 * @return the specified seller
 	 */
 	private MatSeller FindSeller (String CompanyName) {
-		for (MatSeller seller : allSeller) {
+		for (MatSeller seller : allMatSeller) {
 			if (seller.getCompanyName().equals(CompanyName)) return seller;
 		}
 		return new MatSeller(MatSellerId.getMatSellerId(), "NOT FOUND");
@@ -393,6 +464,41 @@ public class MatAddOrderController {
 	public void initData(Stage currentStage) {
 		this.currentStage = currentStage;
 		init();
+	}
+
+	private void AddSeller() {
+		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
+		Method setter;
+
+		for (TextField textField : matSellerInputArray) {
+			if (!textField.getText().equals("")) {
+				try {
+					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matSellerInputArray.indexOf(textField)], String.class);
+					setter.invoke(newSeller, textField.getText());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		System.out.println(newSeller.toString());
+
+		try {
+			DatabaseUtil.AddMatSeller(newSeller);
+			allMatSeller = DatabaseUtil.GetAllMatSellers();
+			currentStage.close();
+		} catch (Exception e) {
+			AlertBox.display("错误", "添加错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+			currentStage.close();
+		}
+	}
+
+	private void ContinueSeller() {
+
 	}
 
 }
