@@ -4,7 +4,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -44,19 +47,25 @@ public class MatAddOrderModifySellerController {
 	@FXML Button matContinueButton;
 
 	// add mat seller
-	@FXML GridPane matAddSellerAddOrderGrid;
+	@FXML GridPane matAddSellerGrid;
 	@FXML Label matAddSellerTitleLabel;
 	@FXML Button matAddSellerCancelButton;
 	@FXML Button matAddSellerCompleteButton;
 	@FXML Button matAddSellerContinueButton;
 
 	// edit mat seller
-
+	@FXML GridPane matEditSellerGrid;
+	@FXML Label matEditSellerTitleLabel;
+	@FXML Button matEditSellerCancelButton;
+	@FXML Button matEditSellerCompleteButton;
+	@FXML ColumnConstraints problematicColumnOne;
+	@FXML ColumnConstraints problematicColumnTwo;
 
 	Stage currentStage;
 	ObservableList<MatSeller> allMatSeller;
 	ArrayList<Node> matOrderInputArray;
-	ArrayList<TextField> matSellerInputArray;
+	ArrayList<TextField> matAddSellerInputArray;
+	ArrayList<TextField> matEditSellerInputArray;
 
 	/**
 	 * Initialize all the element on the screen
@@ -64,6 +73,17 @@ public class MatAddOrderModifySellerController {
 	public void init() {
 		matAddOrderTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		matAddSellerTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		matEditSellerTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+		try {
+			allMatSeller = DatabaseUtil.GetAllMatSellers();
+		} catch (SQLException e) {
+			allMatSeller = FXCollections.observableArrayList();
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
 
 		matCancelButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display("确认", "确定取消？此订单不会被保存", "确认", "取消"))
@@ -91,7 +111,15 @@ public class MatAddOrderModifySellerController {
 			ContinueSeller();
 		});
 
+		initAddMatOrder();
+		initAddMatSeller();
+		initEditMatSeller();
+	}
 
+	/**
+	 * initialize all labels and text fields for add mat order grid
+	 */
+	private void initAddMatOrder() {
 		int row = 1;
 		int col = 0;
 
@@ -100,7 +128,7 @@ public class MatAddOrderModifySellerController {
 		for(int i = 0; i < tableHeaders.length; i++) {
 			Label newLabel = new Label(tableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;" +
-								"-fx-alignment: center-right;");
+					"-fx-alignment: center-right;");
 
 			newLabel.setMaxWidth(Double.MAX_VALUE);
 			GridPane.setConstraints(newLabel, col, row++);
@@ -129,18 +157,12 @@ public class MatAddOrderModifySellerController {
 			// seller, combo box
 			else if (i == propertyHeaders.length - 1) {
 				ComboBox<String> sellerComboBox = new ComboBox<>();
-				try {
-					allMatSeller = DatabaseUtil.GetAllMatSellers();
-				} catch (SQLException e) {
-					sellerComboBox.setMaxWidth(Double.MAX_VALUE);
-					matOrderInputArray.add(sellerComboBox);
-					allMatSeller = FXCollections.observableArrayList();
-				}
 
 				String[] allSellerCompany = new String[allMatSeller.size()];
 				for (int j = 0; j < allMatSeller.size(); j++) {
 					allSellerCompany[j] = allMatSeller.get(j).getCompanyName();
 				}
+
 				sellerComboBox.getItems().setAll(allSellerCompany);
 				sellerComboBox.setMaxWidth(Double.MAX_VALUE);
 				GridPane.setConstraints(sellerComboBox, col, row++);
@@ -196,14 +218,18 @@ public class MatAddOrderModifySellerController {
 		matAddOrderGrid.setHgap(10);
 		matAddOrderGrid.getChildren().addAll(matOrderLabelArray);
 		matAddOrderGrid.getChildren().addAll(matOrderInputArray);
+	}
 
-
+	/**
+	 * initialize all labels and text fields for add mat seller grid
+	 */
+	private void initAddMatSeller() {
 		// * setting up seller labels
 		// setting up all the labels
 		ArrayList<Label> matSellerLabelArray = new ArrayList<>();
-		matSellerInputArray = new ArrayList<>();
-		row = 1;
-		col = 0;
+		matAddSellerInputArray = new ArrayList<>();
+		int row = 1;
+		int col = 0;
 		for(int i = 0; i < sellerTableHeaders.length; i++) {
 			Label newLabel = new Label(sellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
@@ -224,7 +250,7 @@ public class MatAddOrderModifySellerController {
 			newTextField.setAlignment(Pos.CENTER_LEFT);
 			newTextField.setPromptText("输入" + sellerTableHeaders[i]);
 			GridPane.setConstraints(newTextField, col, row++);
-			matSellerInputArray.add(newTextField);
+			matAddSellerInputArray.add(newTextField);
 			if ((i + 5) % 4 == 0) {
 				row = 1;
 				col += 2;
@@ -232,10 +258,135 @@ public class MatAddOrderModifySellerController {
 		}
 
 		// * setting up grid properties
-		matAddSellerAddOrderGrid.setVgap(10);
-		matAddSellerAddOrderGrid.setHgap(10);
-		matAddSellerAddOrderGrid.getChildren().addAll(matSellerLabelArray);
-		matAddSellerAddOrderGrid.getChildren().addAll(matSellerInputArray);
+		matAddSellerGrid.setVgap(10);
+		matAddSellerGrid.setHgap(10);
+		matAddSellerGrid.getChildren().addAll(matSellerLabelArray);
+		matAddSellerGrid.getChildren().addAll(matAddSellerInputArray);
+	}
+
+	/**
+	 * initialize all labels and text fields for edit mat order grid
+	 */
+	private void initEditMatSeller() {
+
+		problematicColumnOne.setHgrow(Priority.ALWAYS);
+		problematicColumnTwo.setHgrow(Priority.ALWAYS);
+
+		// label
+		Label initialSelectSellerTitle = new Label("选择供应商");
+		initialSelectSellerTitle.setStyle("-fx-font-size: 20px;");
+		initialSelectSellerTitle.setMaxWidth(Double.MAX_VALUE);
+		initialSelectSellerTitle.setAlignment(Pos.CENTER_RIGHT);
+
+		// seller combo box
+		ComboBox<String> sellerComboBox = new ComboBox<>();
+		String[] allSellerCompany = new String[allMatSeller.size()];
+		for (int j = 0; j < allMatSeller.size(); j++) {
+			allSellerCompany[j] = allMatSeller.get(j).getCompanyName();
+		}
+		sellerComboBox.getItems().setAll(allSellerCompany);
+
+		HBox selectInitSeller = new HBox(initialSelectSellerTitle, sellerComboBox);
+		selectInitSeller.setMaxWidth(Double.MAX_VALUE);
+		selectInitSeller.setSpacing(10);
+		selectInitSeller.setAlignment(Pos.CENTER);
+		GridPane.setConstraints(selectInitSeller, 1, 1, 2, 1);
+
+		Button startEdit = new Button("编辑供应商");
+		startEdit.setStyle("-fx-background-color: #bbbdf6;\n" +
+				"-fx-font-color: black;\n" +
+				"-fx-font-size: 18px;");
+		startEdit.setAlignment(Pos.CENTER);
+		HBox uselessHBoxForButton = new HBox(startEdit);
+		uselessHBoxForButton.setMaxWidth(Double.MAX_VALUE);
+		uselessHBoxForButton.setAlignment(Pos.CENTER);
+		GridPane.setConstraints(uselessHBoxForButton, 1, 2, 2, 1);
+
+		startEdit.setOnAction(actionEvent -> {
+			if (sellerComboBox.getSelectionModel().getSelectedItem() != null) {
+				matEditSellerGrid.getChildren().removeAll(uselessHBoxForButton, selectInitSeller);
+				updateMatSeller(allMatSeller.get(sellerComboBox.getSelectionModel().getSelectedIndex()));
+			}
+		});
+
+		matEditSellerGrid.getChildren().addAll(selectInitSeller, uselessHBoxForButton);
+	}
+
+	private void updateMatSeller(MatSeller matSeller) {
+		System.out.println(matSeller.toString(false));
+
+		problematicColumnOne.setHgrow(Priority.NEVER);
+		problematicColumnTwo.setHgrow(Priority.NEVER);
+
+		// * setting up seller labels
+		// setting up all the labels
+		ArrayList<Label> matEditSellerLabelArray = new ArrayList<>();
+		matEditSellerInputArray = new ArrayList<>();
+		int row = 1;
+		int col = 0;
+		for(int i = 0; i < sellerTableHeaders.length; i++) {
+			Label newLabel = new Label(sellerTableHeaders[i]);
+			newLabel.setStyle("-fx-font-size: 20px;");
+			GridPane.setConstraints(newLabel, col, row++);
+			matEditSellerLabelArray.add(newLabel);
+			if ((i + 5) % 4 == 0) {
+				row = 1;
+				col += 2;
+			}
+		}
+
+		row = 1;
+		col = 1;
+		// * setting up seller text field
+		for (int i = 0; i <sellerTableHeaders.length; i++) {
+			TextField newTextField = new TextField();
+			newTextField.setMaxWidth(Double.MAX_VALUE);
+			newTextField.setAlignment(Pos.CENTER_LEFT);
+			newTextField.setPromptText("输入" + sellerTableHeaders[i]);
+
+			Method getters;
+			try {
+				getters = MatSeller.class.getDeclaredMethod("get" + sellerPropertyHeaders[i]);
+				String value = (String) getters.invoke(matSeller);
+				newTextField.setText(value);
+			} catch (Exception e) {
+				AlertBox.display("错误", "摘取信息错误");
+				e.printStackTrace();
+				HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+						e.getMessage(), e.getStackTrace(), false);
+				error.WriteToLog();
+			}
+
+			GridPane.setConstraints(newTextField, col, row++);
+
+			matEditSellerInputArray.add(newTextField);
+			if ((i + 5) % 4 == 0) {
+				row = 1;
+				col += 2;
+			}
+		}
+
+		matEditSellerCancelButton.setOnAction(actionEvent -> {
+			matEditSellerGrid.getChildren().clear();
+			matEditSellerGrid.getChildren().add(matEditSellerTitleLabel);
+			initEditMatSeller();
+		});
+
+		matEditSellerCompleteButton.setOnAction(actionEvent -> {
+			if (ConfirmBox.display("确认", "所有使用此供应商的订单会被更新，是否继续？", "继续", "取消"))
+				UpdateSeller(matSeller);
+		});
+
+		// * setting up grid properties
+		matEditSellerGrid.setVgap(10);
+		matEditSellerGrid.setHgap(10);
+		matEditSellerGrid.getChildren().addAll(matEditSellerLabelArray);
+		matEditSellerGrid.getChildren().addAll(matEditSellerInputArray);
+
+	}
+
+	private void UpdateSeller(MatSeller matSeller) {
+		System.out.println("yp");
 	}
 
 	/**
@@ -250,6 +401,75 @@ public class MatAddOrderModifySellerController {
 			}
 		}
 		return -1;
+	}
+
+	/**
+	 * Clear all input area for add order
+	 */
+	private void clearAddOrderFields() {
+		for (int i = 0; i < matOrderInputArray.size(); i++) {
+			if (i != 0 && i != 3) {
+				if (matOrderInputArray.get(i) instanceof TextField) ((TextField) matOrderInputArray.get(i)).clear();
+				if (matOrderInputArray.get(i) instanceof DatePicker) ((DatePicker) matOrderInputArray.get(i)).setValue(null);
+				if (matOrderInputArray.get(i) instanceof ComboBox) ((ComboBox) matOrderInputArray.get(i)).getSelectionModel().select(null);
+			}
+		}
+	}
+
+	/**
+	 * Clear all input area for add order
+	 */
+	private void clearAddSellerFields() {
+		for (int i = 0; i < matAddSellerInputArray.size(); i++)
+			if (matAddSellerInputArray.get(i) != null) matAddSellerInputArray.get(i).clear();
+	}
+
+	/**
+	 * Given a company name, find the seller within the all seller array list
+	 * @param CompanyName company that needs to be found
+	 * @return the specified seller
+	 */
+	private MatSeller FindSeller (String CompanyName) {
+		for (MatSeller seller : allMatSeller) {
+			if (seller.getCompanyName().equals(CompanyName)) return seller;
+		}
+		return new MatSeller(MatSellerId.getMatSellerId(), "NOT FOUND");
+	}
+
+	public void initData(Stage currentStage) {
+		this.currentStage = currentStage;
+		init();
+	}
+
+	private void AddSeller() {
+		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
+		Method setter;
+
+		for (TextField textField : matAddSellerInputArray) {
+			if (!textField.getText().equals("")) {
+				try {
+					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matAddSellerInputArray.indexOf(textField)], String.class);
+					setter.invoke(newSeller, textField.getText());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		System.out.println(newSeller.toString());
+
+		try {
+			DatabaseUtil.AddMatSeller(newSeller);
+			allMatSeller = DatabaseUtil.GetAllMatSellers();
+			currentStage.close();
+		} catch (Exception e) {
+			AlertBox.display("错误", "添加错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+			currentStage.close();
+		}
 	}
 
 	/**
@@ -282,21 +502,21 @@ public class MatAddOrderModifySellerController {
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
-			i++;
+		i++;
 		try {
 			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
-			i++;
+		i++;
 		try {
 			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
-			i++;
+		i++;
 
 		try {
 			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
@@ -304,7 +524,7 @@ public class MatAddOrderModifySellerController {
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
-			i++;
+		i++;
 
 		try {
 			newOrder.setInvoice(((TextField) matOrderInputArray.get(i++)).getText());
@@ -433,51 +653,20 @@ public class MatAddOrderModifySellerController {
 
 		try {
 			DatabaseUtil.AddMatOrder(newOrder);
-			clearFields();
+			clearAddOrderFields();
 		} catch (SQLException e) {
 			AlertBox.display("错误", "无法更新");
 		}
 	}
 
-	/**
-	 * Clear all input area
-	 */
-	private void clearFields() {
-		for (int i = 0; i < matOrderInputArray.size(); i++) {
-			if (i != 0 && i != 3) {
-				if (matOrderInputArray.get(i) instanceof TextField) ((TextField) matOrderInputArray.get(i)).clear();
-				if (matOrderInputArray.get(i) instanceof DatePicker) ((DatePicker) matOrderInputArray.get(i)).setValue(null);
-				if (matOrderInputArray.get(i) instanceof ComboBox) ((ComboBox) matOrderInputArray.get(i)).getSelectionModel().select(null);
-			}
-		}
-	}
-
-
-	/**
-	 * Given a company name, find the seller within the all seller array list
-	 * @param CompanyName company that needs to be found
-	 * @return the specified seller
-	 */
-	private MatSeller FindSeller (String CompanyName) {
-		for (MatSeller seller : allMatSeller) {
-			if (seller.getCompanyName().equals(CompanyName)) return seller;
-		}
-		return new MatSeller(MatSellerId.getMatSellerId(), "NOT FOUND");
-	}
-
-	public void initData(Stage currentStage) {
-		this.currentStage = currentStage;
-		init();
-	}
-
-	private void AddSeller() {
+	private void ContinueSeller() {
 		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
 		Method setter;
 
-		for (TextField textField : matSellerInputArray) {
+		for (TextField textField : matAddSellerInputArray) {
 			if (!textField.getText().equals("")) {
 				try {
-					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matSellerInputArray.indexOf(textField)], String.class);
+					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matAddSellerInputArray.indexOf(textField)], String.class);
 					setter.invoke(newSeller, textField.getText());
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -490,19 +679,14 @@ public class MatAddOrderModifySellerController {
 		try {
 			DatabaseUtil.AddMatSeller(newSeller);
 			allMatSeller = DatabaseUtil.GetAllMatSellers();
-			currentStage.close();
+			clearAddSellerFields();
 		} catch (Exception e) {
 			AlertBox.display("错误", "添加错误");
 			e.printStackTrace();
 			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
-			currentStage.close();
 		}
-	}
-
-	private void ContinueSeller() {
-
 	}
 
 }

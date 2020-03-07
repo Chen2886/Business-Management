@@ -36,7 +36,7 @@ public class MatSellerId {
 		try {
 			sellerId++;
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, false));
-			writer.write(String.valueOf(sellerId + 1));
+			writer.write(String.valueOf(sellerId));
 			writer.close();
 		} catch (IOException e) {
 			HandleError error = new HandleError("sellerId", Thread.currentThread().getStackTrace()[1].getMethodName(),

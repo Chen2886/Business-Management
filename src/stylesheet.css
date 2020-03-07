@@ -85,7 +85,7 @@
 }
 
 .add-order-tab {
-    -fx-pref-width: 480;
+    -fx-pref-width: 325;
     -fx-font-size: 20px;
     -fx-alignment: center;
 }
@@ -93,7 +93,6 @@
 .add-order-tab:hover {
     -fx-cursor: hand;
 }
-
 
 .edit-grid {
     -fx-border-style: solid inside;

@@ -37,10 +37,10 @@ public class MatSerialNum {
 	 */
 	public static void UpdateMatSku() {
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, false));
-			writer.write(String.valueOf(serialNum + 1));
-			writer.close();
 			serialNum++;
+			BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, false));
+			writer.write(String.valueOf(serialNum));
+			writer.close();
 		} catch (IOException e) {
 			HandleError error = new HandleError("SerialNum", Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
