@@ -201,7 +201,6 @@ public class MatAddOrderController {
 		for(int i = 0; i < sellerTableHeaders.length; i++) {
 			Label newLabel = new Label(sellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
-
 			GridPane.setConstraints(newLabel, col, row++);
 			matSellerLabelArray.add(newLabel);
 			if ((i + 5) % 4 == 0) {
@@ -215,9 +214,9 @@ public class MatAddOrderController {
 		// * setting up seller text field
 		for (int i = 0; i <sellerTableHeaders.length; i++) {
 			TextField newTextField = new TextField();
-			Method getters;
 			newTextField.setMaxWidth(Double.MAX_VALUE);
-			newTextField.setAlignment(Pos.CENTER);
+			newTextField.setAlignment(Pos.CENTER_LEFT);
+			newTextField.setPromptText("输入" + sellerTableHeaders[i]);
 			GridPane.setConstraints(newTextField, col, row++);
 			matSellerInputArray.add(newTextField);
 			if ((i + 5) % 4 == 0) {
