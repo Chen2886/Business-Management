@@ -385,8 +385,34 @@ public class MatAddOrderModifySellerController {
 
 	}
 
-	private void UpdateSeller(MatSeller matSeller) {
-		System.out.println("yp");
+	private void UpdateSeller(MatSeller newSeller) {
+		Method setter;
+
+		for (TextField textField : matEditSellerInputArray) {
+			System.out.println(textField.getText() == null);
+			if (textField.getText() != null && !textField.getText().equals("")) {
+				try {
+					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matEditSellerInputArray.indexOf(textField)], String.class);
+					setter.invoke(newSeller, textField.getText());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		try {
+			DatabaseUtil.UpdateMatSellerInMain(newSeller);
+			DatabaseUtil.UpdateMatSellerInSeller(newSeller);
+			allMatSeller = DatabaseUtil.GetAllMatSellers();
+			currentStage.close();
+		} catch (Exception e) {
+			AlertBox.display("错误", "添加错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+			currentStage.close();
+		}
 	}
 
 	/**
@@ -441,39 +467,8 @@ public class MatAddOrderModifySellerController {
 		init();
 	}
 
-	private void AddSeller() {
-		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
-		Method setter;
-
-		for (TextField textField : matAddSellerInputArray) {
-			if (!textField.getText().equals("")) {
-				try {
-					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matAddSellerInputArray.indexOf(textField)], String.class);
-					setter.invoke(newSeller, textField.getText());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		System.out.println(newSeller.toString());
-
-		try {
-			DatabaseUtil.AddMatSeller(newSeller);
-			allMatSeller = DatabaseUtil.GetAllMatSellers();
-			currentStage.close();
-		} catch (Exception e) {
-			AlertBox.display("错误", "添加错误");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
-			currentStage.close();
-		}
-	}
-
 	/**
-	 * Obtain all the new information, update order, and push it to database
+	 * Obtain all the new information, add order, and push it to database
 	 */
 	private void AddOrder() {
 		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
@@ -568,7 +563,7 @@ public class MatAddOrderModifySellerController {
 	}
 
 	/**
-	 * Obtain all the new information, update order, and push it to database
+	 * Obtain all the new information, add order, and push it to database
 	 */
 	private void ContinueOrder() {
 		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
@@ -659,6 +654,41 @@ public class MatAddOrderModifySellerController {
 		}
 	}
 
+	/**
+	 * Obtain all the new seller information, add seller, and push it to database
+	 */
+	private void AddSeller() {
+		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
+		Method setter;
+
+		for (TextField textField : matAddSellerInputArray) {
+			if (!textField.getText().equals("")) {
+				try {
+					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matAddSellerInputArray.indexOf(textField)], String.class);
+					setter.invoke(newSeller, textField.getText());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		try {
+			DatabaseUtil.AddMatSeller(newSeller);
+			allMatSeller = DatabaseUtil.GetAllMatSellers();
+			currentStage.close();
+		} catch (Exception e) {
+			AlertBox.display("错误", "添加错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+			currentStage.close();
+		}
+	}
+
+	/**
+	 * Obtain all the new seller information, add seller, and push it to database
+	 */
 	private void ContinueSeller() {
 		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
 		Method setter;
