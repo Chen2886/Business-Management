@@ -644,4 +644,66 @@ public class DatabaseUtil {
         }
     }
 
+    /**
+     * update all related order in main
+     * @param newSeller new seller
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void UpdateMatSellerInMain(MatSeller newSeller) throws SQLException {
+        String SQLCommand = "UPDATE materialManagement SET companyName = ?, contactName = ?, mobile = ?, landLine = ?," +
+                " fax = ?, accountNum = ?, bankAddress = ?, address = ? WHERE sellerId = ?";
+        try {
+            ConnectToDB();
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, newSeller.getCompanyName());
+            preparedStatement.setString(2, newSeller.getContactName());
+            preparedStatement.setString(3, newSeller.getMobile());
+            preparedStatement.setString(4, newSeller.getLandLine());
+            preparedStatement.setString(5, newSeller.getFax());
+            preparedStatement.setString(6, newSeller.getAccountNum());
+            preparedStatement.setString(7, newSeller.getBankAddress());
+            preparedStatement.setString(8, newSeller.getAddress());
+            preparedStatement.setInt(9, newSeller.getSellerId());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            //System.out.println("UpdateSellerInSeller failed");
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        }
+    }
+
+    /**
+     * update seller info
+     * @param newSeller
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void UpdateMatSellerInSeller(MatSeller newSeller) throws SQLException {
+        String SQLCommand = "UPDATE seller SET companyName = ?, contactName = ?, mobile = ?, landLine = ?," +
+                " fax = ?, accountNum = ?, bankAddress = ?, address = ? WHERE sellerId = ?";
+        try {
+            ConnectToDB();
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, newSeller.getCompanyName());
+            preparedStatement.setString(2, newSeller.getContactName());
+            preparedStatement.setString(3, newSeller.getMobile());
+            preparedStatement.setString(4, newSeller.getLandLine());
+            preparedStatement.setString(5, newSeller.getFax());
+            preparedStatement.setString(6, newSeller.getAccountNum());
+            preparedStatement.setString(7, newSeller.getBankAddress());
+            preparedStatement.setString(8, newSeller.getAddress());
+            preparedStatement.setInt(9, newSeller.getSellerId());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            //System.out.println("UpdateSellerInSeller failed");
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        }
+    }
+
 }
