@@ -99,7 +99,7 @@ public class MatAddOrderController {
 			newLabel.setMaxWidth(Double.MAX_VALUE);
 			GridPane.setConstraints(newLabel, col, row++);
 			matOrderLabelArray.add(newLabel);
-			if ((i + 7) % 6 == 0) {
+			if ((i + 6) % 5 == 0) {
 				row = 1;
 				col += 2;
 			}
@@ -145,7 +145,6 @@ public class MatAddOrderController {
 			else if (i == 3 || i == 4 || i == 5 || i == 6) {
 				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 				DatePicker datePicker = new DatePicker();
-				Method getters;
 
 				datePicker.setConverter(new StringConverter<LocalDate>() {
 					@Override
@@ -173,14 +172,14 @@ public class MatAddOrderController {
 			// regular text field
 			else {
 				TextField newTextField = new TextField();
-				Method getters;
 				newTextField.setMaxWidth(Double.MAX_VALUE);
+				newTextField.setPromptText("输入" + tableHeaders[i]);
 				GridPane.setConstraints(newTextField, col, row++);
 				matOrderInputArray.add(newTextField);
 
 			}
 
-			if ((i + 7) % 6 == 0) {
+			if ((i + 6) % 5 == 0) {
 				row = 1;
 				col += 2;
 			}
