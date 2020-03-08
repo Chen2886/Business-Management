@@ -132,7 +132,7 @@ public class MatAddOrderModifySellerController {
 			newLabel.setStyle("-fx-font-size: 20px;" +
 					"-fx-alignment: center-right;");
 
-			newLabel.setMaxWidth(Double.MAX_VALUE);
+//			newLabel.setMaxWidth(Double.MAX_VALUE);
 			GridPane.setConstraints(newLabel, col, row++);
 			matOrderLabelArray.add(newLabel);
 			if ((i + 6) % 5 == 0) {
@@ -175,6 +175,7 @@ public class MatAddOrderModifySellerController {
 			else if (i == 3 || i == 4 || i == 5 || i == 6) {
 				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 				DatePicker datePicker = new DatePicker();
+				datePicker.setMaxWidth(Double.MAX_VALUE);
 
 				datePicker.setConverter(new StringConverter<LocalDate>() {
 					@Override
