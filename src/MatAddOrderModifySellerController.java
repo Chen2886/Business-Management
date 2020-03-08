@@ -38,6 +38,7 @@ public class MatAddOrderModifySellerController {
 	// all types
 	private static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
+
 	// material section
 	// add mat order
 	@FXML GridPane matAddOrderGrid;
@@ -58,6 +59,7 @@ public class MatAddOrderModifySellerController {
 	@FXML Label matEditSellerTitleLabel;
 	@FXML Button matEditSellerCancelButton;
 	@FXML Button matEditSellerCompleteButton;
+	@FXML Button matEditSellerResetButton;
 	@FXML ColumnConstraints problematicColumnOne;
 	@FXML ColumnConstraints problematicColumnTwo;
 
@@ -309,6 +311,11 @@ public class MatAddOrderModifySellerController {
 			}
 		});
 
+		matEditSellerCancelButton.setOnAction(actionEvent -> {
+			if (ConfirmBox.display("确认", "确定关闭窗口？", "是", "否"))
+				currentStage.close();
+		});
+
 		matEditSellerGrid.getChildren().addAll(selectInitSeller, uselessHBoxForButton);
 	}
 
@@ -366,7 +373,7 @@ public class MatAddOrderModifySellerController {
 			}
 		}
 
-		matEditSellerCancelButton.setOnAction(actionEvent -> {
+		matEditSellerResetButton.setOnAction(actionEvent -> {
 			matEditSellerGrid.getChildren().clear();
 			matEditSellerGrid.getChildren().add(matEditSellerTitleLabel);
 			initEditMatSeller();
