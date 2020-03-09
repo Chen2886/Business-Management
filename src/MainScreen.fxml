@@ -47,7 +47,7 @@
             </Tab>
           <Tab fx:id="prodTab" styleClass="main-screen-tab" text="订单管理">
             <content>
-                <TableView fx:id="orderTableView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TableView fx:id="prodTableView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
 
                     </columns>

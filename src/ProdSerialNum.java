@@ -1,13 +1,13 @@
 import java.io.*;
 
-public class MatSerialNum {
+public class ProdSerialNum {
 	private static int serialNum;
-	private static final String filepath = "MatSerial.txt";
+	private static final String filepath = "ProdSerial.txt";
 
 	/**
 	 * called when program first start, make sure file exists.
 	 */
-	public static void initMatSerialNum() {
+	public static void initProdSerialNum() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filepath));
 			String line = br.readLine();
@@ -16,7 +16,7 @@ public class MatSerialNum {
 		} catch (FileNotFoundException e) {
 			WriteSku();
 		} catch (IOException e) {
-			HandleError error = new HandleError(MatSerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			HandleError error = new HandleError(ProdSerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
 		}
@@ -26,8 +26,8 @@ public class MatSerialNum {
 	 * This function goes to the sku.txt and retrieves the current sku, update it, and return
 	 * @return the current sku
 	 */
-	public static int getMatSerialNum() {
-		UpdateMatSku();
+	public static int getProdSerialNum() {
+		UpdateProdSku();
 		return serialNum;
 	}
 
@@ -35,14 +35,14 @@ public class MatSerialNum {
 	 * This function goes to sku.txt, add one to the current sku
 	 * NOTE: SHOULD NOT USE UNLESS ADDING A NEW ORDER. THIS WILL NEVER DECREASE EVEN IF ORDER DELETED.
 	 */
-	public static void UpdateMatSku() {
+	public static void UpdateProdSku() {
 		try {
 			serialNum++;
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, false));
 			writer.write(String.valueOf(serialNum));
 			writer.close();
 		} catch (IOException e) {
-			HandleError error = new HandleError(MatSerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			HandleError error = new HandleError(ProdSerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
 		}
@@ -56,7 +56,7 @@ public class MatSerialNum {
 			serialNum = 1;
 			writer.close();
 		} catch (IOException e) {
-			HandleError error = new HandleError(MatSerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			HandleError error = new HandleError(ProdSerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
 		}
