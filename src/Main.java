@@ -24,6 +24,7 @@ public class Main extends Application {
 
 		MatSerialNum.initMatSerialNum();
 		MatSellerId.initMatSellerId();
+		ProdSerialNum.initProdSerialNum();
 
 		launch(args);
 	}

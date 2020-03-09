@@ -42,17 +42,17 @@
                      </GridPane>
                      <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="-Infinity" prefWidth="-Infinity" spacing="10.0">
                         <children>
-                           <Button fx:id="matCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="取消" textAlignment="CENTER">
+                           <Button fx:id="matAddOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="取消" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="完成" textAlignment="CENTER">
+                           <Button fx:id="matAddOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="完成" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="保存并继续添加" textAlignment="CENTER">
+                           <Button fx:id="matAddOrderContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="stylesheet.css" text="保存并继续添加" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>

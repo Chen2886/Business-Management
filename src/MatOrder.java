@@ -174,7 +174,7 @@ public class MatOrder {
 	}
 
 	public void setKgAmount() {
-		this.kgAmount = unitAmount * amount;;
+		this.kgAmount = unitAmount * amount;
 	}
 
 	public double getUnitPrice() {
@@ -190,7 +190,7 @@ public class MatOrder {
 	}
 
 	public void setTotalPrice() {
-		this.totalPrice = kgAmount * unitPrice;;
+		this.totalPrice = kgAmount * unitPrice;
 	}
 
 	public String getCompany() {

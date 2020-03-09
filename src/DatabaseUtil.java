@@ -8,6 +8,48 @@ public class DatabaseUtil {
     private static Connection connection;
 
     /**
+     * If DB does not exists, create DB
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void CheckIfDBExists() throws SQLException {
+        try {
+            ConnectToDB();
+            if (connection == null) {
+                CloseConnectionToDB();
+                CreateNewDB();
+            }
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Create database if not exist
+     * @throws SQLException if any error occurs while operating on database
+     */
+    private static void CreateNewDB() throws SQLException {
+        ConnectToDB();
+        try {
+            connection = DriverManager.getConnection(dataBaseLocationFile);
+            if (connection != null) {
+                DatabaseMetaData meta = connection.getMetaData();
+            }
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Update connection to the database
      * @throws SQLException If connection cannot be established to the database
      */
@@ -23,6 +65,24 @@ public class DatabaseUtil {
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
+        }
+    }
+
+    /**
+     * Terminate any connection to database.
+     */
+    public static void CloseConnectionToDB() {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.close();
+            connection = null;
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            connection = null;
         }
     }
 
@@ -43,7 +103,7 @@ public class DatabaseUtil {
                     numOfTable++;
                 } else if ("seller".equals(resultSet.getString("TABLE_NAME"))) {
                     numOfTable++;
-                } else if ("orderManagement".equals(resultSet.getString("TABLE_NAME"))) {
+                } else if ("productManagement".equals(resultSet.getString("TABLE_NAME"))) {
                     numOfTable++;
                 }
             }
@@ -52,7 +112,7 @@ public class DatabaseUtil {
             } else {
                 CreateNewTable("materialManagement");
                 CreateNewTable("seller");
-                CreateNewTable("orderManagement");
+                CreateNewTable("productManagement");
             }
         } catch (SQLException e) {
             HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -125,81 +185,24 @@ public class DatabaseUtil {
                         "bankAddress	TEXT			,\n" +
                         "address		TEXT			\n" +
                         ");";
-            } else if (tableName.equals("orderManagement")) {
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [orderManagement] (\n" +
+            } else if (tableName.equals("productManagement")) {
+                SQLCommand = "CREATE TABLE IF NOT EXISTS [productManagement] (\n" +
                         "serialNum	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
-                        "sku        	TEXT	NOT NULL,\n" +
-                        "prod       	TEXT	NOT NULL,\n" +
+                        "sku        	TEXT	        ,\n" +
+                        "name       	TEXT	        ,\n" +
                         "customer 		TEXT			,\n" +
                         "note   		TEXT			,\n" +
-                        "orderDate		TEXT			,\n" +
+                        "orderDateYear	INTEGER			,\n" +
+                        "orderDateMonth	INTEGER			,\n" +
+                        "orderDateDay	INTEGER			,\n" +
                         "unitAmount		REAL	        ,\n" +
                         "amount 		REAL			,\n" +
-                        "unitPrice  	REAL			\n" +
+                        "unitPrice  	REAL			,\n" +
+                        "formulaFile    TEXT			\n" +
                         ");";
             }
             statement.execute(SQLCommand);
             CloseConnectionToDB();
-        } catch (SQLException e) {
-            HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            throw new SQLException();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * Terminate any connection to database.
-     */
-    public static void CloseConnectionToDB() {
-        if (connection == null) {
-            return;
-        }
-        try {
-            connection.close();
-            connection = null;
-        } catch (SQLException e) {
-            HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            connection = null;
-        }
-    }
-
-    /**
-     * Create database if not exist
-     * @throws SQLException if any error occurs while operating on database
-     */
-    private static void CreateNewDB() throws SQLException {
-        ConnectToDB();
-        try {
-            connection = DriverManager.getConnection(dataBaseLocationFile);
-            if (connection!=null) {
-                DatabaseMetaData meta = connection.getMetaData();
-            }
-        } catch (SQLException e) {
-            HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            throw new SQLException();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * If DB does not exists, create DB
-     * @throws SQLException if any error occurs while operating on database
-     */
-    public static void CheckIfDBExists() throws SQLException {
-        try {
-            ConnectToDB();
-            if (connection == null) {
-                CloseConnectionToDB();
-                CreateNewDB();
-            }
         } catch (SQLException e) {
             HandleError error = new HandleError("DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
@@ -319,6 +322,54 @@ public class DatabaseUtil {
                 newOrder.setKgAmount();
                 newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
                 newOrder.setTotalPrice();
+
+                // adding order
+                orderObservableList.add(newOrder);
+            }
+            CloseConnectionToDB();
+            return orderObservableList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Get All the mat order from database
+     * @return a list of all mat order
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static ObservableList<ProductOrder> GetAllProdOrders() throws SQLException {
+        String SQLCommand = "SELECT * FROM productManagement ORDER BY sku DESC";
+        ObservableList<ProductOrder> orderObservableList = FXCollections.observableArrayList();
+        try {
+            ConnectToDB();
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SQLCommand);
+
+            while (resultSet.next()) {
+
+                // new order
+                ProductOrder newOrder = new ProductOrder(resultSet.getInt("serialNum"));
+                newOrder.setSku(resultSet.getString("sku"));
+                newOrder.setName(resultSet.getString("name"));
+                newOrder.setCustomer(resultSet.getString("customer"));
+                newOrder.setNote(resultSet.getString("note"));
+                newOrder.setOrderDate(new Date(resultSet.getInt("orderDateYear"),
+                        resultSet.getInt("orderDateMonth"),
+                        resultSet.getInt("orderDateDay")));
+                newOrder.setUnitAmount(resultSet.getDouble("unitAmount"));
+                newOrder.setAmount(resultSet.getDouble("amount"));
+                newOrder.setKgAmount();
+                newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
+                newOrder.setTotalPrice();
+                newOrder.setFormulaFile(resultSet.getString("formulaFile"));
 
                 // adding order
                 orderObservableList.add(newOrder);
@@ -625,7 +676,7 @@ public class DatabaseUtil {
 
     /**
      * update seller info
-     * @param newSeller
+     * @param newSeller the new seller that needs to be updated
      * @throws SQLException if any error occurs while operating on database
      */
     public static void UpdateMatSellerInSeller(MatSeller newSeller) throws SQLException {
