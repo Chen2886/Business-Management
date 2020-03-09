@@ -264,7 +264,12 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         }
     }
-    
+
+    /**
+     * Get All the mat order from database
+     * @return a list of all mat order
+     * @throws SQLException if any error occurs while operating on database
+     */
     public static ObservableList<MatOrder> GetAllMatOrders() throws SQLException {
         String SQLCommand = "SELECT * FROM materialManagement ORDER BY sku DESC";
         ObservableList<MatOrder> orderObservableList = FXCollections.observableArrayList();
@@ -332,36 +337,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * Given serial num, delete from database
-     * @param serialNum order identified to be deleted
-     */
-    public static void DeleteMatOrder(int serialNum) throws SQLException {
-        try {
-            ConnectToDB();
-
-            if (!CheckIfMatSerialExists(serialNum)) {
-                return;
-            }
-
-            ConnectToDB();
-            String SQLCommand = "DELETE FROM materialManagement WHERE serialNum = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-            preparedStatement.setInt(1, serialNum);
-            preparedStatement.executeUpdate();
-            CloseConnectionToDB();
-        } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
-            throw new SQLException();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * Return a list of all sellers avaliable
+     * Return a list of all sellers available
      * @return all sellers in the database
      * @throws SQLException if any error occurs while operating on database
      */
@@ -395,70 +371,23 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         }
     }
-    
-    public static void UpdateMatOrder(MatOrder matOrder) throws SQLException {
+
+    /**
+     * Given serial num, delete from database
+     * @param serialNum order identified to be deleted
+     */
+    public static void DeleteMatOrder(int serialNum) throws SQLException {
         try {
             ConnectToDB();
-            String SQLCommand = "UPDATE materialManagement SET sku = ?, name = ?, type = ?, orderDateYear = ?, " +
-                    "orderDateMonth = ?, orderDateDay = ?, unitAmount = ?, amount = ?, kgAmount = ?, unitPrice = ?, " +
-                    "totalPrice = ?, sellerId = ?, companyName = ?, contactName = ?, mobile = ?, landLine = ?, " +
-                    "fax = ?, accountNum = ?, bankAddress = ?, address = ?, paymentDateYear = ?, paymentDateMonth = ?, " +
-                    "paymentDateDay = ?, arrivalDateYear = ?, arrivalDateMonth = ?, arrivalDateDay = ?, " +
-                    "invoiceDateYear = ?, invoiceDateMonth = ?, invoiceDateDay = ?, invoice = ?, signed = ?, " +
-                    "skuSeller = ?, note = ? WHERE serialNum = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
 
-            preparedStatement.setString(1, matOrder.getSku());
-            preparedStatement.setString(2, matOrder.getName());
-            preparedStatement.setString(3, matOrder.getType());
-            preparedStatement.setInt(4, matOrder.getOrderDate().getY());
-            preparedStatement.setInt(5, matOrder.getOrderDate().getM());
-            preparedStatement.setInt(6, matOrder.getOrderDate().getD());
-            preparedStatement.setDouble(7, matOrder.getUnitAmount());
-            preparedStatement.setDouble(8, matOrder.getAmount());
-            preparedStatement.setDouble(9, matOrder.getKgAmount());
-            preparedStatement.setDouble(10, matOrder.getUnitPrice());
-            preparedStatement.setDouble(11, matOrder.getTotalPrice());
-            if (matOrder.getSeller() != null) {
-                preparedStatement.setInt(12, matOrder.getSeller().getSellerId());
-                preparedStatement.setString(13, matOrder.getSeller().getCompanyName());
-                preparedStatement.setString(14, matOrder.getSeller().getContactName());
-                preparedStatement.setString(15, matOrder.getSeller().getMobile());
-                preparedStatement.setString(16, matOrder.getSeller().getLandLine());
-                preparedStatement.setString(17, matOrder.getSeller().getFax());
-                preparedStatement.setString(18, matOrder.getSeller().getAccountNum());
-                preparedStatement.setString(19, matOrder.getSeller().getBankAddress());
-                preparedStatement.setString(20, matOrder.getSeller().getAddress());
-            } else {
-                preparedStatement.setInt(12, 0);
-                preparedStatement.setString(13, "");
-                preparedStatement.setString(14, "");
-                preparedStatement.setString(15, "");
-                preparedStatement.setString(16, "");
-                preparedStatement.setString(17, "");
-                preparedStatement.setString(18, "");
-                preparedStatement.setString(19, "");
-                preparedStatement.setString(20, "");
+            if (!CheckIfMatSerialExists(serialNum)) {
+                return;
             }
 
-            preparedStatement.setString(21, matOrder.getPaymentDate() == null ? "" : String.valueOf(matOrder.getPaymentDate().getY()));
-            preparedStatement.setString(22, matOrder.getPaymentDate() == null ? "" : String.valueOf(matOrder.getPaymentDate().getM()));
-            preparedStatement.setString(23, matOrder.getPaymentDate() == null ? "" : String.valueOf(matOrder.getPaymentDate().getD()));
-
-            preparedStatement.setString(24, matOrder.getArrivalDate() == null ? "" : String.valueOf(matOrder.getArrivalDate().getY()));
-            preparedStatement.setString(25, matOrder.getArrivalDate() == null ? "" : String.valueOf(matOrder.getArrivalDate().getM()));
-            preparedStatement.setString(26, matOrder.getArrivalDate() == null ? "" : String.valueOf(matOrder.getArrivalDate().getD()));
-
-            preparedStatement.setString(27, matOrder.getInvoiceDate() == null ? "" : String.valueOf(matOrder.getInvoiceDate().getY()));
-            preparedStatement.setString(28, matOrder.getInvoiceDate() == null ? "" : String.valueOf(matOrder.getInvoiceDate().getM()));
-            preparedStatement.setString(29, matOrder.getInvoiceDate() == null ? "" : String.valueOf(matOrder.getInvoiceDate().getD()));
-
-            preparedStatement.setString(30, matOrder.getInvoice());
-            preparedStatement.setString(31, matOrder.getSigned());
-            preparedStatement.setString(32, matOrder.getSkuSeller());
-            preparedStatement.setString(33, matOrder.getNote());
-            preparedStatement.setInt(34, matOrder.getSerialNum());
-
+            ConnectToDB();
+            String SQLCommand = "DELETE FROM materialManagement WHERE serialNum = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, serialNum);
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
@@ -550,6 +479,11 @@ public class DatabaseUtil {
         }
     }
 
+    /**
+     * Add seller into the seller database
+     * @param seller seller that needs to be added
+     * @throws SQLException if any error occurs while operating on database
+     */
     public static void AddMatSeller(MatSeller seller) throws SQLException {
         try {
             ConnectToDB();
@@ -578,66 +512,80 @@ public class DatabaseUtil {
     }
 
     /**
-     * Return a list of all sellers avaliable
-     * @return all sellers in the database
+     * Update mat order within database
+     * @param matOrder the order that needs to be updated
      * @throws SQLException if any error occurs while operating on database
      */
-    public static ObservableList<MatOrder> ExecuteCommand(String SQLCommand) throws SQLException {
-        ObservableList<MatOrder> orderObservableList = FXCollections.observableArrayList();
+    public static void UpdateMatOrder(MatOrder matOrder) throws SQLException {
         try {
             ConnectToDB();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(SQLCommand);
-            while (resultSet.next()) {
+            String SQLCommand = "UPDATE materialManagement SET sku = ?, name = ?, type = ?, orderDateYear = ?, " +
+                    "orderDateMonth = ?, orderDateDay = ?, unitAmount = ?, amount = ?, kgAmount = ?, unitPrice = ?, " +
+                    "totalPrice = ?, sellerId = ?, companyName = ?, contactName = ?, mobile = ?, landLine = ?, " +
+                    "fax = ?, accountNum = ?, bankAddress = ?, address = ?, paymentDateYear = ?, paymentDateMonth = ?, " +
+                    "paymentDateDay = ?, arrivalDateYear = ?, arrivalDateMonth = ?, arrivalDateDay = ?, " +
+                    "invoiceDateYear = ?, invoiceDateMonth = ?, invoiceDateDay = ?, invoice = ?, signed = ?, " +
+                    "skuSeller = ?, note = ? WHERE serialNum = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
 
-                // new seller
-                MatSeller seller = new MatSeller(resultSet.getInt("sellerId"),
-                        resultSet.getString("companyName"));
-                seller.setContactName(resultSet.getString("contactName"));
-                seller.setMobile(resultSet.getString("mobile"));
-                seller.setLandLine(resultSet.getString("landLine"));
-                seller.setFax(resultSet.getString("fax"));
-                seller.setAccountNum(resultSet.getString("accountNum"));
-                seller.setBankAddress(resultSet.getString("bankAddress"));
-                seller.setAddress(resultSet.getString("address"));
-
-                // new order
-                MatOrder newOrder = new MatOrder(resultSet.getInt("serialNum"),
-                        resultSet.getString("sku"));
-                newOrder.setName(resultSet.getString("name"));
-                newOrder.setType(resultSet.getString("type"));
-                newOrder.setInvoice(resultSet.getString("invoice"));
-                newOrder.setSigned(resultSet.getString("signed"));
-                newOrder.setSkuSeller(resultSet.getString("skuSeller"));
-                newOrder.setNote(resultSet.getString("note"));
-                newOrder.setOrderDate(new Date(resultSet.getInt("orderDateYear"),
-                        resultSet.getInt("orderDateMonth"),
-                        resultSet.getInt("orderDateDay")));
-                newOrder.setPaymentDate(new Date(resultSet.getInt("paymentDateYear"),
-                        resultSet.getInt("paymentDateMonth"),
-                        resultSet.getInt("paymentDateDay")));
-                newOrder.setArrivalDate(new Date(resultSet.getInt("arrivalDateYear"),
-                        resultSet.getInt("arrivalDateMonth"),
-                        resultSet.getInt("arrivalDateDay")));
-                newOrder.setInvoiceDate(new Date(resultSet.getInt("invoiceDateYear"),
-                        resultSet.getInt("invoiceDateMonth"),
-                        resultSet.getInt("invoiceDateDay")));
-                newOrder.setSeller(seller);
-                newOrder.setUnitAmount(resultSet.getDouble("unitAmount"));
-                newOrder.setAmount(resultSet.getDouble("amount"));
-                newOrder.setKgAmount();
-                newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
-                newOrder.setTotalPrice();
-
-                // adding order
-                orderObservableList.add(newOrder);
+            preparedStatement.setString(1, matOrder.getSku());
+            preparedStatement.setString(2, matOrder.getName());
+            preparedStatement.setString(3, matOrder.getType());
+            preparedStatement.setInt(4, matOrder.getOrderDate().getY());
+            preparedStatement.setInt(5, matOrder.getOrderDate().getM());
+            preparedStatement.setInt(6, matOrder.getOrderDate().getD());
+            preparedStatement.setDouble(7, matOrder.getUnitAmount());
+            preparedStatement.setDouble(8, matOrder.getAmount());
+            preparedStatement.setDouble(9, matOrder.getKgAmount());
+            preparedStatement.setDouble(10, matOrder.getUnitPrice());
+            preparedStatement.setDouble(11, matOrder.getTotalPrice());
+            if (matOrder.getSeller() != null) {
+                preparedStatement.setInt(12, matOrder.getSeller().getSellerId());
+                preparedStatement.setString(13, matOrder.getSeller().getCompanyName());
+                preparedStatement.setString(14, matOrder.getSeller().getContactName());
+                preparedStatement.setString(15, matOrder.getSeller().getMobile());
+                preparedStatement.setString(16, matOrder.getSeller().getLandLine());
+                preparedStatement.setString(17, matOrder.getSeller().getFax());
+                preparedStatement.setString(18, matOrder.getSeller().getAccountNum());
+                preparedStatement.setString(19, matOrder.getSeller().getBankAddress());
+                preparedStatement.setString(20, matOrder.getSeller().getAddress());
+            } else {
+                preparedStatement.setInt(12, 0);
+                preparedStatement.setString(13, "");
+                preparedStatement.setString(14, "");
+                preparedStatement.setString(15, "");
+                preparedStatement.setString(16, "");
+                preparedStatement.setString(17, "");
+                preparedStatement.setString(18, "");
+                preparedStatement.setString(19, "");
+                preparedStatement.setString(20, "");
             }
+
+            preparedStatement.setString(21, matOrder.getPaymentDate() == null ? "" : String.valueOf(matOrder.getPaymentDate().getY()));
+            preparedStatement.setString(22, matOrder.getPaymentDate() == null ? "" : String.valueOf(matOrder.getPaymentDate().getM()));
+            preparedStatement.setString(23, matOrder.getPaymentDate() == null ? "" : String.valueOf(matOrder.getPaymentDate().getD()));
+
+            preparedStatement.setString(24, matOrder.getArrivalDate() == null ? "" : String.valueOf(matOrder.getArrivalDate().getY()));
+            preparedStatement.setString(25, matOrder.getArrivalDate() == null ? "" : String.valueOf(matOrder.getArrivalDate().getM()));
+            preparedStatement.setString(26, matOrder.getArrivalDate() == null ? "" : String.valueOf(matOrder.getArrivalDate().getD()));
+
+            preparedStatement.setString(27, matOrder.getInvoiceDate() == null ? "" : String.valueOf(matOrder.getInvoiceDate().getY()));
+            preparedStatement.setString(28, matOrder.getInvoiceDate() == null ? "" : String.valueOf(matOrder.getInvoiceDate().getM()));
+            preparedStatement.setString(29, matOrder.getInvoiceDate() == null ? "" : String.valueOf(matOrder.getInvoiceDate().getD()));
+
+            preparedStatement.setString(30, matOrder.getInvoice());
+            preparedStatement.setString(31, matOrder.getSigned());
+            preparedStatement.setString(32, matOrder.getSkuSeller());
+            preparedStatement.setString(33, matOrder.getNote());
+            preparedStatement.setInt(34, matOrder.getSerialNum());
+
+            preparedStatement.executeUpdate();
             CloseConnectionToDB();
-            return orderObservableList;
         } catch (SQLException e) {
             HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
+            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -703,6 +651,73 @@ public class DatabaseUtil {
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
+        }
+    }
+
+    /**
+     * Execute a given command related to mat order
+     * @return command result
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static ObservableList<MatOrder> ExecuteMatOrderCommand(String SQLCommand) throws SQLException {
+        ObservableList<MatOrder> orderObservableList = FXCollections.observableArrayList();
+        try {
+            ConnectToDB();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SQLCommand);
+            while (resultSet.next()) {
+
+                // new seller
+                MatSeller seller = new MatSeller(resultSet.getInt("sellerId"),
+                        resultSet.getString("companyName"));
+                seller.setContactName(resultSet.getString("contactName"));
+                seller.setMobile(resultSet.getString("mobile"));
+                seller.setLandLine(resultSet.getString("landLine"));
+                seller.setFax(resultSet.getString("fax"));
+                seller.setAccountNum(resultSet.getString("accountNum"));
+                seller.setBankAddress(resultSet.getString("bankAddress"));
+                seller.setAddress(resultSet.getString("address"));
+
+                // new order
+                MatOrder newOrder = new MatOrder(resultSet.getInt("serialNum"),
+                        resultSet.getString("sku"));
+                newOrder.setName(resultSet.getString("name"));
+                newOrder.setType(resultSet.getString("type"));
+                newOrder.setInvoice(resultSet.getString("invoice"));
+                newOrder.setSigned(resultSet.getString("signed"));
+                newOrder.setSkuSeller(resultSet.getString("skuSeller"));
+                newOrder.setNote(resultSet.getString("note"));
+                newOrder.setOrderDate(new Date(resultSet.getInt("orderDateYear"),
+                        resultSet.getInt("orderDateMonth"),
+                        resultSet.getInt("orderDateDay")));
+                newOrder.setPaymentDate(new Date(resultSet.getInt("paymentDateYear"),
+                        resultSet.getInt("paymentDateMonth"),
+                        resultSet.getInt("paymentDateDay")));
+                newOrder.setArrivalDate(new Date(resultSet.getInt("arrivalDateYear"),
+                        resultSet.getInt("arrivalDateMonth"),
+                        resultSet.getInt("arrivalDateDay")));
+                newOrder.setInvoiceDate(new Date(resultSet.getInt("invoiceDateYear"),
+                        resultSet.getInt("invoiceDateMonth"),
+                        resultSet.getInt("invoiceDateDay")));
+                newOrder.setSeller(seller);
+                newOrder.setUnitAmount(resultSet.getDouble("unitAmount"));
+                newOrder.setAmount(resultSet.getDouble("amount"));
+                newOrder.setKgAmount();
+                newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
+                newOrder.setTotalPrice();
+
+                // adding order
+                orderObservableList.add(newOrder);
+            }
+            CloseConnectionToDB();
+            return orderObservableList;
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
         }
     }
 

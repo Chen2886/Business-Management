@@ -11,6 +11,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.security.Key;
+
 public class ConfirmBox {
 
 	//Create variable
@@ -38,6 +40,12 @@ public class ConfirmBox {
 		buttonHBox.setPadding(new Insets(10, 10, 10, 10));
 
 		//Clicking will set answer and close window
+		yesButton.setOnKeyPressed(keyEvent -> {
+			if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+				answer = true;
+				window.close();
+			}
+		});
 		yesButton.setOnAction(e -> {
 			answer = true;
 			window.close();
@@ -45,15 +53,6 @@ public class ConfirmBox {
 		noButton.setOnAction(e -> {
 			answer = false;
 			window.close();
-		});
-		yesButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent keyEvent) {
-				if (keyEvent.getCode().equals(KeyCode.ENTER)) {
-					answer = true;
-					window.close();
-				}
-			}
 		});
 
 		VBox layout = new VBox(10);

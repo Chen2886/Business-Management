@@ -38,6 +38,17 @@ public class MatEditOrderController  {
 	ArrayList<Node> inputArrayList;
 
 	/**
+	 * Called by main controller to give the selected order
+	 * @param selectedOrder the order that was selected, to fill the information
+	 * @param currentStage the stage, so it can be closed later
+	 */
+	public void initData(MatOrder selectedOrder, Stage currentStage) {
+		this.selectedOrder = selectedOrder;
+		this.currentStage = currentStage;
+		init();
+	}
+
+	/**
 	 * Initialize all the element on the screen
 	 */
 	public void init() {
@@ -51,7 +62,6 @@ public class MatEditOrderController  {
 		completeButton.setOnAction(actionEvent -> {
 			UpdateOrder();
 		});
-
 
 		int row = 1;
 		int col = 0;
@@ -191,8 +201,8 @@ public class MatEditOrderController  {
 
 	/**
 	 * get the index value given the type
-	 * @param type
-	 * @return
+	 * @param type given type
+	 * @return the index of type given
 	 */
 	private int GetIndexOfMatType(String type) {
 		for (int i = 0; i < matOfType.length; i++) {
@@ -201,16 +211,6 @@ public class MatEditOrderController  {
 			}
 		}
 		return -1;
-	}
-
-	/**
-	 * Called by other controller to give the selected order
-	 * @param selectedOrder
-	 */
-	public void initData(MatOrder selectedOrder, Stage currentStage) {
-		this.selectedOrder = selectedOrder;
-		this.currentStage = currentStage;
-		init();
 	}
 
 	/**

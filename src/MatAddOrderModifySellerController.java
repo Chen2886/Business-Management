@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -38,14 +39,15 @@ public class MatAddOrderModifySellerController {
 	// all types
 	private static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
+	// main tab pane
+	@FXML TabPane MatAddOrderModifySellerTabPane;
 
-	// material section
 	// add mat order
 	@FXML GridPane matAddOrderGrid;
 	@FXML Label matAddOrderTitleLabel;
-	@FXML Button matCancelButton;
-	@FXML Button matCompleteButton;
-	@FXML Button matContinueButton;
+	@FXML Button matAddOrderCancelButton;
+	@FXML Button matAddOrderCompleteButton;
+	@FXML Button matAddOrderContinueButton;
 
 	// add mat seller
 	@FXML GridPane matAddSellerGrid;
@@ -70,13 +72,63 @@ public class MatAddOrderModifySellerController {
 	ArrayList<TextField> matEditSellerInputArray;
 
 	/**
+	 * Called by main controller, pass in the stage for later closing, and init the screen
+	 * @param currentStage the current stage so it can be closed
+	 */
+	public void initData(Stage currentStage) {
+		this.currentStage = currentStage;
+		init();
+	}
+
+	/**
 	 * Initialize all the element on the screen
 	 */
 	public void init() {
+
+		// make sure all title labels centered
 		matAddOrderTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		matAddSellerTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		matEditSellerTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
+		// if escape key is detected anywhere
+		MatAddOrderModifySellerTabPane.setOnKeyPressed(keyEvent -> {
+			if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+				if (ConfirmBox.display("确认", "确定关闭窗口？进度不会被保存", "是", "否"))
+					currentStage.close();
+			}
+		});
+
+		// mat add order buttons
+		matAddOrderCompleteButton.setOnAction(actionEvent -> {
+			addOrder();
+		});
+		matAddOrderContinueButton.setOnAction(actionEvent -> {
+			continueOrder();
+		});
+		matAddOrderCancelButton.setOnAction(actionEvent -> {
+			if (ConfirmBox.display("确认", "确定取消？此订单不会被保存", "确认", "取消"))
+				currentStage.close();
+		});
+
+		// mat add seller buttons
+		matAddSellerCompleteButton.setOnAction(actionEvent -> {
+			addSeller();
+		});
+		matAddSellerContinueButton.setOnAction(actionEvent -> {
+			continueSeller();
+		});
+		matAddSellerCancelButton.setOnAction(actionEvent -> {
+			if (ConfirmBox.display("确认", "确定取消？此供应商不会被保存", "确认", "取消"))
+				currentStage.close();
+		});
+
+		// mat edit seller, the rest two is in startEditMatSeller
+		matEditSellerCancelButton.setOnAction(actionEvent -> {
+			if (ConfirmBox.display("确认", "确定关闭窗口？", "是", "否"))
+				currentStage.close();
+		});
+
+		// get all mat sellers, so other functions can use it
 		try {
 			allMatSeller = DatabaseUtil.GetAllMatSellers();
 		} catch (SQLException e) {
@@ -87,32 +139,7 @@ public class MatAddOrderModifySellerController {
 			error.WriteToLog();
 		}
 
-		matCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定取消？此订单不会被保存", "确认", "取消"))
-				currentStage.close();
-		});
-
-		matAddSellerCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定取消？此供应商不会被保存", "确认", "取消"))
-				currentStage.close();
-		});
-
-		matCompleteButton.setOnAction(actionEvent -> {
-			AddOrder();
-		});
-
-		matAddSellerCompleteButton.setOnAction(actionEvent -> {
-			AddSeller();
-		});
-
-		matContinueButton.setOnAction(actionEvent -> {
-			ContinueOrder();
-		});
-
-		matAddSellerContinueButton.setOnAction(actionEvent -> {
-			ContinueSeller();
-		});
-
+		// init all three tabs
 		initAddMatOrder();
 		initAddMatSeller();
 		initEditMatSeller();
@@ -308,19 +335,18 @@ public class MatAddOrderModifySellerController {
 		startEdit.setOnAction(actionEvent -> {
 			if (sellerComboBox.getSelectionModel().getSelectedItem() != null) {
 				matEditSellerGrid.getChildren().removeAll(uselessHBoxForButton, selectInitSeller);
-				updateMatSeller(allMatSeller.get(sellerComboBox.getSelectionModel().getSelectedIndex()));
+				startEditMatSeller(allMatSeller.get(sellerComboBox.getSelectionModel().getSelectedIndex()));
 			}
-		});
-
-		matEditSellerCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定关闭窗口？", "是", "否"))
-				currentStage.close();
 		});
 
 		matEditSellerGrid.getChildren().addAll(selectInitSeller, uselessHBoxForButton);
 	}
 
-	private void updateMatSeller(MatSeller matSeller) {
+	/**
+	 * Called when user selected a mat seller to update, sets up the screen
+	 * @param matSeller the mat seller user selected
+	 */
+	private void startEditMatSeller(MatSeller matSeller) {
 		System.out.println(matSeller.toString(false));
 
 		problematicColumnOne.setHgrow(Priority.NEVER);
@@ -382,7 +408,7 @@ public class MatAddOrderModifySellerController {
 
 		matEditSellerCompleteButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display("确认", "所有使用此供应商的订单会被更新，是否继续？", "继续", "取消"))
-				UpdateSeller(matSeller);
+				updateSeller(matSeller);
 		});
 
 		// * setting up grid properties
@@ -393,7 +419,11 @@ public class MatAddOrderModifySellerController {
 
 	}
 
-	private void UpdateSeller(MatSeller newSeller) {
+	/**
+	 * Updates seller in database, both mat management and seller
+	 * @param newSeller the new seller that needs to be updated
+	 */
+	private void updateSeller(MatSeller newSeller) {
 		Method setter;
 
 		for (TextField textField : matEditSellerInputArray) {
@@ -424,20 +454,6 @@ public class MatAddOrderModifySellerController {
 	}
 
 	/**
-	 * get the index value given the type
-	 * @param type
-	 * @return
-	 */
-	private int GetIndexOfMatType(String type) {
-		for (int i = 0; i < matOfType.length; i++) {
-			if (matOfType[i].equals(type.toUpperCase())) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/**
 	 * Clear all input area for add order
 	 */
 	private void clearAddOrderFields() {
@@ -454,8 +470,7 @@ public class MatAddOrderModifySellerController {
 	 * Clear all input area for add order
 	 */
 	private void clearAddSellerFields() {
-		for (int i = 0; i < matAddSellerInputArray.size(); i++)
-			if (matAddSellerInputArray.get(i) != null) matAddSellerInputArray.get(i).clear();
+		for (TextField textField : matAddSellerInputArray) if (textField != null) textField.clear();
 	}
 
 	/**
@@ -463,22 +478,17 @@ public class MatAddOrderModifySellerController {
 	 * @param CompanyName company that needs to be found
 	 * @return the specified seller
 	 */
-	private MatSeller FindSeller (String CompanyName) {
+	private MatSeller findSeller(String CompanyName) {
 		for (MatSeller seller : allMatSeller) {
 			if (seller.getCompanyName().equals(CompanyName)) return seller;
 		}
 		return new MatSeller(MatSellerId.getMatSellerId(), "NOT FOUND");
 	}
 
-	public void initData(Stage currentStage) {
-		this.currentStage = currentStage;
-		init();
-	}
-
 	/**
 	 * Obtain all the new information, add order, and push it to database
 	 */
-	private void AddOrder() {
+	private void addOrder() {
 		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
 		int i = 0;
 
@@ -559,7 +569,7 @@ public class MatAddOrderModifySellerController {
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setSeller(FindSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
+			newOrder.setSeller(findSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
 		} catch (NullPointerException ignored) {}
 
 		try {
@@ -573,7 +583,7 @@ public class MatAddOrderModifySellerController {
 	/**
 	 * Obtain all the new information, add order, and push it to database
 	 */
-	private void ContinueOrder() {
+	private void continueOrder() {
 		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
 		int i = 0;
 
@@ -651,7 +661,7 @@ public class MatAddOrderModifySellerController {
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setSeller(FindSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
+			newOrder.setSeller(findSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
 		} catch (NullPointerException ignored) {}
 
 		try {
@@ -665,7 +675,7 @@ public class MatAddOrderModifySellerController {
 	/**
 	 * Obtain all the new seller information, add seller, and push it to database
 	 */
-	private void AddSeller() {
+	private void addSeller() {
 		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
 		Method setter;
 
@@ -697,7 +707,7 @@ public class MatAddOrderModifySellerController {
 	/**
 	 * Obtain all the new seller information, add seller, and push it to database
 	 */
-	private void ContinueSeller() {
+	private void continueSeller() {
 		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
 		Method setter;
 
