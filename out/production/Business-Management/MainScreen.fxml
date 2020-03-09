@@ -34,7 +34,7 @@
                </padding>
             </Label>
          </children></Pane>
-      <TabPane stylesheets="stylesheet.css" layoutX="135.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="135.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+      <TabPane fx:id="mainTabPane" stylesheets="stylesheet.css" layoutX="135.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="135.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
         <tabs>
             <Tab fx:id="matTab" text="原料管理" styleClass="main-screen-tab">
                 <content>
@@ -45,7 +45,7 @@
                     </TableView>
                 </content>
             </Tab>
-          <Tab fx:id="orderTab" styleClass="main-screen-tab" text="订单管理">
+          <Tab fx:id="prodTab" styleClass="main-screen-tab" text="订单管理">
             <content>
                 <TableView fx:id="orderTableView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>

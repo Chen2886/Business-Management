@@ -33,9 +33,10 @@ public class MainScreenController implements Initializable {
 
 	private ObservableList<MatOrder> allMatOrderList;
 	private ObservableList<MatOrder> tempQuickSearchMatOrderList;
-	private ObservableList<MatOrder> searchList;
-	public boolean alreadyInitialize = false;
 
+	@FXML TabPane mainTabPane;
+	@FXML Tab matTab;
+	@FXML Tab prodTab;
 	@FXML TableView<ProductOrder> orderTableView;
 	@FXML TableView<MatOrder> matTableView;
 	@FXML Button searchButton;
@@ -65,12 +66,15 @@ public class MainScreenController implements Initializable {
 			error.WriteToLog();
 		}
 
-		// filling the table
+		// filling the mat table
+
 		try {
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			tempQuickSearchMatOrderList = FXCollections.observableArrayList();
 			tempQuickSearchMatOrderList.addAll(allMatOrderList);
 			fillMatTable(allMatOrderList);
+			// TODO: fill the product table
+			fillProdTable(FXCollections.observableArrayList());
 		} catch (SQLException e) {
 			e.printStackTrace();
 			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -80,46 +84,58 @@ public class MainScreenController implements Initializable {
 			return;
 		}
 
+		// precision search mat/prod orders
 		searchButton.setOnAction(event -> {
-			searchOrder();
+			// if selected tab is material
+			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) searchMatOrder();
+			// if selected tab is product
+			else searchProductOrder();
 		});
 
+		// add mat/prod orders
 		addButton.setOnAction(event -> {
-			addOrder();
+			// if selected tab is material
+			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) addMatOrder();
+			// if selected tab is product
+			else addProdOrder();
 		});
 
+		// quit the application
 		quitButton.setOnAction(actionEvent -> {
 			System.exit(1);
 		});
 
+		// reset both table
 		resetButton.setOnAction(actionEvent -> {
 			resetTable();
 		});
 
 		// listener for search bar text field
 		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-			if (newValue == null || newValue.equals("")) {
-				matTableView.getItems().clear();
-				tempQuickSearchMatOrderList = FXCollections.observableArrayList(allMatOrderList);
-				matTableView.setItems(tempQuickSearchMatOrderList);
-			} else {
 
-				// if user deleted char
-				if (newValue.length() < oldValue.length()) {
+			// if selected tab is material
+			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) {
+
+				// if the text field is updated to be empty
+				if (newValue == null || newValue.equals("")) {
 					matTableView.getItems().clear();
 					tempQuickSearchMatOrderList = FXCollections.observableArrayList(allMatOrderList);
-				}
-
-				tempQuickSearchMatOrderList.removeIf(new Predicate<MatOrder>() {
-					@Override
-					public boolean test(MatOrder matOrder) {
-
-						// remove if order doesn't contain the new value
-						if (!matOrder.toString().contains(newValue)) return true;
-						else return false;
+				} else {
+					// if user deleted char, copying original array
+					if (newValue.length() < oldValue.length()) {
+						matTableView.getItems().clear();
+						tempQuickSearchMatOrderList = FXCollections.observableArrayList(allMatOrderList);
 					}
-				});
+
+					// removing orders that doesn't contain key word
+					tempQuickSearchMatOrderList.removeIf(matOrder -> !matOrder.toString().contains(newValue));
+				}
 				matTableView.setItems(tempQuickSearchMatOrderList);
+			}
+
+			// if selected tab is order
+			else {
+				// TODO: update order table according to search
 			}
 		});
 	}
@@ -220,6 +236,13 @@ public class MainScreenController implements Initializable {
 		});
 	}
 
+	// TODO: fix the parameter
+	/**
+	 * Filling of the product table
+	 * @param selectedProdOrders the orders specified
+	 */
+	public void fillProdTable(ObservableList selectedProdOrders) {}
+
 	/**
 	 * Helper function to delete order
 	 * @param selectedOrder the order to be deleted
@@ -272,9 +295,9 @@ public class MainScreenController implements Initializable {
 	}
 
 	/**
-	 * Helper function to set up window to add an order
+	 * Helper function to set up window to add a mat order
 	 */
-	private void addOrder() {
+	private void addMatOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatAddOrderModifySeller.fxml"));
 			Parent newScene = loader.load();
@@ -301,9 +324,14 @@ public class MainScreenController implements Initializable {
 	}
 
 	/**
-	 * Helper function to set up window for advance/precision searching
+	 * Helper function to set up window to add a prod order
 	 */
-	private void searchOrder() {
+	private void addProdOrder() {}
+
+	/**
+	 * Helper function to set up window for advance/precision searching of mat order
+	 */
+	private void searchMatOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("MatSearchOrder.fxml"));
 			Parent newScene = loader.load();
@@ -325,16 +353,22 @@ public class MainScreenController implements Initializable {
 	}
 
 	/**
+	 * Helper function to set up window for advance/precision searching of prod order
+	 */
+	private void searchProductOrder() {
+	}
+
+	/**
 	 * Helper function to reset the table to all orders
 	 */
 	private void resetTable() {
+		// TODO: reset order table
 		try {
 			searchBarTextField.setText("");
 			matTableView.getItems().clear();
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			matTableView.getItems().setAll(allMatOrderList);
 			matTableView.refresh();
-			alreadyInitialize = false;
 		} catch (Exception e) {
 			AlertBox.display("错误", "无法摘取信息");
 			e.printStackTrace();
@@ -346,10 +380,10 @@ public class MainScreenController implements Initializable {
 
 	/**
 	 * Public function for other controller to call, to set the table with new list
-	 * @param newList
+	 * @param newList the search result list
 	 */
 	public void setSearchList(ObservableList<MatOrder> newList) {
-		searchList = FXCollections.observableArrayList(newList);
+		ObservableList<MatOrder> searchList = FXCollections.observableArrayList(newList);
 		matTableView.getItems().clear();
 		matTableView.getItems().setAll(searchList);
 	}

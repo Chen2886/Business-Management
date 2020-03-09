@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MatAddOrderModifySellerController">
    <children>
-      <TabPane prefHeight="475.0" prefWidth="1006.0" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="MatAddOrderModifySellerTabPane" prefHeight="475.0" prefWidth="1006.0" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <tabs>
             <Tab closable="false" styleClass="add-order-tab" text="添加原料订单">
                <content>

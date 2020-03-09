@@ -1,7 +1,6 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -36,6 +35,11 @@ public class MatSearchOrderController {
     ObservableList<MatSeller> allSeller;
     ArrayList<Node> inputArrayList;
 
+    /**
+     * Called by other Main Controller to set stage
+     * @param currentStage stage passed by main controller to close later
+     * @param mainScreenController the main screen controller, so this can call back to fill order
+     */
     public void initData(Stage currentStage, MainScreenController mainScreenController) {
         this.currentStage = currentStage;
         this.mainScreenController = mainScreenController;
@@ -170,9 +174,11 @@ public class MatSearchOrderController {
         MatEditOrderGrid.getChildren().addAll(inputArrayList);
     }
 
+    /**
+     * Generate a command, use database function to execute
+     * @return the new list
+     */
     private ObservableList<MatOrder> searchOrders() {
-        ObservableList<MatOrder> returnList = FXCollections.observableArrayList();
-
         String FinalCommand = "SELECT * FROM materialManagement WHERE ";
         ArrayList<String> SQLCommand = new ArrayList<>();
 
@@ -287,7 +293,7 @@ public class MatSearchOrderController {
         }
 
         try {
-            return DatabaseUtil.ExecuteCommand(FinalCommand);
+            return DatabaseUtil.ExecuteMatOrderCommand(FinalCommand);
         } catch (Exception e) {
             return null;
         }
