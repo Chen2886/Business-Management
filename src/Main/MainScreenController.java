@@ -26,23 +26,24 @@ import java.util.ResourceBundle;
 public class MainScreenController implements Initializable {
 
 	// mat table headers
-	private static final String[] matHeaders = new String[] {"订单号", "原料名称", "类别", "订单日期", "付款日期",
+	private static final String[] matHeaders = new String[] {"订单日期", "订单号", "原料名称", "类别",  "付款日期",
 			"到达日期", "发票日期", "发票编号", "规格", "数量", "公斤", "单价", "总价", "签收人", "供应商订单编号", "供应商",
 			"联系人", "手机", "座机", "传真", "供应商账号", "供应商银行地址", "供应商地址", "备注"};
 
 	// all mat property listed
-	private static final String[] matProperty = new String[]{"sku", "name", "type", "orderDate", "paymentDate",
+	private static final String[] matProperty = new String[]{"orderDate", "sku", "name", "type",  "paymentDate",
 			"arrivalDate", "invoiceDate", "invoice", "unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice",
 			"signed", "skuSeller", "company", "contact", "mobile", "land", "fax", "account",
 			"bank", "address", "note"};
 
 	// prod table headers
-	private static final String[] prodHeaders = new String[] {"订单号", "产品名称", "客户", "订单日期",
-			"规格", "数量", "公斤", "单价", "总价", "备注"};
+	// TODO: Add Formula
+	private static final String[] prodHeaders = new String[] {"订单日期", "送货单号", "客户", "产品名称",
+			"规格", "数量", "公斤", "单价", "金额", "成本价", "备注"};
 
 	// all prod property listed
-	private static final String[] prodProperty = new String[]{"sku", "name", "customer", "orderDate",
-			"unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice", "note"};
+	private static final String[] prodProperty = new String[]{"orderDate", "sku", "customer", "name",
+			"unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice", "basePrice", "note"};
 
 	private ObservableList<MatOrder> allMatOrderList;
 	private ObservableList<MatOrder> tempQuickSearchMatOrderList;
@@ -175,7 +176,7 @@ public class MainScreenController implements Initializable {
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
 				newColumn.setStyle( "-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
-			} else if (i == 3 || i == 4 || i == 5 || i == 6) {
+			} else if (i == 0 || i == 4 || i == 5 || i == 6) {
 				// Main.Date
 				TableColumn<MatOrder, Date> newColumn = new TableColumn<>(matHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
