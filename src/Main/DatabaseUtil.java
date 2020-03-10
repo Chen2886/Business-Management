@@ -205,6 +205,7 @@ public class DatabaseUtil {
                         "unitAmount		REAL	        ,\n" +
                         "amount 		REAL			,\n" +
                         "unitPrice  	REAL			,\n" +
+                        "basePrice  	REAL			,\n" +
                         "formulaFile    TEXT			\n" +
                         ");";
             }
@@ -375,6 +376,7 @@ public class DatabaseUtil {
                 newOrder.setAmount(resultSet.getDouble("amount"));
                 newOrder.setKgAmount();
                 newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
+                newOrder.setBasePrice(resultSet.getDouble("basePrice"));
                 newOrder.setTotalPrice();
                 newOrder.setFormulaFile(resultSet.getString("formulaFile"));
 

@@ -20,6 +20,7 @@ public class ProductOrder {
     private double kgAmount; //公斤
     private double unitPrice;  //单价
     private double totalPrice;  //总价
+    private double basePrice; //成本价
 
     private String formulaFile;
 
@@ -33,9 +34,18 @@ public class ProductOrder {
         this.unitAmount = 0.0;
         this.amount = 0.0;
         this.unitPrice = 0.0;
+        this.basePrice = 0.0;
         this.formulaFile = "";
         setKgAmount();
         setTotalPrice();
+    }
+
+    public double getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(double basePrice) {
+        this.basePrice = basePrice;
     }
 
     public int getSerialNum() {
