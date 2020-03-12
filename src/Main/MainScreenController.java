@@ -149,7 +149,22 @@ public class MainScreenController implements Initializable {
 
 			// if selected tab is order
 			else {
-				// TODO: update order table according to search
+
+				// if the text field is updated to be empty
+				if (newValue == null || newValue.equals("")) {
+					prodTableView.getItems().clear();
+					tempQuickSearchProdOrderList = FXCollections.observableArrayList(allProdOrderList);
+				} else {
+					// if user deleted char, copying original array
+					if (newValue.length() < oldValue.length()) {
+						prodTableView.getItems().clear();
+						tempQuickSearchProdOrderList = FXCollections.observableArrayList(allProdOrderList);
+					}
+
+					// removing orders that doesn't contain key word
+					tempQuickSearchProdOrderList.removeIf(productOrder -> !productOrder.toString().contains(newValue));
+				}
+				prodTableView.setItems(tempQuickSearchProdOrderList);
 			}
 		});
 	}
@@ -309,6 +324,7 @@ public class MainScreenController implements Initializable {
 						} else {
 							edit.setOnAction(event -> modifyProdOrder(getTableView().getItems().get(getIndex())));
 							delete.setOnAction(event -> deleteProdOrder(getTableView().getItems().get(getIndex())));
+							formula.setOnAction(event -> modifyProdOrder(getTableView().getItems().get(getIndex())));
 							edit.getStyleClass().add("actionButtons");
 							delete.getStyleClass().add("actionButtons");
 							formula.getStyleClass().add("actionButtons");
@@ -464,10 +480,10 @@ public class MainScreenController implements Initializable {
 	private void deleteProdOrder(ProductOrder selectedOrder) {
 		if (ConfirmBox.display("确认", "确定删除？", "确定", "取消")) {
 			try {
-				DatabaseUtil.DeleteMatOrder(selectedOrder.getSerialNum());
-				allMatOrderList = DatabaseUtil.GetAllMatOrders();
-				matTableView.getItems().clear();
-				matTableView.getItems().setAll(allMatOrderList);
+				DatabaseUtil.DeleteProdOrder(selectedOrder.getSerialNum());
+				allProdOrderList = DatabaseUtil.GetAllProdOrders();
+				prodTableView.getItems().clear();
+				prodTableView.getItems().setAll(allProdOrderList);
 			} catch (SQLException e) {
 				AlertBox.display("错误", "无法删除");
 				e.printStackTrace();
@@ -515,6 +531,7 @@ public class MainScreenController implements Initializable {
 		// TODO: reset order table
 		try {
 			searchBarTextField.setText("");
+
 			matTableView.getItems().clear();
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			matTableView.getItems().setAll(allMatOrderList);

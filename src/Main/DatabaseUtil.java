@@ -277,6 +277,41 @@ public class DatabaseUtil {
     }
 
     /**
+     * Check is sku provided exists
+     * @param serialNum sku to be checked
+     * @return weather serialNum exists or not
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static boolean CheckIfProdSerialExists(int serialNum) throws SQLException {
+        try {
+            ConnectToDB();
+
+            String SQLCommand = "SELECT serialNum FROM productManagement WHERE serialNum = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, serialNum);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                CloseConnectionToDB();
+                return true;
+            } else {
+                CloseConnectionToDB();
+                return false;
+            }
+
+        } catch (SQLException e) {
+            //System.out.println("checkIfSkuExists failed");
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            e.printStackTrace();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Get All the mat order from database
      * @return a list of all mat order
      * @throws SQLException if any error occurs while operating on database
@@ -441,11 +476,42 @@ public class DatabaseUtil {
             ConnectToDB();
 
             if (!CheckIfMatSerialExists(serialNum)) {
+                CloseConnectionToDB();
                 return;
             }
 
             ConnectToDB();
             String SQLCommand = "DELETE FROM materialManagement WHERE serialNum = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, serialNum);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            e.printStackTrace();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Given serial num, delete from database
+     * @param serialNum order identified to be deleted
+     */
+    public static void DeleteProdOrder(int serialNum) throws SQLException {
+        try {
+            ConnectToDB();
+
+            if (!CheckIfProdSerialExists(serialNum)) {
+                CloseConnectionToDB();
+                return;
+            }
+
+            ConnectToDB();
+            String SQLCommand = "DELETE FROM productManagement WHERE serialNum = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setInt(1, serialNum);
             preparedStatement.executeUpdate();
