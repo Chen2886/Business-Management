@@ -619,6 +619,7 @@ public class MatAddOrderModifySellerController {
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
 		i++;
+
 		try {
 			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
@@ -705,7 +706,6 @@ public class MatAddOrderModifySellerController {
 			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
-			currentStage.close();
 		}
 	}
 

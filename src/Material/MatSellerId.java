@@ -37,7 +37,7 @@ public class MatSellerId {
 	 * This function goes to sku.txt, add one to the current sku
 	 * NOTE: SHOULD NOT USE UNLESS ADDING A NEW ORDER. THIS WILL NEVER DECREASE EVEN IF ORDER DELETED.
 	 */
-	public static void UpdateMatSellerId() {
+	private static void UpdateMatSellerId() {
 		try {
 			sellerId++;
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, false));

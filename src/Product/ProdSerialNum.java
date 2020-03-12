@@ -40,7 +40,7 @@ public class ProdSerialNum {
 	 * This function goes to sku.txt, add one to the current sku
 	 * NOTE: SHOULD NOT USE UNLESS ADDING A NEW ORDER. THIS WILL NEVER DECREASE EVEN IF ORDER DELETED.
 	 */
-	public static void UpdateProdSku() {
+	private static void UpdateProdSku() {
 		try {
 			serialNum++;
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, false));
