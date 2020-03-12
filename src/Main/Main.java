@@ -38,7 +38,7 @@ public class Main extends Application {
 	public void start(Stage stage) throws Exception {
 		Parent root = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
 		Scene scene = new Scene(root);
-		scene.getStylesheets().add("stylesheet.css");
+		scene.getStylesheets().add(getClass().getClassLoader().getResource("stylesheet.css").toString());
 		stage.setScene(scene);
 		this.stage = stage;
 		stage.show();

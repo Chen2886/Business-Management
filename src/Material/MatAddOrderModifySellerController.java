@@ -117,10 +117,10 @@ public class MatAddOrderModifySellerController {
 
 		// mat add seller buttons
 		matAddSellerCompleteButton.setOnAction(actionEvent -> {
-			addSeller();
+			addSeller(false);
 		});
 		matAddSellerContinueButton.setOnAction(actionEvent -> {
-			continueSeller();
+			addSeller(true);
 		});
 		matAddSellerCancelButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display("确认", "确定取消？此供应商不会被保存", "确认", "取消"))
@@ -164,7 +164,7 @@ public class MatAddOrderModifySellerController {
 			newLabel.setStyle("-fx-font-size: 20px;" +
 					"-fx-alignment: center-right;");
 
-//			newLabel.setMaxWidth(Double.MAX_VALUE);
+			// newLabel.setMaxWidth(Double.MAX_VALUE);
 			GridPane.setConstraints(newLabel, col, row++);
 			matOrderLabelArray.add(newLabel);
 			if ((i + 6) % 5 == 0) {
@@ -679,7 +679,7 @@ public class MatAddOrderModifySellerController {
 	/**
 	 * Obtain all the new seller information, add seller, and push it to database
 	 */
-	private void addSeller() {
+	private void addSeller(boolean cont) {
 		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
 		Method setter;
 
@@ -697,7 +697,8 @@ public class MatAddOrderModifySellerController {
 		try {
 			DatabaseUtil.AddMatSeller(newSeller);
 			allMatSeller = DatabaseUtil.GetAllMatSellers();
-			currentStage.close();
+			if (cont) clearAddSellerFields();
+			else currentStage.close();
 		} catch (Exception e) {
 			AlertBox.display("错误", "添加错误");
 			e.printStackTrace();
@@ -705,37 +706,6 @@ public class MatAddOrderModifySellerController {
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
 			currentStage.close();
-		}
-	}
-
-	/**
-	 * Obtain all the new seller information, add seller, and push it to database
-	 */
-	private void continueSeller() {
-		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
-		Method setter;
-
-		for (TextField textField : matAddSellerInputArray) {
-			if (!textField.getText().equals("")) {
-				try {
-					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matAddSellerInputArray.indexOf(textField)], String.class);
-					setter.invoke(newSeller, textField.getText());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		try {
-			DatabaseUtil.AddMatSeller(newSeller);
-			allMatSeller = DatabaseUtil.GetAllMatSellers();
-			clearAddSellerFields();
-		} catch (Exception e) {
-			AlertBox.display("错误", "添加错误");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
 		}
 	}
 
