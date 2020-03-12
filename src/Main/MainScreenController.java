@@ -298,7 +298,8 @@ public class MainScreenController implements Initializable {
 					// define new buttons
 					Button edit = new Button("编辑");
 					Button delete = new Button("删除");
-					HBox actionButtons = new HBox(edit, delete);
+					Button formula = new Button("配方");
+					HBox actionButtons = new HBox(edit, delete, formula);
 
 					@Override
 					public void updateItem(String item, boolean empty) {
@@ -310,6 +311,7 @@ public class MainScreenController implements Initializable {
 							delete.setOnAction(event -> deleteProdOrder(getTableView().getItems().get(getIndex())));
 							edit.getStyleClass().add("actionButtons");
 							delete.getStyleClass().add("actionButtons");
+							formula.getStyleClass().add("actionButtons");
 							actionButtons.setSpacing(5);
 							actionButtons.setAlignment(Pos.CENTER);
 							setGraphic(actionButtons);
@@ -378,8 +380,8 @@ public class MainScreenController implements Initializable {
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-//			ProdAddOrderModifySellerController prodAddOrderModifySellerController = loader.getController();
-//			ProdAddOrderModifySellerController.initData(stage);
+			ProdAddOrderModifySellerController prodAddOrderModifySellerController = loader.getController();
+			prodAddOrderModifySellerController.initData(stage);
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加产品");
