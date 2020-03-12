@@ -540,6 +540,45 @@ public class DatabaseUtil {
     }
 
     /**
+     * Insert an order into the database
+     * @param order specified order
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void AddProdOrder(ProductOrder order) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "INSERT INTO [productManagement] (sku, name, customer, " +
+                    "orderDateYear, orderDateMonth, orderDateDay, unitAmount, amount, unitPrice, " +
+                    "basePrice, formulaFile, note, serialNum) " +
+                    "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, order.getSku());
+            preparedStatement.setString(2, order.getName());
+            preparedStatement.setString(3, order.getCustomer());
+            preparedStatement.setInt(4, order.getOrderDate().getY());
+            preparedStatement.setInt(5, order.getOrderDate().getM());
+            preparedStatement.setInt(6, order.getOrderDate().getD());
+            preparedStatement.setDouble(7, order.getUnitAmount());
+            preparedStatement.setDouble(8, order.getAmount());
+            preparedStatement.setDouble(9, order.getUnitPrice());
+            preparedStatement.setDouble(10, order.getBasePrice());
+            preparedStatement.setString(11, order.getFormulaFile());
+            preparedStatement.setString(12, order.getNote() == null ? "" : order.getNote());
+            preparedStatement.setInt(13, order.getSerialNum());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Add seller into the seller database
      * @param seller seller that needs to be added
      * @throws SQLException if any error occurs while operating on database
