@@ -4,13 +4,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdAddOrderModifySellerController">
-    <GridPane fx:id="prodAddOrderGrid" alignment="CENTER" hgap="10.0" vgap="10.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" VBox.vgrow="ALWAYS">
+<AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdAddOrderController">
+    <GridPane fx:id="prodAddOrderGrid" alignment="CENTER" hgap="30.0" vgap="10.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" VBox.vgrow="ALWAYS">
         <columnConstraints>
-            <ColumnConstraints halignment="RIGHT" />
-            <ColumnConstraints halignment="LEFT" />
-            <ColumnConstraints halignment="RIGHT" />
-            <ColumnConstraints halignment="LEFT" />
+            <ColumnConstraints/>
+            <ColumnConstraints/>
+            <ColumnConstraints/>
+            <ColumnConstraints/>
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />

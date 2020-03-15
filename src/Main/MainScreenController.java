@@ -392,12 +392,12 @@ public class MainScreenController implements Initializable {
 	 */
 	private void addProdOrder() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdAddOrderModifySeller.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdAddOrder.fxml"));
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-			ProdAddOrderModifySellerController prodAddOrderModifySellerController = loader.getController();
-			prodAddOrderModifySellerController.initData(stage);
+			ProdAddOrderController prodAddOrderController = loader.getController();
+			prodAddOrderController.initData(stage);
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加产品");
@@ -450,7 +450,31 @@ public class MainScreenController implements Initializable {
 	 * Helper function set up new window to modify order
 	 * @param selectedOrder the order to be updated
 	 */
-	private void modifyProdOrder(ProductOrder selectedOrder) {	}
+	private void modifyProdOrder(ProductOrder selectedOrder) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdEditOrder.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			ProdEditOrderController prodEditOrderController = loader.getController();
+			prodEditOrderController.initData(selectedOrder, stage);
+
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("编辑订单");
+			stage.setScene(new Scene(newScene));
+			stage.showAndWait();
+			prodTableView.getItems().clear();
+			allProdOrderList = DatabaseUtil.GetAllProdOrders();
+			prodTableView.getItems().setAll(allProdOrderList);
+			prodTableView.refresh();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
 
 	/**
 	 * Helper function to delete order
@@ -522,6 +546,24 @@ public class MainScreenController implements Initializable {
 	 * Helper function to set up window for advance/precision searching of prod order
 	 */
 	private void searchProdOrder() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdSearchOrder.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			ProdSearchController prodSearchController = loader.getController();
+			prodSearchController.initData(stage, this);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("搜索产品");
+			stage.setScene(new Scene(newScene));
+			stage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
 	}
 
 	/**
@@ -554,10 +596,20 @@ public class MainScreenController implements Initializable {
 	 * Public function for other controller to call, to set the table with new list
 	 * @param newList the search result list
 	 */
-	public void setSearchList(ObservableList<MatOrder> newList) {
+	public void setMatSearchList(ObservableList<MatOrder> newList) {
 		ObservableList<MatOrder> searchList = FXCollections.observableArrayList(newList);
 		matTableView.getItems().clear();
 		matTableView.getItems().setAll(searchList);
+	}
+
+	/**
+	 * Public function for other controller to call, to set the table with new list
+	 * @param newList the search result list
+	 */
+	public void setProdSearchList(ObservableList<ProductOrder> newList) {
+		ObservableList<ProductOrder> searchList = FXCollections.observableArrayList(newList);
+		prodTableView.getItems().clear();
+		prodTableView.getItems().setAll(searchList);
 	}
 
 }

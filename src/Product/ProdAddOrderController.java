@@ -16,12 +16,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class ProdAddOrderModifySellerController {
+public class ProdAddOrderController {
 
     // prod table headers
-    // TODO: Add Formula
-    private static final String[] prodHeaders = new String[] {"订单日期", "送货单号", "客户", "产品名称",
-            "规格", "数量", "单价", "备注"};
+    private static final String[] prodHeaders = new String[] {"订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
+            "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注"};
 
     // all prod property listed
     private static final String[] prodProperty = new String[]{"OrderDate", "Sku", "Customer", "Name",
@@ -81,7 +80,6 @@ public class ProdAddOrderModifySellerController {
             Label newLabel = new Label(prodHeaders[i]);
             newLabel.setStyle("-fx-font-size: 20px;" +
                     "-fx-alignment: center-right;");
-            // newLabel.setMaxWidth(Double.MAX_VALUE);
             GridPane.setConstraints(newLabel, col, row++);
             prodOrderLabelArray.add(newLabel);
             if ((i + 5) % 4 == 0) {
@@ -120,7 +118,6 @@ public class ProdAddOrderModifySellerController {
                     }
                 });
 
-
                 GridPane.setConstraints(datePicker, col, row++);
                 prodOrderInputArray.add(datePicker);
             }
@@ -128,10 +125,9 @@ public class ProdAddOrderModifySellerController {
             // regular text field
             else {
                 TextField newTextField = new TextField();
-                newTextField.setPromptText("输入" + prodHeaders[i]);
+                newTextField.setPromptText("输入" + prodHeaders[i].replace("\u3000", ""));
                 GridPane.setConstraints(newTextField, col, row++);
                 prodOrderInputArray.add(newTextField);
-
             }
 
             if ((i + 5) % 4 == 0) {
