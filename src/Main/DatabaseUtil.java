@@ -758,6 +758,44 @@ public class DatabaseUtil {
     }
 
     /**
+     * Update an order to the database
+     * @param order specified order
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void UpdateProdOrder(ProductOrder order) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "UPDATE productManagement SET sku = ?, name = ?, customer = ?, " +
+                    "orderDateYear = ?, orderDateMonth = ?, orderDateDay = ?, unitAmount = ?, amount = ?, unitPrice = ?, " +
+                    "basePrice = ?, formulaFile = ?, note = ? WHERE serialNum = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, order.getSku());
+            preparedStatement.setString(2, order.getName());
+            preparedStatement.setString(3, order.getCustomer());
+            preparedStatement.setInt(4, order.getOrderDate().getY());
+            preparedStatement.setInt(5, order.getOrderDate().getM());
+            preparedStatement.setInt(6, order.getOrderDate().getD());
+            preparedStatement.setDouble(7, order.getUnitAmount());
+            preparedStatement.setDouble(8, order.getAmount());
+            preparedStatement.setDouble(9, order.getUnitPrice());
+            preparedStatement.setDouble(10, order.getBasePrice());
+            preparedStatement.setString(11, order.getFormulaFile());
+            preparedStatement.setString(12, order.getNote() == null ? "" : order.getNote());
+            preparedStatement.setInt(13, order.getSerialNum());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * update all related order in main
      * @param newSeller new seller
      * @throws SQLException if any error occurs while operating on database
@@ -870,6 +908,51 @@ public class DatabaseUtil {
                 newOrder.setKgAmount();
                 newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
                 newOrder.setTotalPrice();
+
+                // adding order
+                orderObservableList.add(newOrder);
+            }
+            CloseConnectionToDB();
+            return orderObservableList;
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Execute a given command related to mat order
+     * @return command result
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static ObservableList<ProductOrder> ExecuteProdOrderCommand(String SQLCommand) throws SQLException {
+        ObservableList<ProductOrder> orderObservableList = FXCollections.observableArrayList();
+        try {
+            ConnectToDB();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SQLCommand);
+            while (resultSet.next()) {
+
+                // new order
+                ProductOrder newOrder = new ProductOrder(resultSet.getInt("serialNum"));
+                newOrder.setSku(resultSet.getString("sku"));
+                newOrder.setName(resultSet.getString("name"));
+                newOrder.setCustomer(resultSet.getString("customer"));
+                newOrder.setNote(resultSet.getString("note"));
+                newOrder.setOrderDate(new Date(resultSet.getInt("orderDateYear"),
+                        resultSet.getInt("orderDateMonth"),
+                        resultSet.getInt("orderDateDay")));
+                newOrder.setUnitAmount(resultSet.getDouble("unitAmount"));
+                newOrder.setAmount(resultSet.getDouble("amount"));
+                newOrder.setKgAmount();
+                newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
+                newOrder.setBasePrice(resultSet.getDouble("basePrice"));
+                newOrder.setTotalPrice();
+                newOrder.setFormulaFile(resultSet.getString("formulaFile"));
 
                 // adding order
                 orderObservableList.add(newOrder);
