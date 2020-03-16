@@ -4,42 +4,38 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdFormula">
-   <children>
-       <Label fx:id="prodFormulaTitleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" text="配方" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-           <font>
-               <Font size="30.0" />
-           </font>
-       </Label>
-      <TableView fx:id="prodFormulaTable" layoutX="192.0" layoutY="54.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="47.0">
-        <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
-        </columns>
-      </TableView>
-       <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="421.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.leftAnchor="10.0">
-           <children>
-               <Button fx:id="addItemButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="添加原料" textAlignment="RIGHT">
-                   <font>
-                       <Font size="18.0" />
-                   </font>
-               </Button>
-               <Button fx:id="saveButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="保存" textAlignment="RIGHT">
-                   <font>
-                       <Font size="18.0" />
-                   </font>
-               </Button>
-               <Button fx:id="saveNewButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="另存为" textAlignment="RIGHT">
-                   <font>
-                       <Font size="18.0" />
-                   </font>
-               </Button>
-               <Button fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="取消" textAlignment="RIGHT">
-                   <font>
-                       <Font size="18.0" />
-                   </font>
-               </Button>
-           </children>
-       </HBox>
-   </children>
+<AnchorPane prefHeight="475.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdFormula">
+    <Label fx:id="prodFormulaTitleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" text="配方" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <font>
+            <Font size="30.0" />
+        </font>
+    </Label>
+    <TableView fx:id="prodFormulaTable" layoutX="192.0" layoutY="54.0" prefHeight="308.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="47.0">
+    </TableView>
+    <HBox fx:id="infoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="365.0">
+    </HBox>
+    <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="421.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <children>
+            <Button fx:id="addFormulaButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="添加原料" textAlignment="RIGHT">
+                <font>
+                    <Font size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="saveButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="保存" textAlignment="RIGHT">
+                <font>
+                    <Font size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="saveNewButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="另存为" textAlignment="RIGHT">
+                <font>
+                    <Font size="18.0" />
+                </font>
+            </Button>
+            <Button fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="取消" textAlignment="RIGHT">
+                <font>
+                    <Font size="18.0" />
+                </font>
+            </Button>
+        </children>
+    </HBox>
 </AnchorPane>

@@ -8,12 +8,11 @@ public class Formula {
     private ArrayList<FormulaItem> formula;
 
     public Formula() {
-        fileName = "";
-        formula = new ArrayList<>();
+        this("");
     }
 
     public Formula(String fileName) {
-        this.fileName = fileName;
+        this(fileName, new ArrayList<>());
     }
 
     public Formula(String fileName, ArrayList<FormulaItem> formula) {
