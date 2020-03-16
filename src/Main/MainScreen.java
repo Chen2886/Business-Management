@@ -233,6 +233,7 @@ public class MainScreen implements Initializable {
 								} else {
 									edit.setOnAction(event -> modifyMatOrder(getTableView().getItems().get(getIndex())));
 									delete.setOnAction(event -> deleteMatOrder(getTableView().getItems().get(getIndex())));
+
 									edit.getStyleClass().add("actionButtons");
 									delete.getStyleClass().add("actionButtons");
 									actionButtons.setSpacing(5);
@@ -324,7 +325,7 @@ public class MainScreen implements Initializable {
 						} else {
 							edit.setOnAction(event -> modifyProdOrder(getTableView().getItems().get(getIndex())));
 							delete.setOnAction(event -> deleteProdOrder(getTableView().getItems().get(getIndex())));
-							formula.setOnAction(event -> modifyProdOrder(getTableView().getItems().get(getIndex())));
+							formula.setOnAction(event -> prodFormula(getTableView().getItems().get(getIndex())));
 							edit.getStyleClass().add("actionButtons");
 							delete.getStyleClass().add("actionButtons");
 							formula.getStyleClass().add("actionButtons");
@@ -610,6 +611,27 @@ public class MainScreen implements Initializable {
 		ObservableList<ProductOrder> searchList = FXCollections.observableArrayList(newList);
 		prodTableView.getItems().clear();
 		prodTableView.getItems().setAll(searchList);
+	}
+
+	public void prodFormula(ProductOrder order) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdFormula.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			ProdFormula prodFormula = loader.getController();
+			prodFormula.initData(order, stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("配方");
+			stage.setScene(new Scene(newScene));
+			stage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
 	}
 
 }
