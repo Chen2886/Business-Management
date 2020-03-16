@@ -53,18 +53,17 @@
              prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
              AnchorPane.leftAnchor="135.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
         <Tab fx:id="matTab" text="原料管理" styleClass="main-screen-tab">
-            <content>
-                <TableView fx:id="matTableView" styleClass="table-row-cell" stylesheets="../stylesheet.css"
-                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                           AnchorPane.topAnchor="0.0">
-                    <columns>
+            <TableView fx:id="matTableView" styleClass="table-row-cell" stylesheets="../stylesheet.css"
+                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <columns>
 
-                    </columns>
-                </TableView>
-            </content>
+                </columns>
+            </TableView>
         </Tab>
         <Tab fx:id="prodTab" styleClass="main-screen-tab" text="订单管理">
-            <TableView fx:id="prodTableView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+            <TableView fx:id="prodTableView" styleClass="table-row-cell" stylesheets="../stylesheet.css"
+                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <columns>
 

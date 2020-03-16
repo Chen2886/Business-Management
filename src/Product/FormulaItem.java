@@ -1,11 +1,25 @@
 package Product;
 
+import java.util.ArrayList;
+
 public class FormulaItem {
     private String itemName;
     private double amount;
     private double unitPrice;
     private double totalPrice;
-    private FormulaItem formula;
+    private ArrayList<FormulaItem> formula;
+
+    public FormulaItem() {
+        this("");
+    }
+
+    public FormulaItem(String itemName) {
+        this(itemName, 0);
+    }
+
+    public FormulaItem(String itemName, double amount) {
+        this(itemName, amount, 0);
+    }
 
     public FormulaItem(String itemName, double amount, double unitPrice) {
         this.itemName = itemName;
@@ -14,7 +28,7 @@ public class FormulaItem {
         this.totalPrice = amount * unitPrice;
     }
 
-    public FormulaItem(FormulaItem formula) {
+    public FormulaItem(ArrayList<FormulaItem> formula) {
         this.formula = formula;
     }
 
@@ -52,11 +66,11 @@ public class FormulaItem {
         this.totalPrice = amount * unitPrice;
     }
 
-    public FormulaItem getFormula() {
+    public ArrayList<FormulaItem> getFormula() {
         return formula;
     }
 
-    public void setFormula(FormulaItem formula) {
+    public void setFormula(ArrayList<FormulaItem> formula) {
         this.formula = formula;
     }
 
