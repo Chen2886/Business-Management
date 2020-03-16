@@ -1,69 +1,68 @@
-package Material;
+package Product;
 
-// from my other packages
 import Main.*;
 
-import Main.MainScreenController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class MatSearchOrderController {
 
-    // table headers
-    private static final String[] tableHeaders = new String[] {"订单号", "原料名称", "类别", "订单开始日期", "订单结束日期",
-            "付款日期", "到达日期", "发票日期", "发票编号", "规格", "数量", "单价", "签收人", "供应商订单编号", "备注", "供应商"};
+public class ProdSearchOrder {
 
-    // all property listed
-    private static final String[] propertyHeaders = new String[]{"sku", "name", "type", "orderStartDate", "orderEndDate", "paymentDate",
-            "arrivalDate", "invoiceDate", "invoice", "unitAmount", "amount", "unitPrice", "signed", "skuSeller", "note", "seller"};
-    // all types
-    private static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
+    // prod table headers
+    private static final String[] prodHeaders = new String[] {"开始订单日期", "结束订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
+            "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注"};
 
-    private MainScreenController mainScreenController;
+    // all prod property listed
+    private static final String[] prodProperty = new String[]{"OrderDateStart", "OrderDateEnd", "Sku", "Customer", "Name",
+            "UnitAmount", "Amount", "UnitPrice", "Note"};
 
-    @FXML GridPane MatEditOrderGrid;
-    @FXML Label editOrderTitleLabel;
-    @FXML Button cancelButton;
-    @FXML Button completeButton;
+    @FXML GridPane prodSearchOrderGrid;
+    @FXML Label prodSearchOrderTitle;
+    @FXML Button prodSearchOrderCancelButton;
+    @FXML Button prodSearchOrderCompleteButton;
 
+    private MainScreen mainScreen;
     Stage currentStage;
-    ObservableList<MatSeller> allSeller;
-    ArrayList<Node> inputArrayList;
+    private ArrayList<Node> prodOrderInputArray;
 
     /**
-     * Called by other Main Controller to set stage
-     * @param currentStage stage passed by main controller to close later
-     * @param mainScreenController the main screen controller, so this can call back to fill order
+     * Called by main controller, pass in the stage for later closing, and init the screen
+     * @param currentStage the current stage so it can be closed
      */
-    public void initData(Stage currentStage, MainScreenController mainScreenController) {
+    public void initData(Stage currentStage, MainScreen mainScreen) {
         this.currentStage = currentStage;
-        this.mainScreenController = mainScreenController;
+        this.mainScreen = mainScreen;
         init();
     }
 
     /**
-     * Initialize all the element on the screen
+     * initialize all labels and text fields for add prod order grid
      */
-    public void init() {
-        editOrderTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+    private void init() {
 
-        cancelButton.setOnAction(actionEvent -> currentStage.close());
+        prodSearchOrderTitle.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        completeButton.setOnAction(actionEvent -> {
+        prodSearchOrderGrid.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ESCAPE)) currentStage.close();
+        });
+
+        prodSearchOrderCancelButton.setOnAction(actionEvent -> currentStage.close());
+
+        prodSearchOrderCompleteButton.setOnAction(actionEvent -> {
             try {
-                ObservableList<MatOrder> newList = searchOrders();
-                mainScreenController.setMatSearchList(newList == null ? FXCollections.observableArrayList() : newList);
+                ObservableList<ProductOrder> newList = searchOrders();
+                mainScreen.setProdSearchList(newList == null ? FXCollections.observableArrayList() : newList);
                 currentStage.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -74,21 +73,18 @@ public class MatSearchOrderController {
             }
         });
 
-
         int row = 1;
         int col = 0;
 
         // setting up all the labels
-        ArrayList<Label> labelArrayList = new ArrayList<>();
-        for(int i = 0; i < tableHeaders.length; i++) {
-            Label newLabel = new Label(tableHeaders[i]);
+        ArrayList<Label> prodOrderLabelArray = new ArrayList<>();
+        for(int i = 0; i < prodHeaders.length; i++) {
+            Label newLabel = new Label(prodHeaders[i]);
             newLabel.setStyle("-fx-font-size: 20px;" +
                     "-fx-alignment: center-right;");
-
-            newLabel.setMaxWidth(Double.MAX_VALUE);
             GridPane.setConstraints(newLabel, col, row++);
-            labelArrayList.add(newLabel);
-            if ((i + 7) % 6 == 0) {
+            prodOrderLabelArray.add(newLabel);
+            if ((i + 5) % 4 == 0) {
                 row = 1;
                 col += 2;
             }
@@ -96,42 +92,13 @@ public class MatSearchOrderController {
 
         row = 1;
         col = 1;
+
         // setting up all the text field
-        inputArrayList = new ArrayList<>();
-        for(int i = 0; i < propertyHeaders.length; i++) {
-
-            // type of mat, combo box
-            if (i == 2) {
-                ComboBox<String> newComboBox = new ComboBox<>();
-                newComboBox.getItems().setAll(matOfType);
-                newComboBox.setMaxWidth(Double.MAX_VALUE);
-                GridPane.setConstraints(newComboBox, col, row++);
-                inputArrayList.add(newComboBox);
-            }
-
-            // seller, combo box
-            else if (i == propertyHeaders.length - 1) {
-                ComboBox<String> sellerComboBox = new ComboBox<>();
-                try {
-                    allSeller = DatabaseUtil.GetAllMatSellers();
-                } catch (SQLException e) {
-                    sellerComboBox.setMaxWidth(Double.MAX_VALUE);
-                    inputArrayList.add(sellerComboBox);
-                    allSeller = FXCollections.observableArrayList();
-                }
-
-                String[] allSellerCompany = new String[allSeller.size()];
-                for (int j = 0; j < allSeller.size(); j++) {
-                    allSellerCompany[j] = allSeller.get(j).getCompanyName();
-                }
-                sellerComboBox.getItems().setAll(allSellerCompany);
-                sellerComboBox.setMaxWidth(Double.MAX_VALUE);
-                GridPane.setConstraints(sellerComboBox, col, row++);
-                inputArrayList.add(sellerComboBox);
-            }
+        prodOrderInputArray = new ArrayList<>();
+        for(int i = 0; i < prodProperty.length; i++) {
 
             // dates, date picker
-            else if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7) {
+            if (i == 0 || i == 1) {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
                 DatePicker datePicker = new DatePicker();
 
@@ -153,48 +120,45 @@ public class MatSearchOrderController {
                     }
                 });
 
-
                 GridPane.setConstraints(datePicker, col, row++);
-                inputArrayList.add(datePicker);
+                prodOrderInputArray.add(datePicker);
             }
 
             // regular text field
             else {
                 TextField newTextField = new TextField();
-                newTextField.setMaxWidth(Double.MAX_VALUE);
+                newTextField.setPromptText("输入" + prodHeaders[i].replace("\u3000", ""));
                 GridPane.setConstraints(newTextField, col, row++);
-                inputArrayList.add(newTextField);
-
+                prodOrderInputArray.add(newTextField);
             }
 
-            if ((i + 7) % 6 == 0) {
+            if ((i + 5) % 4 == 0) {
                 row = 1;
                 col += 2;
             }
         }
 
-        // * setting up grid properties
-        MatEditOrderGrid.setVgap(10);
-        MatEditOrderGrid.setHgap(10);
-        MatEditOrderGrid.getChildren().addAll(labelArrayList);
-        MatEditOrderGrid.getChildren().addAll(inputArrayList);
+        prodSearchOrderGrid.setVgap(10);
+        prodSearchOrderGrid.setHgap(10);
+        prodSearchOrderGrid.getChildren().addAll(prodOrderLabelArray);
+        prodSearchOrderGrid.getChildren().addAll(prodOrderInputArray);
     }
 
     /**
      * Generate a command, use database function to execute
      * @return the new list
      */
-    private ObservableList<MatOrder> searchOrders() {
-        String FinalCommand = "SELECT * FROM materialManagement WHERE ";
+    private ObservableList<ProductOrder> searchOrders() {
+        String FinalCommand = "SELECT * FROM productManagement WHERE ";
         ArrayList<String> SQLCommand = new ArrayList<>();
 
-        for (int i = 0; i < inputArrayList.size(); i++) {
+        for (int i = 0; i < prodOrderInputArray.size(); i++) {
             // orderDate start
-            if (i == 3) {
+            if (i == 0) {
                 // order date year
 
-                DatePicker startDate = (DatePicker) inputArrayList.get(i);
-                DatePicker endDate = (DatePicker) inputArrayList.get(i + 1);
+                DatePicker startDate = (DatePicker) prodOrderInputArray.get(i);
+                DatePicker endDate = (DatePicker) prodOrderInputArray.get(i + 1);
 
                 try {
                     if (startDate.getValue() == null && endDate.getValue() != null) {
@@ -249,38 +213,14 @@ public class MatSearchOrderController {
                 catch (NullPointerException ignored) { }
             }
             // orderDate end, skip
-            else if (i == 4) {
+            else if (i == 1) {
                 continue;
-            }
-            // other dates
-            else if (i == 5 || i == 6 || i == 7) {
-                if (((DatePicker) inputArrayList.get(i)).getValue() != null) {
-                    SQLCommand.add(String.format("%s = '%s'", propertyHeaders[i] + "Year", ((DatePicker) inputArrayList.get(i)).getValue().getYear()));
-                    SQLCommand.add(String.format("%s = '%s'", propertyHeaders[i] + "Month", ((DatePicker) inputArrayList.get(i)).getValue().getMonthValue()));
-                    SQLCommand.add(String.format("%s = '%s'", propertyHeaders[i] + "Day", ((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-                }
-            }
-            // combo box mat type
-            else if (i == 2) {
-                try {
-                    if (!((ComboBox) inputArrayList.get(i)).getValue().toString().equals(""))
-                        SQLCommand.add(String.format("%s = '%s'", "type", ((ComboBox) inputArrayList.get(i)).getValue().toString()));
-                } catch (Exception ignored) {}
-            }
-            else if (i == inputArrayList.size() - 1) {
-                try {
-                    String companyName = ((ComboBox) inputArrayList.get(i)).getValue().toString();
-                    for (MatSeller seller: allSeller) {
-                        if (seller.getCompanyName().equals(companyName))
-                            SQLCommand.add(String.format("%s = '%s'", "sellerId", seller.getSellerId()));
-                    }
-                } catch (Exception ignored) {}
             }
             // string/numbers
             else {
-                String value = ((TextField) inputArrayList.get(i)).getText();
+                String value = ((TextField) prodOrderInputArray.get(i)).getText();
                 if (!value.equals("")) {
-                    SQLCommand.add(String.format("%s = '%s'", propertyHeaders[i], value));
+                    SQLCommand.add(String.format("%s = '%s'", prodProperty[i], value));
                 }
             }
         }
@@ -299,10 +239,11 @@ public class MatSearchOrderController {
         }
 
         try {
-            return DatabaseUtil.ExecuteMatOrderCommand(FinalCommand);
+            return DatabaseUtil.ExecuteProdOrderCommand(FinalCommand);
         } catch (Exception e) {
             return null;
         }
     }
+
 
 }

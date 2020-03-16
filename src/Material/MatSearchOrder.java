@@ -1,5 +1,6 @@
-package Product;
+package Material;
 
+// from my other packages
 import Main.*;
 
 import javafx.collections.FXCollections;
@@ -7,59 +8,61 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+public class MatSearchOrder {
 
-public class ProdSearchController {
+    // table headers
+    private static final String[] tableHeaders = new String[] {"订单号", "原料名称", "类别", "订单开始日期", "订单结束日期",
+            "付款日期", "到达日期", "发票日期", "发票编号", "规格", "数量", "单价", "签收人", "供应商订单编号", "备注", "供应商"};
 
-    // prod table headers
-    private static final String[] prodHeaders = new String[] {"开始订单日期", "结束订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
-            "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注"};
+    // all property listed
+    private static final String[] propertyHeaders = new String[]{"sku", "name", "type", "orderStartDate", "orderEndDate", "paymentDate",
+            "arrivalDate", "invoiceDate", "invoice", "unitAmount", "amount", "unitPrice", "signed", "skuSeller", "note", "seller"};
+    // all types
+    private static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
-    // all prod property listed
-    private static final String[] prodProperty = new String[]{"OrderDateStart", "OrderDateEnd", "Sku", "Customer", "Name",
-            "UnitAmount", "Amount", "UnitPrice", "Note"};
+    private MainScreen mainScreen;
 
-    @FXML GridPane prodSearchOrderGrid;
-    @FXML Label prodSearchOrderTitle;
-    @FXML Button prodSearchOrderCancelButton;
-    @FXML Button prodSearchOrderCompleteButton;
+    @FXML GridPane MatEditOrderGrid;
+    @FXML Label editOrderTitleLabel;
+    @FXML Button cancelButton;
+    @FXML Button completeButton;
 
-    private MainScreenController mainScreenController;
     Stage currentStage;
-    private ArrayList<Node> prodOrderInputArray;
+    ObservableList<MatSeller> allSeller;
+    ArrayList<Node> inputArrayList;
 
     /**
-     * Called by main controller, pass in the stage for later closing, and init the screen
-     * @param currentStage the current stage so it can be closed
+     * Called by other Main Controller to set stage
+     * @param currentStage stage passed by main controller to close later
+     * @param mainScreen the main screen controller, so this can call back to fill order
      */
-    public void initData(Stage currentStage, MainScreenController mainScreenController) {
+    public void initData(Stage currentStage, MainScreen mainScreen) {
         this.currentStage = currentStage;
-        this.mainScreenController = mainScreenController;
+        this.mainScreen = mainScreen;
         init();
     }
 
-    private void init() {
+    /**
+     * Initialize all the element on the screen
+     */
+    public void init() {
+        editOrderTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        prodSearchOrderTitle.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        cancelButton.setOnAction(actionEvent -> currentStage.close());
 
-        prodSearchOrderGrid.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode().equals(KeyCode.ESCAPE)) currentStage.close();
-        });
-
-        prodSearchOrderCancelButton.setOnAction(actionEvent -> currentStage.close());
-
-        prodSearchOrderCompleteButton.setOnAction(actionEvent -> {
+        completeButton.setOnAction(actionEvent -> {
             try {
-                ObservableList<ProductOrder> newList = searchOrders();
-                mainScreenController.setProdSearchList(newList == null ? FXCollections.observableArrayList() : newList);
+                ObservableList<MatOrder> newList = searchOrders();
+                mainScreen.setMatSearchList(newList == null ? FXCollections.observableArrayList() : newList);
                 currentStage.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -70,18 +73,21 @@ public class ProdSearchController {
             }
         });
 
+
         int row = 1;
         int col = 0;
 
         // setting up all the labels
-        ArrayList<Label> prodOrderLabelArray = new ArrayList<>();
-        for(int i = 0; i < prodHeaders.length; i++) {
-            Label newLabel = new Label(prodHeaders[i]);
+        ArrayList<Label> labelArrayList = new ArrayList<>();
+        for(int i = 0; i < tableHeaders.length; i++) {
+            Label newLabel = new Label(tableHeaders[i]);
             newLabel.setStyle("-fx-font-size: 20px;" +
                     "-fx-alignment: center-right;");
+
+            newLabel.setMaxWidth(Double.MAX_VALUE);
             GridPane.setConstraints(newLabel, col, row++);
-            prodOrderLabelArray.add(newLabel);
-            if ((i + 5) % 4 == 0) {
+            labelArrayList.add(newLabel);
+            if ((i + 7) % 6 == 0) {
                 row = 1;
                 col += 2;
             }
@@ -89,13 +95,42 @@ public class ProdSearchController {
 
         row = 1;
         col = 1;
-
         // setting up all the text field
-        prodOrderInputArray = new ArrayList<>();
-        for(int i = 0; i < prodProperty.length; i++) {
+        inputArrayList = new ArrayList<>();
+        for(int i = 0; i < propertyHeaders.length; i++) {
+
+            // type of mat, combo box
+            if (i == 2) {
+                ComboBox<String> newComboBox = new ComboBox<>();
+                newComboBox.getItems().setAll(matOfType);
+                newComboBox.setMaxWidth(Double.MAX_VALUE);
+                GridPane.setConstraints(newComboBox, col, row++);
+                inputArrayList.add(newComboBox);
+            }
+
+            // seller, combo box
+            else if (i == propertyHeaders.length - 1) {
+                ComboBox<String> sellerComboBox = new ComboBox<>();
+                try {
+                    allSeller = DatabaseUtil.GetAllMatSellers();
+                } catch (SQLException e) {
+                    sellerComboBox.setMaxWidth(Double.MAX_VALUE);
+                    inputArrayList.add(sellerComboBox);
+                    allSeller = FXCollections.observableArrayList();
+                }
+
+                String[] allSellerCompany = new String[allSeller.size()];
+                for (int j = 0; j < allSeller.size(); j++) {
+                    allSellerCompany[j] = allSeller.get(j).getCompanyName();
+                }
+                sellerComboBox.getItems().setAll(allSellerCompany);
+                sellerComboBox.setMaxWidth(Double.MAX_VALUE);
+                GridPane.setConstraints(sellerComboBox, col, row++);
+                inputArrayList.add(sellerComboBox);
+            }
 
             // dates, date picker
-            if (i == 0 || i == 1) {
+            else if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7) {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
                 DatePicker datePicker = new DatePicker();
 
@@ -117,45 +152,48 @@ public class ProdSearchController {
                     }
                 });
 
+
                 GridPane.setConstraints(datePicker, col, row++);
-                prodOrderInputArray.add(datePicker);
+                inputArrayList.add(datePicker);
             }
 
             // regular text field
             else {
                 TextField newTextField = new TextField();
-                newTextField.setPromptText("输入" + prodHeaders[i].replace("\u3000", ""));
+                newTextField.setMaxWidth(Double.MAX_VALUE);
                 GridPane.setConstraints(newTextField, col, row++);
-                prodOrderInputArray.add(newTextField);
+                inputArrayList.add(newTextField);
+
             }
 
-            if ((i + 5) % 4 == 0) {
+            if ((i + 7) % 6 == 0) {
                 row = 1;
                 col += 2;
             }
         }
 
-        prodSearchOrderGrid.setVgap(10);
-        prodSearchOrderGrid.setHgap(10);
-        prodSearchOrderGrid.getChildren().addAll(prodOrderLabelArray);
-        prodSearchOrderGrid.getChildren().addAll(prodOrderInputArray);
+        // * setting up grid properties
+        MatEditOrderGrid.setVgap(10);
+        MatEditOrderGrid.setHgap(10);
+        MatEditOrderGrid.getChildren().addAll(labelArrayList);
+        MatEditOrderGrid.getChildren().addAll(inputArrayList);
     }
 
     /**
      * Generate a command, use database function to execute
      * @return the new list
      */
-    private ObservableList<ProductOrder> searchOrders() {
-        String FinalCommand = "SELECT * FROM productManagement WHERE ";
+    private ObservableList<MatOrder> searchOrders() {
+        String FinalCommand = "SELECT * FROM materialManagement WHERE ";
         ArrayList<String> SQLCommand = new ArrayList<>();
 
-        for (int i = 0; i < prodOrderInputArray.size(); i++) {
+        for (int i = 0; i < inputArrayList.size(); i++) {
             // orderDate start
-            if (i == 0) {
+            if (i == 3) {
                 // order date year
 
-                DatePicker startDate = (DatePicker) prodOrderInputArray.get(i);
-                DatePicker endDate = (DatePicker) prodOrderInputArray.get(i + 1);
+                DatePicker startDate = (DatePicker) inputArrayList.get(i);
+                DatePicker endDate = (DatePicker) inputArrayList.get(i + 1);
 
                 try {
                     if (startDate.getValue() == null && endDate.getValue() != null) {
@@ -210,14 +248,38 @@ public class ProdSearchController {
                 catch (NullPointerException ignored) { }
             }
             // orderDate end, skip
-            else if (i == 1) {
+            else if (i == 4) {
                 continue;
+            }
+            // other dates
+            else if (i == 5 || i == 6 || i == 7) {
+                if (((DatePicker) inputArrayList.get(i)).getValue() != null) {
+                    SQLCommand.add(String.format("%s = '%s'", propertyHeaders[i] + "Year", ((DatePicker) inputArrayList.get(i)).getValue().getYear()));
+                    SQLCommand.add(String.format("%s = '%s'", propertyHeaders[i] + "Month", ((DatePicker) inputArrayList.get(i)).getValue().getMonthValue()));
+                    SQLCommand.add(String.format("%s = '%s'", propertyHeaders[i] + "Day", ((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+                }
+            }
+            // combo box mat type
+            else if (i == 2) {
+                try {
+                    if (!((ComboBox) inputArrayList.get(i)).getValue().toString().equals(""))
+                        SQLCommand.add(String.format("%s = '%s'", "type", ((ComboBox) inputArrayList.get(i)).getValue().toString()));
+                } catch (Exception ignored) {}
+            }
+            else if (i == inputArrayList.size() - 1) {
+                try {
+                    String companyName = ((ComboBox) inputArrayList.get(i)).getValue().toString();
+                    for (MatSeller seller: allSeller) {
+                        if (seller.getCompanyName().equals(companyName))
+                            SQLCommand.add(String.format("%s = '%s'", "sellerId", seller.getSellerId()));
+                    }
+                } catch (Exception ignored) {}
             }
             // string/numbers
             else {
-                String value = ((TextField) prodOrderInputArray.get(i)).getText();
+                String value = ((TextField) inputArrayList.get(i)).getText();
                 if (!value.equals("")) {
-                    SQLCommand.add(String.format("%s = '%s'", prodProperty[i], value));
+                    SQLCommand.add(String.format("%s = '%s'", propertyHeaders[i], value));
                 }
             }
         }
@@ -236,11 +298,10 @@ public class ProdSearchController {
         }
 
         try {
-            return DatabaseUtil.ExecuteProdOrderCommand(FinalCommand);
+            return DatabaseUtil.ExecuteMatOrderCommand(FinalCommand);
         } catch (Exception e) {
             return null;
         }
     }
-
 
 }
