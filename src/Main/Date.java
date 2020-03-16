@@ -47,6 +47,13 @@ public class Date {
 			return String.format("%d/%d/%d", y, m, d);
 	}
 
+	public String toStringWithoutSlash() {
+		if (this.y < 2000 || this.y > 2099 || this.m < 1 || this.m > 12 || this.d < 1 || this.d > 31)
+			return "";
+		else
+			return String.format("%d-%d-%d", y, m, d);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Date) return ((Date) o).y == y && ((Date) o).m == m && ((Date) o).d == d;
