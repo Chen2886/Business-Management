@@ -15,6 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -55,6 +56,9 @@ public class ProdFormula {
         init();
     }
 
+    /**
+     * Initialize everything on the screen
+     */
     private void init() {
 
         if (selectedOrder.getFormulaFile().equals("")) {
@@ -91,6 +95,9 @@ public class ProdFormula {
                     error.WriteToLog();
                 }
             });
+
+            saveNewButton.setOnAction(event -> saveNewFormula());
+
         } else {
             // TODO: formula given, populate table
         }
@@ -253,6 +260,25 @@ public class ProdFormula {
         formulaItem.setTotalPrice();
         if (!empty) addItemToList(formulaItem);
         for(TextField textField : inputArray) textField.clear();
+    }
+
+    /**
+     * Save the new formula
+     */
+    private void saveNewFormula() {
+
+        // try to create folder
+        String folder = selectedOrder.getName() + '-' + selectedOrder.getOrderDate().toStringWithoutSlash() + '-' + selectedOrder.getSerialNum();
+        System.out.println("./Formula/" + folder);
+        File file = new File("Formula/" + folder);
+        boolean dirSuccess = file.mkdir();
+
+        if (dirSuccess) {
+            // creation successful
+        }
+        else {
+            // creation failed, folder probably already exists
+        }
     }
 
 }
