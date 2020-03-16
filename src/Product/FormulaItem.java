@@ -5,12 +5,17 @@ public class FormulaItem {
     private double amount;
     private double unitPrice;
     private double totalPrice;
+    private FormulaItem formula;
 
     public FormulaItem(String itemName, double amount, double unitPrice) {
         this.itemName = itemName;
         this.amount = amount;
         this.unitPrice = unitPrice;
         this.totalPrice = amount * unitPrice;
+    }
+
+    public FormulaItem(FormulaItem formula) {
+        this.formula = formula;
     }
 
     public String getItemName() {
@@ -27,6 +32,7 @@ public class FormulaItem {
 
     public void setAmount(double amount) {
         this.amount = amount;
+        setTotalPrice();
     }
 
     public double getUnitPrice() {
@@ -35,6 +41,7 @@ public class FormulaItem {
 
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
+        setTotalPrice();
     }
 
     public double getTotalPrice() {
@@ -43,5 +50,18 @@ public class FormulaItem {
 
     public void setTotalPrice() {
         this.totalPrice = amount * unitPrice;
+    }
+
+    public FormulaItem getFormula() {
+        return formula;
+    }
+
+    public void setFormula(FormulaItem formula) {
+        this.formula = formula;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%f,%f,%f", itemName, amount, unitPrice, totalPrice);
     }
 }
