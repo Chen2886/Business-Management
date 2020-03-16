@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.ResourceBundle;
 
 
-public class MainScreenController implements Initializable {
+public class MainScreen implements Initializable {
 
 	// mat table headers
 	private static final String[] matHeaders = new String[] {"订单日期", "订单号", "原料名称", "类别",  "付款日期",
@@ -367,8 +367,8 @@ public class MainScreenController implements Initializable {
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-			MatAddOrderModifySellerController matAddOrderModifySellerController = loader.getController();
-			matAddOrderModifySellerController.initData(stage);
+			MatAddOrderModifySeller matAddOrderModifySeller = loader.getController();
+			matAddOrderModifySeller.initData(stage);
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加订单");
@@ -396,8 +396,8 @@ public class MainScreenController implements Initializable {
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-			ProdAddOrderController prodAddOrderController = loader.getController();
-			prodAddOrderController.initData(stage);
+			ProdAddOrder prodAddOrder = loader.getController();
+			prodAddOrder.initData(stage);
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加产品");
@@ -426,7 +426,7 @@ public class MainScreenController implements Initializable {
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-			MatEditOrderController editOrderController = loader.getController();
+			MatEditOrder editOrderController = loader.getController();
 			editOrderController.initData(selectedOrder, stage);
 
 			stage.initModality(Modality.APPLICATION_MODAL);
@@ -456,8 +456,8 @@ public class MainScreenController implements Initializable {
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-			ProdEditOrderController prodEditOrderController = loader.getController();
-			prodEditOrderController.initData(selectedOrder, stage);
+			ProdEditOrder prodEditOrder = loader.getController();
+			prodEditOrder.initData(selectedOrder, stage);
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("编辑订单");
@@ -527,8 +527,8 @@ public class MainScreenController implements Initializable {
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-			MatSearchOrderController matSearchOrderController = loader.getController();
-			matSearchOrderController.initData(stage, this);
+			MatSearchOrder matSearchOrder = loader.getController();
+			matSearchOrder.initData(stage, this);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("搜索订单");
 			stage.setScene(new Scene(newScene));
@@ -551,8 +551,8 @@ public class MainScreenController implements Initializable {
 			Parent newScene = loader.load();
 			Stage stage = new Stage();
 
-			ProdSearchController prodSearchController = loader.getController();
-			prodSearchController.initData(stage, this);
+			ProdSearchOrder prodSearchOrder = loader.getController();
+			prodSearchOrder.initData(stage, this);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("搜索产品");
 			stage.setScene(new Scene(newScene));

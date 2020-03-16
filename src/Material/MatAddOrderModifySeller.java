@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class MatAddOrderModifySellerController {
+public class MatAddOrderModifySeller {
 
 	// table headers
 	private static final String[] tableHeaders = new String[] {"订单日期", "订单号", "原料名称", "类别", "付款日期",

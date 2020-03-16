@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class ProdEditOrderController {
+public class ProdEditOrder {
 
     // prod table headers
     private static final String[] prodHeaders = new String[] {"订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
