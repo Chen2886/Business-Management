@@ -484,14 +484,14 @@ public class MatAddOrderModifySeller {
 		for (MatSeller seller : allMatSeller) {
 			if (seller.getCompanyName().equals(CompanyName)) return seller;
 		}
-		return new MatSeller(MatSellerId.getMatSellerId(), "NOT FOUND");
+		return new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "NOT FOUND");
 	}
 
 	/**
 	 * Obtain all the new information, add order, and push it to database
 	 */
 	private void addOrder() {
-		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
+		MatOrder newOrder = new MatOrder(SerialNum.getSerialNum(DBOrder.MAT), "");
 		int i = 0;
 
 		try {
@@ -509,9 +509,11 @@ public class MatAddOrderModifySeller {
 		String nameOfMat = ((TextField) matOrderInputArray.get(i++)).getText();
 		newOrder.setName(nameOfMat);
 
-		if (sku.equals("") || nameOfMat.equals("")) {
-			if (ConfirmBox.display("数据错误","没有输入数据，结束输入？", "是", "否" )) currentStage.close();
-			else return;
+		if (sku.equals("") && nameOfMat.equals("")) {
+			if (ConfirmBox.display("数据错误","没有输入数据，结束输入？", "是", "否" )) {
+				currentStage.close();
+			}
+			return;
 		}
 
 		// mat type
@@ -587,7 +589,7 @@ public class MatAddOrderModifySeller {
 	 * Obtain all the new information, add order, and push it to database
 	 */
 	private void continueOrder() {
-		MatOrder newOrder = new MatOrder(MatSerialNum.getMatSerialNum(), "");
+		MatOrder newOrder = new MatOrder(SerialNum.getSerialNum(DBOrder.MAT), "");
 		int i = 0;
 
 		try {
@@ -605,7 +607,12 @@ public class MatAddOrderModifySeller {
 		String nameOfMat = ((TextField) matOrderInputArray.get(i++)).getText();
 		newOrder.setName(nameOfMat);
 
-		if (sku.equals("") && nameOfMat.equals("")) currentStage.close();
+		if (sku.equals("") && nameOfMat.equals("")) {
+			if (ConfirmBox.display("数据错误","没有输入数据，结束输入？", "是", "否" )) {
+				currentStage.close();
+			}
+			return;
+		}
 
 		// mat type
 		try {
@@ -681,7 +688,7 @@ public class MatAddOrderModifySeller {
 	 * Obtain all the new seller information, add seller, and push it to database
 	 */
 	private void addSeller(boolean cont) {
-		MatSeller newSeller = new MatSeller(MatSellerId.getMatSellerId(), "");
+		MatSeller newSeller = new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "");
 		Method setter;
 
 		for (TextField textField : matAddSellerInputArray) {

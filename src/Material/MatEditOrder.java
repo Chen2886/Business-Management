@@ -329,7 +329,7 @@ public class MatEditOrder {
 		for (MatSeller seller : allSeller) {
 			if (seller.getCompanyName().equals(CompanyName)) return seller;
 		}
-		return new MatSeller(MatSellerId.getMatSellerId(), "NOT FOUND");
+		return new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "NOT FOUND");
 	}
 
 }

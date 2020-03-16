@@ -144,7 +144,7 @@ public class ProdAddOrder {
     }
 
     private void addOrder(boolean cont) {
-        ProductOrder newOrder = new ProductOrder(ProdSerialNum.getProdSerialNum());
+        ProductOrder newOrder = new ProductOrder(SerialNum.getSerialNum(DBOrder.PROD));
         Method setter;
 
         for (int i = 0; i < prodOrderInputArray.size(); i++) {

@@ -1,8 +1,6 @@
 package Main;
 
 // from my other packages
-import Material.*;
-import Product.*;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -26,9 +24,7 @@ public class Main extends Application {
 			System.exit(1);
 		}
 
-		MatSerialNum.initMatSerialNum();
-		MatSellerId.initMatSellerId();
-		ProdSerialNum.initProdSerialNum();
+		SerialNum.initSerialNum();
 
 		launch(args);
 	}

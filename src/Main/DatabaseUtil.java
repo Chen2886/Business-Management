@@ -1,7 +1,6 @@
 package Main;
 
 // from my other packages
-import Main.*;
 import Material.*;
 import Product.*;
 
@@ -13,6 +12,30 @@ import java.sql.*;
 public class DatabaseUtil {
     private static String dataBaseLocationFile = "jdbc:sqlite:BusinessCashFlow.db";
     private static Connection connection;
+
+    /**
+     * Gets the largest serial num in existence in the database
+     */
+    public static int GetNewestSerialNum(String tableName) throws SQLException {
+        try {
+            ConnectToDB();
+            Statement statement = connection.createStatement();
+            if (tableName.equals("seller")) {
+                ResultSet resultSet = statement.executeQuery(String.format("SELECT max(sellerId) FROM [%s]", tableName));
+                return resultSet.getInt("max(sellerId)");
+            } else {
+                ResultSet resultSet = statement.executeQuery(String.format("SELECT max(serialNum) FROM [%s]", tableName));
+                return resultSet.getInt("max(serialNum)");
+            }
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
 
     /**
      * If DB does not exists, create DB
@@ -103,23 +126,22 @@ public class DatabaseUtil {
 
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             ResultSet resultSet = databaseMetaData.getTables(null, null, "materialManagement", null);
+
             int numOfTable = 0;
-            // TODO: add more tables
             while (resultSet.next()) {
-                if ("materialManagement".equals(resultSet.getString("TABLE_NAME"))) {
-                    numOfTable++;
-                } else if ("seller".equals(resultSet.getString("TABLE_NAME"))) {
-                    numOfTable++;
-                } else if ("productManagement".equals(resultSet.getString("TABLE_NAME"))) {
-                    numOfTable++;
-                }
+                if ("materialManagement".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
+                else if ("seller".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
+                else if ("productManagement".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
+                else if ("formulaFile".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
             }
-            if (numOfTable == 3) {
+
+            if (numOfTable == 4) {
                 CloseConnectionToDB();
             } else {
                 CreateNewTable("materialManagement");
                 CreateNewTable("seller");
                 CreateNewTable("productManagement");
+                CreateNewTable("formulaFile");
             }
         } catch (SQLException e) {
             HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -207,6 +229,12 @@ public class DatabaseUtil {
                         "unitPrice  	REAL			,\n" +
                         "basePrice  	REAL			,\n" +
                         "formulaFile    TEXT			\n" +
+                        ");";
+            } else if (tableName.equals("formulaFile")) {
+                SQLCommand = "CREATE TABLE IF NOT EXISTS [formulaFile] (\n" +
+                        "serialNum	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
+                        "name       	TEXT    NOT NULL,\n" +
+                        "fileName       TEXT			 \n" +
                         ");";
             }
             statement.execute(SQLCommand);
