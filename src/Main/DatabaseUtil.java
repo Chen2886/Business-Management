@@ -132,16 +132,18 @@ public class DatabaseUtil {
                 if ("materialManagement".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
                 else if ("seller".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
                 else if ("productManagement".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
-                else if ("formulaFile".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
+                else if ("formula".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
+                else if ("newestFormula".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
             }
 
-            if (numOfTable == 4) {
+            if (numOfTable == 5) {
                 CloseConnectionToDB();
             } else {
                 CreateNewTable("materialManagement");
                 CreateNewTable("seller");
                 CreateNewTable("productManagement");
-                CreateNewTable("formulaFile");
+                CreateNewTable("formula");
+                CreateNewTable("newestFormula");
             }
         } catch (SQLException e) {
             HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -228,12 +230,17 @@ public class DatabaseUtil {
                         "amount 		REAL			,\n" +
                         "unitPrice  	REAL			,\n" +
                         "basePrice  	REAL			,\n" +
-                        "formulaFile    BLOB			\n" +
+                        "formulaIndex   INTEGER			\n" +
                         ");";
-            } else if (tableName.equals("formulaFile")) {
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [formulaFile] (\n" +
-                        "name	 	    TEXT	PRIMARY KEY	NOT NULL,\n" +
+            } else if (tableName.equals("formula")) {
+                SQLCommand = "CREATE TABLE IF NOT EXISTS [formula] (\n" +
+                        "serialNum	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
                         "formula        BLOB			 \n" +
+                        ");";
+            } else if (tableName.equals("newestFormula")) {
+                SQLCommand = "CREATE TABLE IF NOT EXISTS [newestFormula] (\n" +
+                        "name   	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
+                        "formulaIndex   INTEGER			 \n" +
                         ");";
             }
             statement.execute(SQLCommand);
@@ -259,6 +266,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return true;
         } catch (SQLException e) {
+
             HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
@@ -440,7 +448,7 @@ public class DatabaseUtil {
                 newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
                 newOrder.setBasePrice(resultSet.getDouble("basePrice"));
                 newOrder.setTotalPrice();
-                newOrder.setFormula((Formula) resultSet.getObject("formulaFile"));
+                newOrder.setFormulaIndex(resultSet.getInt("formulaIndex"));
 
                 // adding order
                 orderObservableList.add(newOrder);
@@ -642,7 +650,7 @@ public class DatabaseUtil {
             ConnectToDB();
             String SQLCommand = "INSERT INTO [productManagement] (sku, name, customer, " +
                     "orderDateYear, orderDateMonth, orderDateDay, unitAmount, amount, unitPrice, " +
-                    "basePrice, formulaFile, note, serialNum) " +
+                    "basePrice, formulaIndex, note, serialNum) " +
                     "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setString(1, order.getSku());
@@ -655,7 +663,7 @@ public class DatabaseUtil {
             preparedStatement.setDouble(8, order.getAmount());
             preparedStatement.setDouble(9, order.getUnitPrice());
             preparedStatement.setDouble(10, order.getBasePrice());
-            preparedStatement.setObject(11, order.getFormula());
+            preparedStatement.setInt(11, order.getFormulaIndex());
             preparedStatement.setString(12, order.getNote() == null ? "" : order.getNote());
             preparedStatement.setInt(13, order.getSerialNum());
             preparedStatement.executeUpdate();
@@ -794,7 +802,7 @@ public class DatabaseUtil {
             ConnectToDB();
             String SQLCommand = "UPDATE productManagement SET sku = ?, name = ?, customer = ?, " +
                     "orderDateYear = ?, orderDateMonth = ?, orderDateDay = ?, unitAmount = ?, amount = ?, unitPrice = ?, " +
-                    "basePrice = ?, formulaFile = ?, note = ? WHERE serialNum = ?";
+                    "basePrice = ?, formulaIndex = ?, note = ? WHERE serialNum = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setString(1, order.getSku());
             preparedStatement.setString(2, order.getName());
@@ -806,7 +814,7 @@ public class DatabaseUtil {
             preparedStatement.setDouble(8, order.getAmount());
             preparedStatement.setDouble(9, order.getUnitPrice());
             preparedStatement.setDouble(10, order.getBasePrice());
-            preparedStatement.setObject(11, order.getFormula());
+            preparedStatement.setInt(11, order.getFormulaIndex());
             preparedStatement.setString(12, order.getNote() == null ? "" : order.getNote());
             preparedStatement.setInt(13, order.getSerialNum());
             preparedStatement.executeUpdate();
@@ -979,7 +987,7 @@ public class DatabaseUtil {
                 newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
                 newOrder.setBasePrice(resultSet.getDouble("basePrice"));
                 newOrder.setTotalPrice();
-                newOrder.setFormula((Formula) resultSet.getObject("formulaFile"));
+                newOrder.setFormulaIndex(resultSet.getInt("formulaIndex"));
 
                 // adding order
                 orderObservableList.add(newOrder);
@@ -996,33 +1004,24 @@ public class DatabaseUtil {
         }
     }
 
-    public static void UpdateNewstFormula(String name, Formula formula) throws SQLException {
+    public static Formula GetFormulaByIndex(int index) throws SQLException {
+        String SQLCommand = "SELECT formula FROM formula WHERE serialNum = ?";
         try {
             ConnectToDB();
-            String SQLCommand = "INSERT INTO [formulaFile] (name, formula) VALUES(?,?,?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-            preparedStatement.setString(1, name);
-            preparedStatement.setObject(2, formula);
-            preparedStatement.executeUpdate();
-            CloseConnectionToDB();
-        } catch (SQLException e) {
 
-            try {
-                ConnectToDB();
-                String SQLCommand = "UPDATE [formulaFile] set formula = ? WHERE name = ?";
-                PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-                preparedStatement.setObject(1, formula);
-                preparedStatement.setString(2, name);
-                preparedStatement.executeUpdate();
-                CloseConnectionToDB();
-            } catch (SQLException f) {
-                HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                        f.getMessage(), f.getStackTrace(), false);
-                error.WriteToLog();
-                throw new SQLException();
-            } finally {
-                CloseConnectionToDB();
-            }
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, index);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            Formula formula = (Formula) resultSet.getObject(1);
+            CloseConnectionToDB();
+            return formula;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
         } finally {
             CloseConnectionToDB();
         }
