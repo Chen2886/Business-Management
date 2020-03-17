@@ -4,25 +4,30 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="475.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdFormula">
-    <Label fx:id="prodFormulaTitleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" text="配方" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+<AnchorPane prefHeight="900" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdFormula">
+    <Label fx:id="prodFormulaTitleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="配方系统" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <font>
             <Font size="30.0" />
         </font>
     </Label>
-    <TableView fx:id="formulaItemTable" layoutX="192.0" layoutY="54.0" prefHeight="154.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="47.0">
+    <Label fx:id="itemTitle" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="无配方原料" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="60.0">
+        <font>
+            <Font size="26.0" />
+        </font>
+    </Label>
+    <TableView fx:id="formulaItemTable" layoutX="192.0" layoutY="54.0" prefHeight="300.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="105.0">
     </TableView>
-    <TableView fx:id="formulaTable" layoutX="192.0" layoutY="208.0" prefHeight="154.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="47.0">
+    <Label fx:id="formulaTitle" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="配方原料" textAlignment="CENTER" AnchorPane.bottomAnchor="425" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <font>
+            <Font size="26.0" />
+        </font>
+    </Label>
+    <TableView fx:id="formulaTable" layoutX="192.0" layoutY="208.0" prefHeight="300.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
     </TableView>
-    <HBox fx:id="infoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="365.0">
+    <HBox fx:id="infoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" >
     </HBox>
     <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="421.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
         <children>
-            <Button fx:id="addFormulaButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="添加原料" textAlignment="RIGHT">
-                <font>
-                    <Font size="18.0" />
-                </font>
-            </Button>
             <Button fx:id="saveButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="保存" textAlignment="RIGHT">
                 <font>
                     <Font size="18.0" />

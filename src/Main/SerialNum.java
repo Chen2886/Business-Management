@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class SerialNum {
 
     private static int[] serialNum;
-    private static String[] tableNames = {"materialManagement", "productManagement", "seller", "formulaFile"};
+    private static String[] tableNames = {"materialManagement", "productManagement", "seller", "formula"};
 
     /**
      * called when program first start, make sure file exists.
