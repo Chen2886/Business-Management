@@ -5,14 +5,10 @@ import Main.ConfirmBox;
 import Main.DatabaseUtil;
 import Main.HandleError;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -20,8 +16,6 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 public class ProdFormula implements Serializable {
 
@@ -31,7 +25,7 @@ public class ProdFormula implements Serializable {
 
     @FXML Button cancelButton;
     @FXML Button saveButton;
-
+    @FXML Button saveNewButton;
     @FXML TableView<Formula> formulaTable;
     @FXML TableView<FormulaItem> formulaItemTable;
     @FXML HBox infoHBox;
@@ -45,6 +39,7 @@ public class ProdFormula implements Serializable {
     Stage currentStage;
     ProductOrder selectedOrder;
     Formula formula;
+    boolean isNewFormula;
 
     /**
      * Called by main controller to give the selected order
@@ -58,9 +53,18 @@ public class ProdFormula implements Serializable {
 
         // getting current formula
         try {
+
+            // if this is a product that doesn't have existing formula
             if (selectedOrder.getFormulaIndex() != -1)
                 formula = DatabaseUtil.GetFormulaByIndex(selectedOrder.getFormulaIndex());
-            else formula = null;
+            else {
+                if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName())) {
+                    int newIndex = DatabaseUtil.GetNewestFormulaIndex(selectedOrder.getName());
+                    formula = DatabaseUtil.GetFormulaByIndex(newIndex);
+                    selectedOrder.setFormulaIndex(newIndex);
+                    DatabaseUtil.UpdateProdOrder(selectedOrder);
+                } else formula = null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -87,9 +91,14 @@ public class ProdFormula implements Serializable {
             if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
                 currentStage.close();
         });
+        saveNewButton.setOnAction(event -> saveNewFormula());
+        saveButton.setOnAction(event -> saveFormula());
 
         if (formula == null) {
             formula = new Formula(selectedOrder.getName());
+            isNewFormula = true;
+        } else {
+            isNewFormula = false;
         }
 
     }
@@ -349,6 +358,52 @@ public class ProdFormula implements Serializable {
         formulaItem.setTotalPrice();
         if (!empty) addItemToList(formulaItem);
         for(TextField textField : inputArray) textField.clear();
+    }
+
+    /**
+     * Save the formula to the selected order, and push formula to database
+     */
+    private void saveNewFormula() {
+        try {
+            int index = DatabaseUtil.AddFormula(formula);
+            selectedOrder.setFormulaIndex(index);
+            DatabaseUtil.UpdateProdOrder(selectedOrder);
+
+            if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName()))
+                DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), index);
+            else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), index);
+
+            currentStage.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
+    }
+
+    /**
+     * Save the formula to the selected order, and push formula to database
+     */
+    private void saveFormula() {
+        if (isNewFormula) {
+            AlertBox.display("错误", "没有已存在的配方，选择另存为");
+            return;
+        }
+        try {
+            DatabaseUtil.UpdateFormula(formula, selectedOrder.getFormulaIndex());
+
+            if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName()))
+                DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), selectedOrder.getFormulaIndex());
+            else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), selectedOrder.getFormulaIndex());
+
+            currentStage.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
     }
 
 }
