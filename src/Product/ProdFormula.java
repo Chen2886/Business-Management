@@ -83,6 +83,10 @@ public class ProdFormula implements Serializable {
         initItemTable();
         initFormulaTable();
         initInfoHBox();
+        cancelButton.setOnAction(event -> {
+            if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
+                currentStage.close();
+        });
 
         if (formula == null) {
             formula = new Formula(selectedOrder.getName());
