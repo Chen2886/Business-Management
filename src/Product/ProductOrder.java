@@ -22,7 +22,7 @@ public class ProductOrder {
     private double totalPrice;  //总价
     private double basePrice; //成本价
 
-    private String formulaFile;
+    private Formula formula;
 
     public ProductOrder(int serialNum) {
         this.serialNum = serialNum;
@@ -35,7 +35,7 @@ public class ProductOrder {
         this.amount = 0.0;
         this.unitPrice = 0.0;
         this.basePrice = 0.0;
-        this.formulaFile = "";
+        this.formula = null;
         setKgAmount();
         setTotalPrice();
     }
@@ -136,12 +136,12 @@ public class ProductOrder {
         this.totalPrice = kgAmount * unitPrice;
     }
 
-    public String getFormulaFile() {
-        return formulaFile;
+    public Formula getFormula() {
+        return formula;
     }
 
-    public void setFormulaFile(String formulaFile) {
-        this.formulaFile = formulaFile;
+    public void setFormula(Formula formula) {
+        this.formula = formula;
     }
 
     /**
@@ -161,7 +161,7 @@ public class ProductOrder {
         returnVal = addFormat(String.valueOf(getKgAmount()), returnVal);
         returnVal = addFormat(String.valueOf(unitPrice), returnVal);
         returnVal = addFormat(String.valueOf(getTotalPrice()), returnVal);
-        returnVal = addFormat(formulaFile, returnVal);
+        returnVal = addFormat(formula.toString(), returnVal);
 
         return returnVal;
     }

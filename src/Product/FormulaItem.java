@@ -1,35 +1,21 @@
 package Product;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 
-public class FormulaItem {
+public class FormulaItem implements Serializable {
+
+    private Formula parent;
     private String itemName;
     private double amount;
     private double unitPrice;
     private double totalPrice;
-    private ArrayList<FormulaItem> formula;
 
-    public FormulaItem() {
-        this("");
+    public Formula getParent() {
+        return parent;
     }
 
-    public FormulaItem(String itemName) {
-        this(itemName, 0);
-    }
-
-    public FormulaItem(String itemName, double amount) {
-        this(itemName, amount, 0);
-    }
-
-    public FormulaItem(String itemName, double amount, double unitPrice) {
-        this.itemName = itemName;
-        this.amount = amount;
-        this.unitPrice = unitPrice;
-        this.totalPrice = amount * unitPrice;
-    }
-
-    public FormulaItem(ArrayList<FormulaItem> formula) {
-        this.formula = formula;
+    public void setParent(Formula parent) {
+        this.parent = parent;
     }
 
     public String getItemName() {
@@ -46,7 +32,6 @@ public class FormulaItem {
 
     public void setAmount(double amount) {
         this.amount = amount;
-        setTotalPrice();
     }
 
     public double getUnitPrice() {
@@ -55,7 +40,6 @@ public class FormulaItem {
 
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
-        setTotalPrice();
     }
 
     public double getTotalPrice() {
@@ -66,16 +50,19 @@ public class FormulaItem {
         this.totalPrice = amount * unitPrice;
     }
 
-    public ArrayList<FormulaItem> getFormula() {
-        return formula;
+    /**
+     * Given a formula item, convert to a formula object
+     * @param formulaItem the item that needs to be converted
+     * @return a formula object that has all the information
+     */
+    public static Formula convertToFormula(FormulaItem formulaItem) {
+        Formula returnVal = new Formula();
+        returnVal.setAmount(formulaItem.getAmount());
+        returnVal.setUnitPrice(formulaItem.getUnitPrice());
+        returnVal.setTotalPrice();
+        returnVal.setFormulaName(formulaItem.getItemName());
+        returnVal.setFolderPath(formulaItem.getParent().getFolderPath());
+        return returnVal;
     }
 
-    public void setFormula(ArrayList<FormulaItem> formula) {
-        this.formula = formula;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s,%f,%f,%f", itemName, amount, unitPrice, totalPrice);
-    }
 }
