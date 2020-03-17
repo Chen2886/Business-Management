@@ -10,7 +10,9 @@
             <Font size="30.0" />
         </font>
     </Label>
-    <TableView fx:id="prodFormulaTable" layoutX="192.0" layoutY="54.0" prefHeight="308.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="47.0">
+    <TableView fx:id="formulaItemTable" layoutX="192.0" layoutY="54.0" prefHeight="154.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="47.0">
+    </TableView>
+    <TableView fx:id="formulaTable" layoutX="192.0" layoutY="208.0" prefHeight="154.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="47.0">
     </TableView>
     <HBox fx:id="infoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="365.0">
     </HBox>
