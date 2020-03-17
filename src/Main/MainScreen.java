@@ -196,7 +196,7 @@ public class MainScreen implements Initializable {
 				TableColumn<MatOrder, Date> newColumn = new TableColumn<>(matHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
-				newColumn.setMinWidth(100);
+				newColumn.setMinWidth(110);
 				orderColumnArrayList.add(newColumn);
 			} else if (i == 13) {
 				// signed by increase column width
@@ -266,7 +266,6 @@ public class MainScreen implements Initializable {
 		});
 	}
 
-	// TODO: fix the parameter
 	/**
 	 * Filling of the product table
 	 * @param selectedProdOrders the orders specified
@@ -282,19 +281,19 @@ public class MainScreen implements Initializable {
 
 		// loop to set up all regular columns
 		for (int i = 0; i < prodHeaders.length; i++) {
-			if (i == 4 || i == 5 || i == 6 || i == 7 || i == 8) {
+			if (i == 4 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9) {
 				// Doubles
 				TableColumn<ProductOrder, Double> newColumn = new TableColumn<>(prodHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(prodProperty[i]));
 				newColumn.setStyle( "-fx-alignment: CENTER;");
 				newColumn.setMinWidth(100);
 				productColumnArrayList.add(newColumn);
-			} else if (i == 3) {
+			} else if (i == 0) {
 				// Main.Date
 				TableColumn<ProductOrder, Date> newColumn = new TableColumn<>(prodHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(prodProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
-				newColumn.setMinWidth(100);
+				newColumn.setMinWidth(110);
 				productColumnArrayList.add(newColumn);
 			} else {
 				// String

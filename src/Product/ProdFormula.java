@@ -25,13 +25,12 @@ import java.util.GregorianCalendar;
 
 public class ProdFormula implements Serializable {
 
-    private static String[] propertyMethodName = new String[]{"ItemName", "Amount", "UnitPrice", "TotalPrice"};
-    private static String[] property = new String[]{"itemName", "amount", "unitPrice", "totalPrice"};
+    private static String[] propertyMethodName = new String[]{"Name", "Amount", "UnitPrice", "TotalPrice"};
+    private static String[] property = new String[]{"name", "amount", "unitPrice", "totalPrice"};
     private static String[] header = new String[]{"原料名称", "数量", "单价", "金额"};
 
     @FXML Button cancelButton;
     @FXML Button saveButton;
-    @FXML Button saveNewButton;
 
     @FXML TableView<Formula> formulaTable;
     @FXML TableView<FormulaItem> formulaItemTable;
@@ -82,78 +81,19 @@ public class ProdFormula implements Serializable {
     private void init() {
 
         initItemTable();
+        initFormulaTable();
+        initInfoHBox();
+
+        if (formula == null) {
+            formula = new Formula(selectedOrder.getName());
+        }
 
     }
 
     /**
-     * Initialize the item table and the HBox
+     * Initialize info hbox
      */
-    private void initItemTable() {
-
-        // init table
-        // setting up first action column
-        TableColumn<FormulaItem, String> actionColumn = new TableColumn<>("动作");
-        actionColumn.setSortable(false);
-        itemColumnList.add(actionColumn);
-
-        // loop to set up all regular columns
-        for (int i = 0; i < property.length; i++) {
-            if (i == 1 || i == 2 || i == 3) {
-                // Doubles
-                TableColumn<FormulaItem, Double> newColumn = new TableColumn<>(header[i]);
-                newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
-                newColumn.setStyle("-fx-alignment: CENTER;");
-                newColumn.setMinWidth(100);
-                itemColumnList.add(newColumn);
-            } else {
-                // String
-                TableColumn<FormulaItem, String> newColumn = new TableColumn<>(header[i]);
-                newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
-                newColumn.setStyle("-fx-alignment: CENTER;");
-                newColumn.setMinWidth(100);
-                itemColumnList.add(newColumn);
-            }
-        }
-
-        // Setting a call back to handle the first column of action buttons
-        Callback<TableColumn<FormulaItem, String>, TableCell<FormulaItem, String>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<FormulaItem, String> call(TableColumn<FormulaItem, String> formulaItem) {
-                TableCell<FormulaItem, String> cell = new TableCell<>() {
-                    // define new buttons
-                    Button edit = new Button("查看/编辑");
-                    Button delete = new Button("删除");
-                    HBox actionButtons = new HBox(edit, delete);
-
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            delete.setOnAction(event -> {
-                                if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
-                                    removeItemFromList(getTableView().getItems().get(getIndex()));
-                            });
-
-                            edit.getStyleClass().add("actionButtons");
-                            delete.getStyleClass().add("actionButtons");
-                            actionButtons.setSpacing(5);
-                            actionButtons.setAlignment(Pos.CENTER);
-                            setGraphic(actionButtons);
-                        }
-                        setText(null);
-                    }
-                };
-                return cell;
-            }
-        };
-
-        actionColumn.setCellFactory(cellFactory);
-
-        formulaItemTable.getColumns().setAll(itemColumnList);
-        if (formula != null) formulaItemTable.getItems().setAll(formula.getSimpleItemList());
-
+    private void initInfoHBox() {
         // populating the info hbox
         inputArray = new ArrayList<>();
         for (String s : header) {
@@ -176,18 +116,167 @@ public class ProdFormula implements Serializable {
 
         // auto price
         TextField totalPrice = inputArray.get(inputArray.size() - 1);
-        totalPrice.setOnKeyTyped(event -> {
-            try {
-                totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
-                        Double.parseDouble(inputArray.get(2).getText())));
-            } catch (Exception ignored) {}
-        });
-        totalPrice.setOnMouseClicked(event -> {
-            try {
-                totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
-                        Double.parseDouble(inputArray.get(2).getText())));
-            } catch (Exception ignored) {}
-        });
+        for (int i = 1; i < inputArray.size(); i++) {
+            TextField textField = inputArray.get(i);
+            textField.setOnKeyTyped(event -> {
+                try {
+                    totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
+                            Double.parseDouble(inputArray.get(2).getText())));
+                } catch (Exception ignored) {}
+            });
+            textField.setOnMouseClicked(event -> {
+                try {
+                    totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
+                            Double.parseDouble(inputArray.get(2).getText())));
+                } catch (Exception ignored) {}
+            });
+        }
+        
+    }
+
+    /**
+     * Initialize the item table
+     */
+    private void initItemTable() {
+
+        // init table
+        // setting up first action column
+        TableColumn<FormulaItem, String> actionColumn = new TableColumn<>("动作");
+        actionColumn.setSortable(false);
+        actionColumn.setMinWidth(180);
+        itemColumnList.add(actionColumn);
+
+        // loop to set up all regular columns
+        for (int i = 0; i < property.length; i++) {
+            if (i == 1 || i == 2 || i == 3) {
+                // Doubles
+                TableColumn<FormulaItem, Double> newColumn = new TableColumn<>(header[i]);
+                newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
+                newColumn.setStyle("-fx-alignment: CENTER;");
+                newColumn.setMinWidth(100);
+                itemColumnList.add(newColumn);
+            } else {
+                // String
+                TableColumn<FormulaItem, String> newColumn = new TableColumn<>(header[i]);
+                newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
+                newColumn.setStyle("-fx-alignment: CENTER;");
+                newColumn.setMinWidth(140);
+                itemColumnList.add(newColumn);
+            }
+        }
+
+        // Setting a call back to handle the first column of action buttons
+        Callback<TableColumn<FormulaItem, String>, TableCell<FormulaItem, String>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<FormulaItem, String> call(TableColumn<FormulaItem, String> formulaItem) {
+                TableCell<FormulaItem, String> cell = new TableCell<>() {
+                    // define new buttons
+                    Button edit = new Button("添加配方");
+                    Button delete = new Button("删除");
+                    HBox actionButtons = new HBox(edit, delete);
+
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            delete.setOnAction(event -> {
+                                if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
+                                    removeItemFromList(getTableView().getItems().get(getIndex()));
+                            });
+                            edit.setOnAction(event -> {
+                                // TODO: turn item into formula
+                            });
+
+                            edit.getStyleClass().add("actionButtons");
+                            delete.getStyleClass().add("actionButtons");
+                            actionButtons.setSpacing(5);
+                            actionButtons.setAlignment(Pos.CENTER);
+                            setGraphic(actionButtons);
+                        }
+                        setText(null);
+                    }
+                };
+                return cell;
+            }
+        };
+
+        actionColumn.setCellFactory(cellFactory);
+
+        formulaItemTable.getColumns().setAll(itemColumnList);
+        if (formula != null) formulaItemTable.getItems().setAll(formula.getSimpleItemList());
+    }
+
+    /**
+     * Initialize the formula table
+     */
+    private void initFormulaTable() {
+
+        // init table
+        // setting up first action column
+        TableColumn<Formula, String> actionColumn = new TableColumn<>("动作");
+        actionColumn.setSortable(false);
+        actionColumn.setMinWidth(180);
+        formulaColumnList.add(actionColumn);
+
+        // loop to set up all regular columns
+        for (int i = 0; i < property.length; i++) {
+            if (i == 1 || i == 2 || i == 3) {
+                // Doubles
+                TableColumn<Formula, Double> newColumn = new TableColumn<>(header[i]);
+                newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
+                newColumn.setStyle("-fx-alignment: CENTER;");
+                newColumn.setMinWidth(100);
+                formulaColumnList.add(newColumn);
+            } else {
+                // String
+                TableColumn<Formula, String> newColumn = new TableColumn<>(header[i]);
+                newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
+                newColumn.setStyle("-fx-alignment: CENTER;");
+                newColumn.setMinWidth(130);
+                formulaColumnList.add(newColumn);
+            }
+        }
+
+        // Setting a call back to handle the first column of action buttons
+        Callback<TableColumn<Formula, String>, TableCell<Formula, String>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<Formula, String> call(TableColumn<Formula, String> formulaItem) {
+                TableCell<Formula, String> cell = new TableCell<>() {
+                    // define new buttons
+                    Button edit = new Button("查看/编辑");
+                    Button delete = new Button("删除");
+                    HBox actionButtons = new HBox(edit, delete);
+
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            delete.setOnAction(event -> {
+                                if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
+                                    removeFormulaFromList(getTableView().getItems().get(getIndex()));
+                            });
+
+                            edit.getStyleClass().add("actionButtons");
+                            delete.getStyleClass().add("actionButtons");
+                            actionButtons.setSpacing(5);
+                            actionButtons.setAlignment(Pos.CENTER);
+                            setGraphic(actionButtons);
+                        }
+                        setText(null);
+                    }
+                };
+                return cell;
+            }
+        };
+
+        actionColumn.setCellFactory(cellFactory);
+
+        formulaTable.getColumns().setAll(formulaColumnList);
+        if (formula != null) formulaTable.getItems().setAll(formula.getFormulaList());
     }
 
     /**
@@ -211,6 +300,16 @@ public class ProdFormula implements Serializable {
     }
 
     /**
+     * public function for other controller to call, to remove item from the list, and refresh table
+     * @param formula the formula to be removed to list
+     */
+    public void removeFormulaFromList(Formula formula) {
+        formula.removeFormula(formula);
+        formulaTable.getItems().clear();
+        formulaTable.getItems().setAll(formula.getFormulaList());
+    }
+
+    /**
      * Add Simple item to the product
      */
     private void addItem() {
@@ -224,7 +323,7 @@ public class ProdFormula implements Serializable {
                 if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
                     empty = false;
                     try {
-                        setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], String.class);
+                        setter = FormulaItem.class.getDeclaredMethod("set" + propertyMethodName[i], String.class);
                         setter.invoke(formulaItem, currentTextField.getText());
                     } catch (Exception ignored) {
                         ignored.printStackTrace();
@@ -234,7 +333,7 @@ public class ProdFormula implements Serializable {
                 if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
                     empty = false;
                     try {
-                        setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], double.class);
+                        setter = FormulaItem.class.getDeclaredMethod("set" + propertyMethodName[i], double.class);
                         setter.invoke(formulaItem, Double.parseDouble(currentTextField.getText()));
                     } catch (Exception ignored) {
                         ignored.printStackTrace();

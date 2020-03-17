@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class FormulaItem implements Serializable {
 
     private Formula parent;
-    private String itemName;
+    private String name;
     private double amount;
     private double unitPrice;
     private double totalPrice;
@@ -18,12 +18,12 @@ public class FormulaItem implements Serializable {
         this.parent = parent;
     }
 
-    public String getItemName() {
-        return itemName;
+    public String getName() {
+        return name;
     }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getAmount() {
@@ -60,8 +60,7 @@ public class FormulaItem implements Serializable {
         returnVal.setAmount(formulaItem.getAmount());
         returnVal.setUnitPrice(formulaItem.getUnitPrice());
         returnVal.setTotalPrice();
-        returnVal.setFormulaName(formulaItem.getItemName());
-        returnVal.setFolderPath(formulaItem.getParent().getFolderPath());
+        returnVal.setName(formulaItem.getName());
         return returnVal;
     }
 
