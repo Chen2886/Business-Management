@@ -3,8 +3,7 @@ package Product;
 import java.util.ArrayList;
 
 public class Formula {
-    private String folderPath;
-    private String formulaName;
+    private String name;
 
     private double amount;
     private double unitPrice;
@@ -18,24 +17,21 @@ public class Formula {
         this("");
     }
 
-    public Formula(String folderPath) {
-        this(folderPath, "");
+    public Formula(String name) {
+        this(name, 0);
     }
 
-    public Formula(String folderPath, String formulaName) {
-        this(folderPath, formulaName, 0);
+    public Formula(String name, double amount) {
+        this(name, amount, 0);
     }
 
-    public Formula(String folderPath, String formulaName, double amount) {
-        this(folderPath, formulaName, amount, 0);
-    }
-
-    public Formula(String folderPath, String formulaName, double amount, double unitPrice) {
-        this.folderPath = folderPath;
-        this.formulaName = formulaName;
+    public Formula(String name, double amount, double unitPrice) {
+        this.name = name;
         this.amount = amount;
         this.unitPrice = unitPrice;
         setTotalPrice();
+        formulaList = new ArrayList<>();
+        simpleItemList = new ArrayList<>();
     }
 
     public void addItem(FormulaItem item) {
@@ -70,20 +66,12 @@ public class Formula {
         this.simpleItemList = simpleItemList;
     }
 
-    public String getFolderPath() {
-        return folderPath;
+    public String getName() {
+        return name;
     }
 
-    public void setFolderPath(String folderPath) {
-        this.folderPath = folderPath;
-    }
-
-    public String getFormulaName() {
-        return formulaName;
-    }
-
-    public void setFormulaName(String formulaName) {
-        this.formulaName = formulaName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getAmount() {
@@ -112,6 +100,6 @@ public class Formula {
 
     @Override
     public String toString() {
-        return String.format("%s,%.2f,%.2f,%.2f,%s\n", formulaName, amount, unitPrice, totalPrice, folderPath);
+        return String.format("%s,%.2f,%.2f,%.2f\n", name, amount, unitPrice, totalPrice);
     }
 }
