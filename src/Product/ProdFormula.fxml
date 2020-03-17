@@ -28,7 +28,12 @@
     </HBox>
     <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="421.0" spacing="10.0"
           AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
-        <Button fx:id="saveButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="保存" textAlignment="RIGHT">
+        <Button fx:id="saveButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="更新此配方" textAlignment="RIGHT">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+        <Button fx:id="saveNewButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="另存为" textAlignment="RIGHT">
             <font>
                 <Font size="18.0"/>
             </font>
