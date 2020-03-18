@@ -28,7 +28,10 @@ public class ProdFormula {
     private static String[] propertyMethodName = new String[]{"Name", "Amount", "UnitPrice", "TotalPrice"};
     private static String[] property = new String[]{"name", "amount", "unitPrice", "totalPrice"};
     private static String[] header = new String[]{"原料名称", "数量", "单价", "金额"};
+    private static String[] formulaInfoHeader = new String[]{"配方名称", "成本价"};
+    private static String[] formulaInfoProperty = new String[]{"Name", "BasePrice"};
 
+    @FXML HBox formulaInfoHBox;
     @FXML Button cancelButton;
     @FXML Button saveButton;
     @FXML Button saveNewButton;
@@ -39,6 +42,7 @@ public class ProdFormula {
     Button addItemButton;
 
     ArrayList<TextField> inputArray;
+    ArrayList<TextField> formulaInfoInputArray;
     ArrayList<TableColumn<FormulaItem, ?>> itemColumnList;
     ArrayList<TableColumn<Formula, ?>> formulaColumnList;
 
@@ -93,6 +97,9 @@ public class ProdFormula {
         initItemTable();
         initFormulaTable();
         initInfoHBox();
+        initFormulaInfoHBox();
+        calcUnitPrice();
+
         cancelButton.setOnAction(event -> {
             if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
                 currentStage.close();
@@ -107,6 +114,45 @@ public class ProdFormula {
             isNewFormula = false;
         }
 
+    }
+
+    private void initFormulaInfoHBox() {
+        // populating the info hbox
+        formulaInfoInputArray = new ArrayList<>();
+        Method getter;
+        for (int i = 0; i < formulaInfoHeader.length; i++) {
+            Label newLabel = new Label(formulaInfoHeader[i]);
+            newLabel.setStyle("-fx-font-size: 20px;" +
+                    "-fx-alignment: center-right;");
+            formulaInfoHBox.getChildren().add(newLabel);
+
+            TextField newTextField = new TextField();
+            newTextField.setPromptText("输入" + formulaInfoHeader[i]);
+            try {
+                getter = ProductOrder.class.getDeclaredMethod("get" + formulaInfoProperty[i]);
+                newTextField.setText(String.valueOf(getter.invoke(selectedOrder)));
+            } catch (Exception e) {e.printStackTrace();}
+            formulaInfoHBox.getChildren().add(newTextField);
+            formulaInfoInputArray.add(newTextField);
+        }
+
+        // auto price
+        TextField totalPrice = formulaInfoInputArray.get(formulaInfoInputArray.size() - 1);
+        for (int i = 1; i < formulaInfoInputArray.size(); i++) {
+            TextField textField = formulaInfoInputArray.get(i);
+            textField.setOnKeyTyped(event -> {
+                try {
+                    totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
+                            Double.parseDouble(formulaInfoInputArray.get(2).getText())));
+                } catch (Exception ignored) {}
+            });
+            textField.setOnMouseClicked(event -> {
+                try {
+                    totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
+                            Double.parseDouble(formulaInfoInputArray.get(2).getText())));
+                } catch (Exception ignored) {}
+            });
+        }
     }
 
     /**
@@ -243,6 +289,32 @@ public class ProdFormula {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("编辑配方");
             stage.setScene(new Scene(newScene));
+            stage.showAndWait();
+            calcUnitPrice();
+        } catch (Exception e) {
+            AlertBox.display("错误", "窗口错误");
+            e.printStackTrace();
+            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
+    }
+
+    /**
+     * Convert an item to Formula
+     */
+    private void viewFormula(Formula formula) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ProdFormulaEdit.fxml"));
+            Parent newScene = loader.load();
+            Stage stage = new Stage();
+
+            ProdFormulaEdit prodFormulaEdit = loader.getController();
+            prodFormulaEdit.initData(null, formula, stage, formulaItemTable, formulaTable);
+
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("编辑配方");
+            stage.setScene(new Scene(newScene));
             stage.show();
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
@@ -304,6 +376,9 @@ public class ProdFormula {
                                 if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
                                     removeFormulaFromList(getTableView().getItems().get(getIndex()));
                             });
+                            edit.setOnAction(event -> {
+                                viewFormula(getTableView().getItems().get(getIndex()));
+                            });
 
                             edit.getStyleClass().add("actionButtons");
                             delete.getStyleClass().add("actionButtons");
@@ -332,6 +407,7 @@ public class ProdFormula {
         formula.addItem(item);
         formulaItemTable.getItems().clear();
         formulaItemTable.getItems().setAll(formula.getSimpleItemList());
+        calcUnitPrice();
     }
 
     /**
@@ -352,6 +428,7 @@ public class ProdFormula {
         formula.removeItem(item);
         formulaItemTable.getItems().clear();
         formulaItemTable.getItems().setAll(formula.getSimpleItemList());
+        calcUnitPrice();
     }
 
     /**
@@ -362,6 +439,7 @@ public class ProdFormula {
         formula.removeFormula(inputFormula);
         formulaTable.getItems().clear();
         formulaTable.getItems().setAll(inputFormula.getFormulaList());
+        calcUnitPrice();
     }
 
     /**
@@ -406,6 +484,8 @@ public class ProdFormula {
         formulaItem.setTotalPrice();
         if (!empty) addItemToList(formulaItem);
         for(TextField textField : inputArray) textField.clear();
+
+        calcUnitPrice();
     }
 
     /**
@@ -420,6 +500,7 @@ public class ProdFormula {
             ArrayList<Formula> newFormulaList = new ArrayList<>(formulaTable.getItems());
             formula.setSimpleItemList(newItemList);
             formula.setFormulaList(newFormulaList);
+            selectedOrder.setBasePrice(calcUnitPrice());
 
             int index = DatabaseUtil.AddFormula(formula);
             selectedOrder.setFormulaIndex(index);
@@ -428,6 +509,8 @@ public class ProdFormula {
             if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName()))
                 DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), index);
             else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), index);
+
+            DatabaseUtil.UpdateProdOrder(selectedOrder);
 
             currentStage.close();
         } catch (SQLException e) {
@@ -454,10 +537,14 @@ public class ProdFormula {
             formula.setSimpleItemList(newItemList);
             formula.setFormulaList(newFormulaList);
 
+            selectedOrder.setBasePrice(calcUnitPrice());
+
             DatabaseUtil.UpdateFormula(formula, selectedOrder.getFormulaIndex());
             if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName()))
                 DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), selectedOrder.getFormulaIndex());
             else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), selectedOrder.getFormulaIndex());
+
+            DatabaseUtil.UpdateProdOrder(selectedOrder);
 
             currentStage.close();
         } catch (SQLException e) {
@@ -466,6 +553,26 @@ public class ProdFormula {
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
         }
+    }
+
+    /**
+     * Calculate the base price
+     * @return the base price
+     */
+    private double calcUnitPrice() {
+        double totalSum = 0.0;
+        double totalAmount = 0.0;
+        for (Formula formula : formula.getFormulaList()) {
+            totalSum += formula.getTotalPrice();
+            totalAmount += formula.getAmount();
+        }
+        for (FormulaItem formulaItem : formula.getSimpleItemList()) {
+            totalSum += formulaItem.getTotalPrice();
+            totalAmount += formulaItem.getAmount();
+        }
+        double returnVal = Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
+        formulaInfoInputArray.get(1).setText(String.valueOf(returnVal));
+        return Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
     }
 
 }

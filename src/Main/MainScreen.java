@@ -71,6 +71,10 @@ public class MainScreen implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 
+		resetButton.setText("重置\n表格");
+		searchButton.setText("精确\n搜索");
+		addButton.setText("添加\n编辑");
+
 		// setting up the image for search bar
 		try {
 			FileInputStream input = new FileInputStream("src/iconmonstr-magnifier-4-240.png");

@@ -3,6 +3,8 @@ package Product;
 // from my other packages
 import Main.*;
 
+import java.text.DecimalFormat;
+
 public class ProductOrder {
 
     private int serialNum;
@@ -31,17 +33,17 @@ public class ProductOrder {
         this.customer = "";
         this.note = "";
         this.orderDate = new Date(0, 0, 0);
-        this.unitAmount = 0.0;
-        this.amount = 0.0;
-        this.unitPrice = 0.0;
-        this.basePrice = 0.0;
+        this.unitAmount = Math.round(0.0 * 100.0) / 100.0;
+        this.amount = Math.round(0.0 * 100.0) / 100.0;;
+        this.unitPrice = Math.round(0.0 * 100.0) / 100.0;;
+        this.basePrice = Math.round(0.0 * 100.0) / 100.0;;
         this.formulaIndex = -1;
         setKgAmount();
         setTotalPrice();
     }
 
     public double getBasePrice() {
-        return basePrice;
+        return Math.round(basePrice * 100.0) / 100.0;
     }
 
     public void setBasePrice(double basePrice) {
@@ -97,7 +99,7 @@ public class ProductOrder {
     }
 
     public double getUnitAmount() {
-        return unitAmount;
+        return Math.round(unitAmount * 100.0) / 100.0;
     }
 
     public void setUnitAmount(double unitAmount) {
@@ -105,7 +107,7 @@ public class ProductOrder {
     }
 
     public double getAmount() {
-        return amount;
+        return Math.round(amount * 100.0) / 100.0;
     }
 
     public void setAmount(double amount) {
@@ -113,7 +115,7 @@ public class ProductOrder {
     }
 
     public double getKgAmount() {
-        return kgAmount;
+        return Math.round(kgAmount * 100.0) / 100.0;
     }
 
     public void setKgAmount() {
@@ -121,7 +123,7 @@ public class ProductOrder {
     }
 
     public double getUnitPrice() {
-        return unitPrice;
+        return Math.round(unitAmount * 100.0) / 100.0;
     }
 
     public void setUnitPrice(double unitPrice) {
@@ -129,7 +131,7 @@ public class ProductOrder {
     }
 
     public double getTotalPrice() {
-        return totalPrice;
+        return Math.round(totalPrice * 100.0) / 100.0;
     }
 
     public void setTotalPrice() {
