@@ -57,10 +57,10 @@ public class FormulaItem implements Serializable {
      */
     public static Formula convertToFormula(FormulaItem formulaItem) {
         Formula returnVal = new Formula();
+        returnVal.setName(formulaItem.getName());
         returnVal.setAmount(formulaItem.getAmount());
         returnVal.setUnitPrice(formulaItem.getUnitPrice());
         returnVal.setTotalPrice();
-        returnVal.setName(formulaItem.getName());
         return returnVal;
     }
 
