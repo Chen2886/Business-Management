@@ -5,7 +5,6 @@ import Main.ConfirmBox;
 import Main.DatabaseUtil;
 import Main.HandleError;
 import Material.MatAddOrderModifySeller;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -23,7 +22,7 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ProdFormula {
+public class ProdFormulaEdit {
 
     private static String[] propertyMethodName = new String[]{"Name", "Amount", "UnitPrice", "TotalPrice"};
     private static String[] property = new String[]{"name", "amount", "unitPrice", "totalPrice"};
@@ -31,7 +30,6 @@ public class ProdFormula {
 
     @FXML Button cancelButton;
     @FXML Button saveButton;
-    @FXML Button saveNewButton;
     @FXML TableView<Formula> formulaTable;
     @FXML TableView<FormulaItem> formulaItemTable;
     @FXML HBox infoHBox;
@@ -42,46 +40,29 @@ public class ProdFormula {
     ArrayList<TableColumn<FormulaItem, ?>> itemColumnList;
     ArrayList<TableColumn<Formula, ?>> formulaColumnList;
 
+    TableView<FormulaItem> parentItemTableView;
+    TableView<Formula> parentFormulaTableView;
+    FormulaItem parentItem;
+
     Stage currentStage;
-    ProductOrder selectedOrder;
     Formula formula;
-    boolean isNewFormula;
 
     /**
      * Called by main controller to give the selected order
      *
-     * @param selectedOrder the order that was selected, to fill the information
+     * @param formula the formula that needs to be edited, to fill the information
      * @param currentStage  the stage, so it can be closed later
      */
-    public void initData(ProductOrder selectedOrder, Stage currentStage) {
-        this.selectedOrder = selectedOrder;
+    public void initData(FormulaItem parentItem, Formula formula, Stage currentStage, TableView<FormulaItem> parentItemTableView,
+                         TableView<Formula> parentFormulaTableView) {
+        this.parentItem = parentItem;
+        this.formula = formula;
         this.currentStage = currentStage;
-
-        // getting current formula
-        try {
-
-            // if this is a product that doesn't have existing formula
-            if (selectedOrder.getFormulaIndex() != -1)
-                formula = DatabaseUtil.GetFormulaByIndex(selectedOrder.getFormulaIndex());
-            else {
-                if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName())) {
-                    int newIndex = DatabaseUtil.GetNewestFormulaIndex(selectedOrder.getName());
-                    formula = DatabaseUtil.GetFormulaByIndex(newIndex);
-                    selectedOrder.setFormulaIndex(newIndex);
-                    DatabaseUtil.UpdateProdOrder(selectedOrder);
-                } else formula = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            selectedOrder.setFormulaIndex(-1);
-            formula = null;
-        }
-
         itemColumnList = new ArrayList<>();
         formulaColumnList = new ArrayList<>();
+
+        this.parentFormulaTableView = parentFormulaTableView;
+        this.parentItemTableView = parentItemTableView;
         init();
     }
 
@@ -93,19 +74,13 @@ public class ProdFormula {
         initItemTable();
         initFormulaTable();
         initInfoHBox();
+
         cancelButton.setOnAction(event -> {
             if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
                 currentStage.close();
         });
-        saveNewButton.setOnAction(event -> saveNewFormula());
-        saveButton.setOnAction(event -> saveFormula());
 
-        if (formula == null) {
-            formula = new Formula(selectedOrder.getName());
-            isNewFormula = true;
-        } else {
-            isNewFormula = false;
-        }
+        saveButton.setOnAction(event -> saveFormula());
 
     }
 
@@ -150,7 +125,7 @@ public class ProdFormula {
                 } catch (Exception ignored) {}
             });
         }
-        
+
     }
 
     /**
@@ -243,7 +218,7 @@ public class ProdFormula {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("编辑配方");
             stage.setScene(new Scene(newScene));
-            stage.show();
+            stage.showAndWait();
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
             e.printStackTrace();
@@ -336,12 +311,12 @@ public class ProdFormula {
 
     /**
      * public function for other controller to call, to add to the list, and refresh table
-     * @param formula the formula to be added to list
+     * @param inputFormula the formula to be added to list
      */
-    public void addFormulaToList(Formula formula) {
-        formula.addFormula(formula);
+    public void addFormulaToList(Formula inputFormula) {
+        formula.addFormula(inputFormula);
         formulaTable.getItems().clear();
-        formulaTable.getItems().setAll(formula.getFormulaList());
+        formulaTable.getItems().setAll(inputFormula.getFormulaList());
     }
 
     /**
@@ -356,12 +331,12 @@ public class ProdFormula {
 
     /**
      * public function for other controller to call, to remove item from the list, and refresh table
-     * @param inputFormula the formula to be removed to list
+     * @param formula the formula to be removed to list
      */
-    public void removeFormulaFromList(Formula inputFormula) {
-        formula.removeFormula(inputFormula);
+    public void removeFormulaFromList(Formula formula) {
+        formula.removeFormula(formula);
         formulaTable.getItems().clear();
-        formulaTable.getItems().setAll(inputFormula.getFormulaList());
+        formulaTable.getItems().setAll(formula.getFormulaList());
     }
 
     /**
@@ -411,61 +386,24 @@ public class ProdFormula {
     /**
      * Save the formula to the selected order, and push formula to database
      */
-    private void saveNewFormula() {
-        if (!isNewFormula && !ConfirmBox.display("确认", "确定另存为此配方，以后此产品默认此新配方？之前产品的配方不会被更该", "是", "否"))
-            return;
-        try {
-
-            ArrayList<FormulaItem> newItemList = new ArrayList<>(formulaItemTable.getItems());
-            ArrayList<Formula> newFormulaList = new ArrayList<>(formulaTable.getItems());
-            formula.setSimpleItemList(newItemList);
-            formula.setFormulaList(newFormulaList);
-
-            int index = DatabaseUtil.AddFormula(formula);
-            selectedOrder.setFormulaIndex(index);
-            DatabaseUtil.UpdateProdOrder(selectedOrder);
-
-            if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName()))
-                DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), index);
-            else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), index);
-
-            currentStage.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-        }
-    }
-
-    /**
-     * Save the formula to the selected order, and push formula to database
-     */
     private void saveFormula() {
-        if (isNewFormula) {
-            AlertBox.display("错误", "没有已存在的配方，选择另存为");
-            return;
-        }
-        if (!ConfirmBox.display("确认", "确定更新此配方？所有使用此配方的产品即将被更新", "是", "否"))
-            return;
-        try {
-            ArrayList<FormulaItem> newItemList = new ArrayList<>(formulaItemTable.getItems());
-            ArrayList<Formula> newFormulaList = new ArrayList<>(formulaTable.getItems());
-            formula.setSimpleItemList(newItemList);
-            formula.setFormulaList(newFormulaList);
-
-            DatabaseUtil.UpdateFormula(formula, selectedOrder.getFormulaIndex());
-            if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName()))
-                DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), selectedOrder.getFormulaIndex());
-            else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), selectedOrder.getFormulaIndex());
-
-            currentStage.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-        }
+        formula.setUnitPrice(calcUnitPrice());
+        parentItemTableView.getItems().remove(parentItem);
+        parentFormulaTableView.getItems().add(formula);
+        currentStage.close();
     }
 
+    private double calcUnitPrice() {
+        double totalSum = 0.0;
+        double totalAmount = 0.0;
+        for (Formula formula : formula.getFormulaList()) {
+            totalSum += formula.getTotalPrice();
+            totalAmount += formula.getAmount();
+        }
+        for (FormulaItem formulaItem : formula.getSimpleItemList()) {
+            totalSum += formulaItem.getTotalPrice();
+            totalAmount += formulaItem.getAmount();
+        }
+        return totalSum / totalAmount;
+    }
 }
