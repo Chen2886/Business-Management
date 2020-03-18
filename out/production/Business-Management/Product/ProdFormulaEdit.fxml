@@ -4,18 +4,20 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdFormulaEdit">
+<AnchorPane prefHeight="955.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdFormulaEdit">
     <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="配方系统" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <font>
             <Font size="30.0" />
         </font>
     </Label>
-    <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="无配方原料" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="60.0">
+    <HBox fx:id="formulaInfoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+    </HBox>
+    <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="无配方原料" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="115.0">
         <font>
             <Font size="26.0" />
         </font>
     </Label>
-    <TableView fx:id="formulaItemTable" layoutX="192.0" layoutY="54.0" prefHeight="300.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="105.0">
+    <TableView fx:id="formulaItemTable" layoutX="192.0" layoutY="54.0" prefHeight="300.0" prefWidth="980.0" stylesheets="@../stylesheet.css" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="160.0">
     </TableView>
     <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="配方原料" textAlignment="CENTER" AnchorPane.bottomAnchor="425" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
         <font>

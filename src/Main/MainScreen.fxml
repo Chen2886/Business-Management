@@ -10,13 +10,29 @@
             prefWidth="1650.0" styleClass="parent " stylesheets="../stylesheet.css"
             xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="Main.MainScreen">
-    <ListView fx:id="leftListView" prefHeight="950.0" prefWidth="135.0" styleClass="sidebar"
-              stylesheets="../stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="100.0"/>
+    <VBox fx:id="leftListView" prefHeight="950.0" prefWidth="135.0" styleClass="sidebar"
+              stylesheets="../stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="100.0" spacing="10">
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="30.0" top="10.0"/>
+        </padding>
+        <Button fx:id="resetButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
+                prefWidth="115.0" stylesheets="../stylesheet.css" text="重置表格" wrapText="true"/>
+        <Button fx:id="searchButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
+                prefWidth="115.0" stylesheets="../stylesheet.css" text="精确搜索" wrapText="true"/>
+        <Button fx:id="addButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                prefHeight="80.0" prefWidth="115.0" stylesheets="../stylesheet.css" text="添加/编辑" wrapText="true"/>
+        <Button fx:id="quitButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
+                prefWidth="115.0" stylesheets="../stylesheet.css" text="退出" wrapText="true"/>
+    </VBox>
     <HBox alignment="CENTER" layoutX="135.0" prefHeight="100.0" spacing="10.0" styleClass="sidebar"
           stylesheets="../stylesheet.css" AnchorPane.leftAnchor="135.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            <Insets bottom="10.0" left="10.0" right="30.0" top="10.0"/>
         </padding>
         <ImageView fx:id="searchImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true"
                    HBox.hgrow="ALWAYS"/>
@@ -26,18 +42,6 @@
                 <Font size="25.0"/>
             </font>
         </TextField>
-        <Button fx:id="resetButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
-                prefWidth="150.0" stylesheets="../stylesheet.css" text="重置表格"/>
-        <Button fx:id="searchButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
-                prefWidth="150.0" stylesheets="../stylesheet.css" text="精确搜索"/>
-        <Button fx:id="addButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
-                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                prefHeight="80.0" prefWidth="150.0" stylesheets="../stylesheet.css" text="添加/编辑"/>
-        <Button fx:id="quitButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
-                prefWidth="129.0" stylesheets="../stylesheet.css" text="退出"/>
     </HBox>
     <Pane prefHeight="100.0" prefWidth="135.0" styleClass="topLeftBox" stylesheets="../stylesheet.css"
           AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">

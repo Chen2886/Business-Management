@@ -76,7 +76,7 @@ public class Formula implements Serializable {
     }
 
     public double getAmount() {
-        return amount;
+        return Math.round(amount * 100.0) / 100.0;
     }
 
     public void setAmount(double amount) {
@@ -84,7 +84,7 @@ public class Formula implements Serializable {
     }
 
     public double getUnitPrice() {
-        return unitPrice;
+        return Math.round(unitPrice * 100.0) / 100.0;
     }
 
     public void setUnitPrice(double unitPrice) {
@@ -92,7 +92,7 @@ public class Formula implements Serializable {
     }
 
     public double getTotalPrice() {
-        return totalPrice;
+        return Math.round(totalPrice * 100.0) / 100.0;
     }
 
     public void setTotalPrice() {
