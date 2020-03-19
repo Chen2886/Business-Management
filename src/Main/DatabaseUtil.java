@@ -136,6 +136,8 @@ public class DatabaseUtil {
                 else if ("productManagement".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
                 else if ("formula".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
                 else if ("newestFormula".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
+                else if ("productUnitPrice".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
+                else if ("materialUnitPrice".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
             }
 
             if (numOfTable == 5) {
@@ -146,6 +148,8 @@ public class DatabaseUtil {
                 CreateNewTable("productManagement");
                 CreateNewTable("formula");
                 CreateNewTable("newestFormula");
+                CreateNewTable("productUnitPrice");
+                CreateNewTable("materialUnitPrice");
             }
         } catch (SQLException e) {
             HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -243,6 +247,17 @@ public class DatabaseUtil {
                 SQLCommand = "CREATE TABLE IF NOT EXISTS [newestFormula] (\n" +
                         "name   	 	TEXT	PRIMARY KEY	NOT NULL,\n" +
                         "formulaIndex   INTEGER			 \n" +
+                        ");";
+            } else if (tableName.equals("productUnitPrice")) {
+                SQLCommand = "CREATE TABLE IF NOT EXISTS [productUnitPrice] (\n" +
+                        "name   	 	TEXT	PRIMARY KEY	NOT NULL,\n" +
+                        "price          REAL			 \n" +
+                        ");";
+            } else if (tableName.equals("materialUnitPrice")) {
+                SQLCommand = "CREATE TABLE IF NOT EXISTS [materialUnitPrice] (\n" +
+                        "name   	 	TEXT	PRIMARY KEY	NOT NULL,\n" +
+                        "price          REAL    NOT NULL,\n" +
+                        "note           TEXT			 \n" +
                         ");";
             }
             statement.execute(SQLCommand);
@@ -505,6 +520,42 @@ public class DatabaseUtil {
     }
 
     /**
+     * Get All the mat unit prices from database
+     * @return a list of all mat unit prices
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static ObservableList<MatUnitPrice> GetAllMatUnitPrice() throws SQLException {
+        String SQLCommand = "SELECT * FROM materialUnitPrice";
+        ObservableList<MatUnitPrice> matUnitPriceTableObservableList = FXCollections.observableArrayList();
+        try {
+            ConnectToDB();
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SQLCommand);
+
+            while (resultSet.next()) {
+
+                // new order
+                MatUnitPrice newUnitPrice = new MatUnitPrice(resultSet.getString("name"),
+                        resultSet.getInt("price"), resultSet.getString("note"));
+
+                // adding unitPrice
+                matUnitPriceTableObservableList.add(newUnitPrice);
+            }
+            CloseConnectionToDB();
+            return matUnitPriceTableObservableList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Given serial num, delete from database
      * @param serialNum order identified to be deleted
      */
@@ -521,6 +572,30 @@ public class DatabaseUtil {
             String SQLCommand = "DELETE FROM materialManagement WHERE serialNum = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setInt(1, serialNum);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            e.printStackTrace();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Given serial num, delete from database
+     * @param name name of the unit prices that needs to be deleted
+     */
+    public static void DeleteMatUnitPrice(String name) throws SQLException {
+        try {
+            ConnectToDB();
+
+            String SQLCommand = "DELETE FROM materialUnitPrice WHERE name = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, name);
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
@@ -668,6 +743,33 @@ public class DatabaseUtil {
             preparedStatement.setInt(11, order.getFormulaIndex());
             preparedStatement.setString(12, order.getNote() == null ? "" : order.getNote());
             preparedStatement.setInt(13, order.getSerialNum());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Insert an unit price into the database
+     * @param matUnitPrice specified mat unit price
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void AddMatUnitPrice(MatUnitPrice matUnitPrice) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "INSERT INTO [materialUnitPrice] (name, price, note) " +
+                    "VALUES(?,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, matUnitPrice.getName());
+            preparedStatement.setDouble(2, matUnitPrice.getUnitPrice());
+            preparedStatement.setString(3, matUnitPrice.getNote());
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
@@ -1170,6 +1272,34 @@ public class DatabaseUtil {
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
             int returnVal = resultSet.getInt(1);
+            CloseConnectionToDB();
+            return returnVal;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * get the unit price from the name provided
+     * @param name the name of the formula that needs to be found
+     * @return the unit price, -1 it not found
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static double GetMatUnitPrice(String name) throws SQLException {
+        String SQLCommand = "SELECT price FROM materialUnitPrice WHERE name = ?";
+        try {
+            ConnectToDB();
+
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            double returnVal = resultSet.next() ? resultSet.getDouble(1) : -1;
             CloseConnectionToDB();
             return returnVal;
         } catch (SQLException e) {
