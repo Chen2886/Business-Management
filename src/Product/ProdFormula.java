@@ -116,6 +116,9 @@ public class ProdFormula {
 
     }
 
+    /**
+     * Init top formula into hbox
+     */
     private void initFormulaInfoHBox() {
         // populating the info hbox
         formulaInfoInputArray = new ArrayList<>();
@@ -137,7 +140,7 @@ public class ProdFormula {
         }
 
         // auto price
-        TextField totalPrice = formulaInfoInputArray.get(formulaInfoInputArray.size() - 1);
+        TextField totalPrice = formulaInfoInputArray.get(1);
         for (int i = 1; i < formulaInfoInputArray.size(); i++) {
             TextField textField = formulaInfoInputArray.get(i);
             textField.setOnKeyTyped(event -> {
@@ -180,7 +183,7 @@ public class ProdFormula {
         addItemButton.setOnAction(event -> addItem());
 
         // auto price
-        TextField totalPrice = inputArray.get(inputArray.size() - 1);
+        TextField totalPrice = inputArray.get(3);
         for (int i = 1; i < inputArray.size(); i++) {
             TextField textField = inputArray.get(i);
             textField.setOnKeyTyped(event -> {
@@ -196,6 +199,19 @@ public class ProdFormula {
                 } catch (Exception ignored) {}
             });
         }
+
+        // auto unit price
+        TextField unitPrice = inputArray.get(2);
+        unitPrice.setOnKeyTyped(keyEvent -> {
+            try {
+                unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        });
         
     }
 

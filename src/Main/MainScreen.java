@@ -61,6 +61,7 @@ public class MainScreen implements Initializable {
 	@FXML Button quitButton;
 	@FXML Button resetButton;
 	@FXML Button excelButton;
+	@FXML Button unitPriceButton;
 	@FXML TextField searchBarTextField;
 	@FXML ImageView searchImageView;
 
@@ -76,6 +77,7 @@ public class MainScreen implements Initializable {
 		searchButton.setText("精确\n搜索");
 		addButton.setText("添加\n编辑");
 		excelButton.setText("生成\n表格");
+		unitPriceButton.setText("单价\n管理");
 
 		// setting up the image for search bar
 		try {
@@ -138,6 +140,9 @@ public class MainScreen implements Initializable {
 			else generateProdExcel();
 		});
 
+
+		unitPriceButton.setOnAction(event -> loadUnitPrice());
+
 		// listener for search bar text field
 		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
 
@@ -181,6 +186,30 @@ public class MainScreen implements Initializable {
 				prodTableView.setItems(tempQuickSearchProdOrderList);
 			}
 		});
+	}
+
+	/**
+	 * Load FXML for unit price table
+	 */
+	private void loadUnitPrice() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Material/MatUnitPriceTable.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			MatUnitPriceTable matUnitPriceTable = loader.getController();
+			matUnitPriceTable.initData(stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("单价系统");
+			stage.setScene(new Scene(newScene));
+			stage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
 	}
 
 	/**

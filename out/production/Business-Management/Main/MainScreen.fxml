@@ -27,6 +27,9 @@
         <Button fx:id="excelButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
                 prefWidth="115.0" stylesheets="../stylesheet.css" text="生成一览表" wrapText="true"/>
+        <Button fx:id="unitPriceButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
+                prefWidth="115.0" stylesheets="../stylesheet.css" text="产品单价" wrapText="true"/>
         <Button fx:id="quitButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
                 prefWidth="115.0" stylesheets="../stylesheet.css" text="退出" wrapText="true"/>
