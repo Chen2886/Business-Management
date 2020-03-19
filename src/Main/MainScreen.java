@@ -45,7 +45,7 @@ public class MainScreen implements Initializable {
 	private static final String[] prodProperty = new String[]{"orderDate", "sku", "customer", "name",
 			"unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice", "basePrice", "note"};
 
-	private ObservableList<MatOrder> allMatOrderList;
+    private ObservableList<MatOrder> allMatOrderList;
 	private ObservableList<MatOrder> tempQuickSearchMatOrderList;
 
 	private ObservableList<ProductOrder> allProdOrderList;
@@ -60,6 +60,7 @@ public class MainScreen implements Initializable {
 	@FXML Button addButton;
 	@FXML Button quitButton;
 	@FXML Button resetButton;
+	@FXML Button excelButton;
 	@FXML TextField searchBarTextField;
 	@FXML ImageView searchImageView;
 
@@ -74,6 +75,7 @@ public class MainScreen implements Initializable {
 		resetButton.setText("重置\n表格");
 		searchButton.setText("精确\n搜索");
 		addButton.setText("添加\n编辑");
+		excelButton.setText("生成\n表格");
 
 		// setting up the image for search bar
 		try {
@@ -128,6 +130,14 @@ public class MainScreen implements Initializable {
 		// reset both table
 		resetButton.setOnAction(actionEvent -> resetTable());
 
+		// excel button
+		excelButton.setOnAction(event -> {
+			// if selected tab is material
+			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) generateMatExcel();
+				// if selected tab is product
+			else generateProdExcel();
+		});
+
 		// listener for search bar text field
 		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
 
@@ -171,6 +181,54 @@ public class MainScreen implements Initializable {
 				prodTableView.setItems(tempQuickSearchProdOrderList);
 			}
 		});
+	}
+
+	/**
+	 * Function to generate excel file with material
+	 */
+	private void generateMatExcel() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Material/MatGenerateExcel.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			MatGenerateExcel matGenerateExcel = loader.getController();
+			matGenerateExcel.initData(stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("生成表格");
+			stage.setScene(new Scene(newScene));
+			stage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	/**
+	 * Function to generate excel file with product
+	 */
+	private void generateProdExcel() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdGenerateExcel.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			ProdGenerateExcel prodGenerateExcel = loader.getController();
+			prodGenerateExcel.initData(stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("生成表格");
+			stage.setScene(new Scene(newScene));
+			stage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
 	}
 
 	/**
