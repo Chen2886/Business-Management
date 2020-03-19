@@ -1039,6 +1039,11 @@ public class DatabaseUtil {
         }
     }
 
+    /**
+     * Given a name, see if newest formula table has it
+     * @param name the name that needs to be true
+     * @return true if contains, false if does not contain
+     */
     public static boolean CheckIfNameExistsInNewestFormula(String name) {
         String SQLCommand = "SELECT formulaIndex FROM newestFormula WHERE name = ?";
         try {
@@ -1060,6 +1065,12 @@ public class DatabaseUtil {
         }
     }
 
+    /**
+     * Update the newest formula table
+     * @param exists if formula exists already
+     * @param name the name of the formula
+     * @param index the index of the formula
+     */
     public static void UpdateNewestFormula(boolean exists, String name, int index) {
         String SQLCommand = "";
         if (exists) SQLCommand = "UPDATE newestFormula SET formulaIndex = ? WHERE name = ?";
@@ -1144,6 +1155,12 @@ public class DatabaseUtil {
         }
     }
 
+    /**
+     * get the index from the newest formula's name
+     * @param name the name of the formula that needs to be found
+     * @return the index
+     * @throws SQLException if any error occurs while operating on database
+     */
     public static int GetNewestFormulaIndex(String name) throws SQLException {
         String SQLCommand = "SELECT formulaIndex FROM newestFormula WHERE name = ?";
         try {
@@ -1166,6 +1183,12 @@ public class DatabaseUtil {
         }
     }
 
+    /**
+     * get all material orders with in the input date range
+     * @param input 2d array of size 2, 1st is start date (yyyy-mm-dd), 2nd is end date (yyyy-mm-dd)
+     * @return arraylist of material order
+     * @throws SQLException if any error occurs while operating on database
+     */
     public static ArrayList<MatOrder> SelectMatOrderWithDateRange(int[][] input) throws SQLException {
         ArrayList<MatOrder> orderArrayList = new ArrayList<>();
         String SQLCommand = "SELECT * FROM materialManagement WHERE " +
@@ -1231,8 +1254,9 @@ public class DatabaseUtil {
     }
 
     /**
-     * Get All the mat order from database
-     * @return a list of all mat order
+     * get all product orders with in the input date range
+     * @param input 2d array of size 2, 1st is start date (yyyy-mm-dd), 2nd is end date (yyyy-mm-dd)
+     * @return arraylist of product order
      * @throws SQLException if any error occurs while operating on database
      */
     public static ArrayList<ProductOrder> SelectProductOrderWithDateRange(int[][] input) throws SQLException {
