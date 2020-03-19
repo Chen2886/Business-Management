@@ -24,6 +24,9 @@
         <Button fx:id="addButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
                 maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                 prefHeight="80.0" prefWidth="115.0" stylesheets="../stylesheet.css" text="添加/编辑" wrapText="true"/>
+        <Button fx:id="excelButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
+                prefWidth="115.0" stylesheets="../stylesheet.css" text="生成一览表" wrapText="true"/>
         <Button fx:id="quitButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
                 prefWidth="115.0" stylesheets="../stylesheet.css" text="退出" wrapText="true"/>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Product.ProdGenerateExcel"
+            prefHeight="300.0" prefWidth="600.0">
+    <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="生成产品一览表" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <font>
+            <Font size="30.0" />
+        </font>
+    </Label>
+    <HBox alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="开始日期" textAlignment="CENTER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <DatePicker fx:id="startDate">
+
+        </DatePicker>
+        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="结束日期" textAlignment="CENTER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <DatePicker fx:id="endDate">
+
+        </DatePicker>
+    </HBox>
+    <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="421.0" spacing="10.0"
+          AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <Button fx:id="generateButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="生成" textAlignment="RIGHT">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+        <Button fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="取消" textAlignment="RIGHT">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+    </HBox>
+</AnchorPane>

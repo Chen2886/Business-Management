@@ -572,7 +572,7 @@ public class ProdFormula {
         }
         double returnVal = Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
         formulaInfoInputArray.get(1).setText(String.valueOf(returnVal));
-        return Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
+        return returnVal;
     }
 
 }

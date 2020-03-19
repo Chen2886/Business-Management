@@ -237,10 +237,10 @@ public class MatOrder {
 	@Override
 	public String toString() {
 		String returnVal = "";
+		returnVal = addFormat(orderDate == null ? "" : orderDate.toString(), returnVal);
 		returnVal = addFormat(sku, returnVal);
 		returnVal = addFormat(name, returnVal);
 		returnVal = addFormat(type, returnVal);
-		returnVal = addFormat(orderDate == null ? "" : orderDate.toString(), returnVal);
 		returnVal = addFormat(paymentDate == null ? "" : paymentDate.toString(), returnVal);
 		returnVal = addFormat(arrivalDate == null ? "" : arrivalDate.toString(), returnVal);
 		returnVal = addFormat(invoiceDate == null ? "" : invoiceDate.toString(), returnVal);

@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DatabaseUtil {
     private static String dataBaseLocationFile = "jdbc:sqlite:BusinessCashFlow.db";
@@ -1154,6 +1155,123 @@ public class DatabaseUtil {
             int returnVal = resultSet.getInt(1);
             CloseConnectionToDB();
             return returnVal;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    public static ArrayList<MatOrder> SelectMatOrderWithDateRange(int[][] input) throws SQLException {
+        ArrayList<MatOrder> orderArrayList = new ArrayList<>();
+        String SQLCommand = "SELECT * FROM materialManagement WHERE " +
+                "(orderDateYear * 10000 + orderDateMonth * 100 + orderDateDay) >= ? " +
+                "AND (orderDateYear * 10000 + orderDateMonth * 100 + orderDateDay) <= ?";
+        try {
+            ConnectToDB();
+            PreparedStatement statement = connection.prepareStatement(SQLCommand);
+            statement.setInt(1, input[0][0] * 10000 + input[0][1] * 100 + input[0][2]);
+            statement.setInt(2, input[1][0] * 10000 + input[1][1] * 100 + input[1][2]);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+
+                // new seller
+                MatSeller seller = new MatSeller(resultSet.getInt("sellerId"),
+                        resultSet.getString("companyName"));
+                seller.setContactName(resultSet.getString("contactName"));
+                seller.setMobile(resultSet.getString("mobile"));
+                seller.setLandLine(resultSet.getString("landLine"));
+                seller.setFax(resultSet.getString("fax"));
+                seller.setAccountNum(resultSet.getString("accountNum"));
+                seller.setBankAddress(resultSet.getString("bankAddress"));
+                seller.setAddress(resultSet.getString("address"));
+
+                // new order
+                MatOrder newOrder = new MatOrder(resultSet.getInt("serialNum"),
+                        resultSet.getString("sku"));
+                newOrder.setName(resultSet.getString("name"));
+                newOrder.setType(resultSet.getString("type"));
+                newOrder.setInvoice(resultSet.getString("invoice"));
+                newOrder.setSigned(resultSet.getString("signed"));
+                newOrder.setSkuSeller(resultSet.getString("skuSeller"));
+                newOrder.setNote(resultSet.getString("note"));
+                newOrder.setOrderDate(new Date(resultSet.getInt("orderDateYear"),
+                        resultSet.getInt("orderDateMonth"),
+                        resultSet.getInt("orderDateDay")));
+                newOrder.setPaymentDate(new Date(resultSet.getInt("paymentDateYear"),
+                        resultSet.getInt("paymentDateMonth"),
+                        resultSet.getInt("paymentDateDay")));
+                newOrder.setArrivalDate(new Date(resultSet.getInt("arrivalDateYear"),
+                        resultSet.getInt("arrivalDateMonth"),
+                        resultSet.getInt("arrivalDateDay")));
+                newOrder.setInvoiceDate(new Date(resultSet.getInt("invoiceDateYear"),
+                        resultSet.getInt("invoiceDateMonth"),
+                        resultSet.getInt("invoiceDateDay")));
+                newOrder.setSeller(seller);
+                newOrder.setUnitAmount(resultSet.getDouble("unitAmount"));
+                newOrder.setAmount(resultSet.getDouble("amount"));
+                newOrder.setKgAmount();
+                newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
+                newOrder.setTotalPrice();
+
+                orderArrayList.add(newOrder);
+            }
+            CloseConnectionToDB();
+            return orderArrayList;
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        }
+    }
+
+    /**
+     * Get All the mat order from database
+     * @return a list of all mat order
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static ArrayList<ProductOrder> SelectProductOrderWithDateRange(int[][] input) throws SQLException {
+        String SQLCommand = "SELECT * FROM productManagement WHERE " +
+                "(orderDateYear * 10000 + orderDateMonth * 100 + orderDateDay) >= ? " +
+                "AND (orderDateYear * 10000 + orderDateMonth * 100 + orderDateDay) <= ?";
+        ArrayList<ProductOrder> orderArrayList = new ArrayList<>();
+        try {
+            ConnectToDB();
+
+            PreparedStatement statement = connection.prepareStatement(SQLCommand);
+            statement.setInt(1, input[0][0] * 10000 + input[0][1] * 100 + input[0][2]);
+            statement.setInt(2, input[1][0] * 10000 + input[1][1] * 100 + input[1][2]);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                // new order
+                ProductOrder newOrder = new ProductOrder(resultSet.getInt("serialNum"));
+                newOrder.setSku(resultSet.getString("sku"));
+                newOrder.setName(resultSet.getString("name"));
+                newOrder.setCustomer(resultSet.getString("customer"));
+                newOrder.setNote(resultSet.getString("note"));
+                newOrder.setOrderDate(new Date(resultSet.getInt("orderDateYear"),
+                        resultSet.getInt("orderDateMonth"),
+                        resultSet.getInt("orderDateDay")));
+                newOrder.setUnitAmount(resultSet.getDouble("unitAmount"));
+                newOrder.setAmount(resultSet.getDouble("amount"));
+                newOrder.setKgAmount();
+                newOrder.setUnitPrice(resultSet.getDouble("unitPrice"));
+                newOrder.setBasePrice(resultSet.getDouble("basePrice"));
+                newOrder.setTotalPrice();
+                newOrder.setFormulaIndex(resultSet.getInt("formulaIndex"));
+
+                // adding order
+                orderArrayList.add(newOrder);
+            }
+            CloseConnectionToDB();
+            return orderArrayList;
         } catch (SQLException e) {
             e.printStackTrace();
             HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),

@@ -153,17 +153,17 @@ public class ProductOrder {
     @Override
     public String toString() {
         String returnVal = "";
-        returnVal = addFormat(sku, returnVal);
-        returnVal = addFormat(name, returnVal);
-        returnVal = addFormat(customer, returnVal);
-        returnVal = addFormat(note, returnVal);
         returnVal = addFormat(orderDate.toString(), returnVal);
+        returnVal = addFormat(sku, returnVal);
+        returnVal = addFormat(customer, returnVal);
+        returnVal = addFormat(name, returnVal);
         returnVal = addFormat(String.valueOf(unitAmount), returnVal);
         returnVal = addFormat(String.valueOf(amount), returnVal);
         returnVal = addFormat(String.valueOf(getKgAmount()), returnVal);
         returnVal = addFormat(String.valueOf(unitPrice), returnVal);
         returnVal = addFormat(String.valueOf(getTotalPrice()), returnVal);
-        returnVal = addFormat(String.valueOf(formulaIndex), returnVal);
+        returnVal = addFormat(String.valueOf(getBasePrice()), returnVal);
+        returnVal = addFormat(note, returnVal);
 
         return returnVal;
     }
