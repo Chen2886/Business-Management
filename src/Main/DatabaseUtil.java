@@ -140,7 +140,7 @@ public class DatabaseUtil {
                 else if ("materialUnitPrice".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
             }
 
-            if (numOfTable == 5) {
+            if (numOfTable == 7) {
                 CloseConnectionToDB();
             } else {
                 CreateNewTable("materialManagement");
@@ -152,6 +152,8 @@ public class DatabaseUtil {
                 CreateNewTable("materialUnitPrice");
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+            e.getMessage();
             HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
@@ -250,8 +252,15 @@ public class DatabaseUtil {
                         ");";
             } else if (tableName.equals("productUnitPrice")) {
                 SQLCommand = "CREATE TABLE IF NOT EXISTS [productUnitPrice] (\n" +
-                        "name   	 	TEXT	PRIMARY KEY	NOT NULL,\n" +
-                        "price          REAL			 \n" +
+                        "serialNum   	INTEGER	PRIMARY KEY	NOT NULL,\n" +
+                        "name	        TEXT			,\n" +
+                        "price          REAL			,\n" +
+                        "orderDateYear	INTEGER			,\n" +
+                        "orderDateMonth	INTEGER			,\n" +
+                        "orderDateDay	INTEGER			,\n" +
+                        "customer   	TEXT			,\n" +
+                        "note       	TEXT			,\n" +
+                        "sku        	TEXT			\n" +
                         ");";
             } else if (tableName.equals("materialUnitPrice")) {
                 SQLCommand = "CREATE TABLE IF NOT EXISTS [materialUnitPrice] (\n" +
@@ -283,7 +292,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return true;
         } catch (SQLException e) {
-
+            e.printStackTrace();
             HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
@@ -358,6 +367,32 @@ public class DatabaseUtil {
             error.WriteToLog();
             e.printStackTrace();
             throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Given a name, see if newest formula table has it
+     * @param name the name that needs to be true
+     * @return true if contains, false if does not contain
+     */
+    public static boolean CheckIfNameExistsInNewestFormula(String name) {
+        String SQLCommand = "SELECT formulaIndex FROM newestFormula WHERE name = ?";
+        try {
+            ConnectToDB();
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            CloseConnectionToDB();
+            if (resultSet.next()) return true;
+            else return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            return false;
         } finally {
             CloseConnectionToDB();
         }
@@ -556,6 +591,171 @@ public class DatabaseUtil {
     }
 
     /**
+     * Get All the mat unit prices from database
+     * @return a list of all mat unit prices
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static ObservableList<ProdUnitPrice> GetAllProdUnitPrice() throws SQLException {
+        String SQLCommand = "SELECT * FROM productUnitPrice";
+        ObservableList<ProdUnitPrice> prodUnitPriceObservableList = FXCollections.observableArrayList();
+        try {
+            ConnectToDB();
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SQLCommand);
+
+            while (resultSet.next()) {
+
+                // new order
+                ProdUnitPrice prodUnitPrice = new ProdUnitPrice();
+                prodUnitPrice.setSerialNum(resultSet.getInt("serialNum"));
+                prodUnitPrice.setName(resultSet.getString("name"));
+                prodUnitPrice.setUnitPrice(resultSet.getDouble("price"));
+                prodUnitPrice.setDate(new Date(resultSet.getInt("orderDateYear"),
+                        resultSet.getInt("orderDateMonth"),
+                        resultSet.getInt("orderDateDay")));
+                prodUnitPrice.setCustomer(resultSet.getString("customer"));
+                prodUnitPrice.setNote(resultSet.getString("note"));
+                prodUnitPrice.setSku(resultSet.getString("sku"));
+
+                // adding unitPrice
+                prodUnitPriceObservableList.add(prodUnitPrice);
+            }
+            CloseConnectionToDB();
+            return prodUnitPriceObservableList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Given index, return formula object
+     * @param index the index of the formula
+     * @return the formula @ index
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static Formula GetFormulaByIndex(int index) throws SQLException {
+        String SQLCommand = "SELECT formula FROM formula WHERE serialNum = ?";
+        try {
+            ConnectToDB();
+
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, index);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            byte[] buf = resultSet.getBytes(1);
+            Formula formula = null;
+            if (buf != null) {
+                ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
+                formula = (Formula) objectIn.readObject();
+            }
+            CloseConnectionToDB();
+            return formula;
+        } catch (SQLException | IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * get the index from the newest formula's name
+     * @param name the name of the formula that needs to be found
+     * @return the index
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static int GetNewestFormulaIndex(String name) throws SQLException {
+        String SQLCommand = "SELECT formulaIndex FROM newestFormula WHERE name = ?";
+        try {
+            ConnectToDB();
+
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            int returnVal = resultSet.getInt(1);
+            CloseConnectionToDB();
+            return returnVal;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * get the unit price from the name provided
+     * @param name the name of the formula that needs to be found
+     * @return the unit price, -1 it not found
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static double GetMatUnitPrice(String name) throws SQLException {
+        String SQLCommand = "SELECT price FROM materialUnitPrice WHERE name = ?";
+        try {
+            ConnectToDB();
+
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            double returnVal = resultSet.next() ? resultSet.getDouble(1) : -1;
+            CloseConnectionToDB();
+            return returnVal;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * get the unit price from the name provided
+     * @param customer of the product that needs to be found
+     * @param name the name of the product that needs to be found
+     * @return the unit price, -1 it not found
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static double GetProdUnitPrice(String name, String customer) throws SQLException {
+        String SQLCommand = "SELECT price FROM productUnitPrice WHERE name = ? AND customer = ?";
+        try {
+            ConnectToDB();
+
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, customer);
+            System.out.println(name + " " + customer);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            double returnVal = resultSet.next() ? resultSet.getDouble(1) : -1;
+            CloseConnectionToDB();
+            return returnVal;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Given serial num, delete from database
      * @param serialNum order identified to be deleted
      */
@@ -596,6 +796,32 @@ public class DatabaseUtil {
             String SQLCommand = "DELETE FROM materialUnitPrice WHERE name = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setString(1, name);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            e.printStackTrace();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Given serial num, delete from database
+     * @param name name of the unit prices that needs to be deleted
+     * @param customer customer of the unit prices that needs to be deleted
+     */
+    public static void DeleteProdUnitPrice(String name, String customer) throws SQLException {
+        try {
+            ConnectToDB();
+
+            String SQLCommand = "DELETE FROM productUnitPrice WHERE name = ? AND customer = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, customer);
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
@@ -784,6 +1010,40 @@ public class DatabaseUtil {
     }
 
     /**
+     * Insert an unit price into the database
+     * @param prodUnitPrice specified prod unit price
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void AddProdUnitPrice(ProdUnitPrice prodUnitPrice) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "INSERT INTO [productUnitPrice] (serialNum, name, price, orderDateYear, " +
+                    "orderDateMonth, orderDateDay, customer, note, sku) " +
+                    "VALUES(?,?,?,?,?,?,?,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, prodUnitPrice.getSerialNum());
+            preparedStatement.setString(2, prodUnitPrice.getName());
+            preparedStatement.setDouble(3, prodUnitPrice.getUnitPrice());
+            preparedStatement.setInt(4, prodUnitPrice.getDate().getY());
+            preparedStatement.setInt(5, prodUnitPrice.getDate().getM());
+            preparedStatement.setInt(6, prodUnitPrice.getDate().getD());
+            preparedStatement.setString(7, prodUnitPrice.getCustomer());
+            preparedStatement.setString(8, prodUnitPrice.getNote());
+            preparedStatement.setString(9, prodUnitPrice.getSku());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Add seller into the seller database
      * @param seller seller that needs to be added
      * @throws SQLException if any error occurs while operating on database
@@ -806,6 +1066,39 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * save formula to formula table
+     * @return the index where Formula was added
+     */
+    public static int AddFormula (Formula formula) throws SQLException {
+        String SQLCommand = "INSERT INTO formula (serialNum, formula) VALUES(?,?)";
+        try {
+            ConnectToDB();
+            int serialNum = SerialNum.getSerialNum(DBOrder.FORMULA);
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, serialNum);
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(formula);
+            objectOutputStream.close();
+
+            preparedStatement.setObject(2, byteArrayOutputStream.toByteArray());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+
+            return serialNum;
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
             HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
@@ -997,6 +1290,62 @@ public class DatabaseUtil {
     }
 
     /**
+     * Update the newest formula table
+     * @param exists if formula exists already
+     * @param name the name of the formula
+     * @param index the index of the formula
+     */
+    public static void UpdateNewestFormula(boolean exists, String name, int index) {
+        String SQLCommand = "";
+        if (exists) SQLCommand = "UPDATE newestFormula SET formulaIndex = ? WHERE name = ?";
+        else SQLCommand = "INSERT INTO newestFormula (formulaIndex, name) VALUES(?,?)";
+        try {
+            ConnectToDB();
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, index);
+            preparedStatement.setString(2, name);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * update formula to formula table
+     */
+    public static void UpdateFormula (Formula formula, int serialNum) throws SQLException {
+        String SQLCommand = "UPDATE formula SET formula = ? WHERE serialNum = ?";
+        try {
+            ConnectToDB();
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(formula);
+            objectOutputStream.close();
+
+            preparedStatement.setObject(1, byteArrayOutputStream.toByteArray());
+            preparedStatement.setInt(2, serialNum);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Execute a given command related to mat order
      * @return command result
      * @throws SQLException if any error occurs while operating on database
@@ -1099,211 +1448,6 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderObservableList;
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            throw new SQLException();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * save formula to formula table
-     * @return the index where Formula was added
-     */
-    public static int AddFormula (Formula formula) throws SQLException {
-        String SQLCommand = "INSERT INTO formula (serialNum, formula) VALUES(?,?)";
-        try {
-            ConnectToDB();
-            int serialNum = SerialNum.getSerialNum(DBOrder.FORMULA);
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-            preparedStatement.setInt(1, serialNum);
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(formula);
-            objectOutputStream.close();
-
-            preparedStatement.setObject(2, byteArrayOutputStream.toByteArray());
-            preparedStatement.executeUpdate();
-            CloseConnectionToDB();
-
-            return serialNum;
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            throw new SQLException();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * Given a name, see if newest formula table has it
-     * @param name the name that needs to be true
-     * @return true if contains, false if does not contain
-     */
-    public static boolean CheckIfNameExistsInNewestFormula(String name) {
-        String SQLCommand = "SELECT formulaIndex FROM newestFormula WHERE name = ?";
-        try {
-            ConnectToDB();
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-            preparedStatement.setString(1, name);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            CloseConnectionToDB();
-            if (resultSet.next()) return true;
-            else return false;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            return false;
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * Update the newest formula table
-     * @param exists if formula exists already
-     * @param name the name of the formula
-     * @param index the index of the formula
-     */
-    public static void UpdateNewestFormula(boolean exists, String name, int index) {
-        String SQLCommand = "";
-        if (exists) SQLCommand = "UPDATE newestFormula SET formulaIndex = ? WHERE name = ?";
-        else SQLCommand = "INSERT INTO newestFormula (formulaIndex, name) VALUES(?,?)";
-        try {
-            ConnectToDB();
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-            preparedStatement.setInt(1, index);
-            preparedStatement.setString(2, name);
-            preparedStatement.executeUpdate();
-            CloseConnectionToDB();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * update formula to formula table
-     */
-    public static void UpdateFormula (Formula formula, int serialNum) throws SQLException {
-        String SQLCommand = "UPDATE formula SET formula = ? WHERE serialNum = ?";
-        try {
-            ConnectToDB();
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(formula);
-            objectOutputStream.close();
-
-            preparedStatement.setObject(1, byteArrayOutputStream.toByteArray());
-            preparedStatement.setInt(2, serialNum);
-            preparedStatement.executeUpdate();
-            CloseConnectionToDB();
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            throw new SQLException();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * Given index, return formula object
-     * @param index the index of the formula
-     * @return the formula @ index
-     * @throws SQLException if any error occurs while operating on database
-     */
-    public static Formula GetFormulaByIndex(int index) throws SQLException {
-        String SQLCommand = "SELECT formula FROM formula WHERE serialNum = ?";
-        try {
-            ConnectToDB();
-
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-            preparedStatement.setInt(1, index);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            byte[] buf = resultSet.getBytes(1);
-            Formula formula = null;
-            if (buf != null) {
-                ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
-                formula = (Formula) objectIn.readObject();
-            }
-            CloseConnectionToDB();
-            return formula;
-        } catch (SQLException | IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            throw new SQLException();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * get the index from the newest formula's name
-     * @param name the name of the formula that needs to be found
-     * @return the index
-     * @throws SQLException if any error occurs while operating on database
-     */
-    public static int GetNewestFormulaIndex(String name) throws SQLException {
-        String SQLCommand = "SELECT formulaIndex FROM newestFormula WHERE name = ?";
-        try {
-            ConnectToDB();
-
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-            preparedStatement.setString(1, name);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            int returnVal = resultSet.getInt(1);
-            CloseConnectionToDB();
-            return returnVal;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            throw new SQLException();
-        } finally {
-            CloseConnectionToDB();
-        }
-    }
-
-    /**
-     * get the unit price from the name provided
-     * @param name the name of the formula that needs to be found
-     * @return the unit price, -1 it not found
-     * @throws SQLException if any error occurs while operating on database
-     */
-    public static double GetMatUnitPrice(String name) throws SQLException {
-        String SQLCommand = "SELECT price FROM materialUnitPrice WHERE name = ?";
-        try {
-            ConnectToDB();
-
-            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
-            preparedStatement.setString(1, name);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            double returnVal = resultSet.next() ? resultSet.getDouble(1) : -1;
-            CloseConnectionToDB();
-            return returnVal;
-        } catch (SQLException e) {
-            e.printStackTrace();
             HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();

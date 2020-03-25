@@ -120,10 +120,8 @@ public class ProdAddOrder {
 
                 GridPane.setConstraints(datePicker, col, row++);
                 prodOrderInputArray.add(datePicker);
-            }
-
-            // regular text field
-            else {
+            } else {
+                // regular text field
                 TextField newTextField = new TextField();
                 newTextField.setPromptText("输入" + prodHeaders[i].replace("\u3000", ""));
                 GridPane.setConstraints(newTextField, col, row++);
@@ -131,10 +129,38 @@ public class ProdAddOrder {
             }
 
             if ((i + 5) % 4 == 0) {
+                // grid constraint
                 row = 1;
                 col += 2;
             }
         }
+
+        // auto unit price
+        TextField unitPrice = (TextField) prodOrderInputArray.get(6);
+        unitPrice.setOnKeyTyped(keyEvent -> {
+            try {
+                unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
+                        ((TextField) prodOrderInputArray.get(2)).getText())));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        });
+        unitPrice.setOnMouseClicked(keyEvent -> {
+            try {
+                unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
+                        ((TextField) prodOrderInputArray.get(2)).getText())));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        });
+
+
 
         prodAddOrderGrid.setVgap(10);
         prodAddOrderGrid.setHgap(10);
