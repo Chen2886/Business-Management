@@ -1,7 +1,7 @@
 package Main;
 
 public enum DBOrder {
-    MAT(0), PROD(1), SELLER(2), FORMULA(3);
+    MAT(0), PROD(1), SELLER(2), FORMULA(3), PRODPRICE(4);
 
     private final int value;
 

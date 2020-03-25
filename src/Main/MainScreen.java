@@ -45,7 +45,7 @@ public class MainScreen implements Initializable {
 	private static final String[] prodProperty = new String[]{"orderDate", "sku", "customer", "name",
 			"unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice", "basePrice", "note"};
 
-    private ObservableList<MatOrder> allMatOrderList;
+	private ObservableList<MatOrder> allMatOrderList;
 	private ObservableList<MatOrder> tempQuickSearchMatOrderList;
 
 	private ObservableList<ProductOrder> allProdOrderList;
@@ -61,7 +61,8 @@ public class MainScreen implements Initializable {
 	@FXML Button quitButton;
 	@FXML Button resetButton;
 	@FXML Button excelButton;
-	@FXML Button unitPriceButton;
+	@FXML Button matUnitPriceButton;
+	@FXML Button prodUnitPriceButton;
 	@FXML TextField searchBarTextField;
 	@FXML ImageView searchImageView;
 
@@ -77,7 +78,8 @@ public class MainScreen implements Initializable {
 		searchButton.setText("精确\n搜索");
 		addButton.setText("添加\n编辑");
 		excelButton.setText("生成\n表格");
-		unitPriceButton.setText("单价\n管理");
+		matUnitPriceButton.setText("原料\n单价");
+		prodUnitPriceButton.setText("产品\n单价");
 
 		// setting up the image for search bar
 		try {
@@ -141,7 +143,9 @@ public class MainScreen implements Initializable {
 		});
 
 
-		unitPriceButton.setOnAction(event -> loadUnitPrice());
+		matUnitPriceButton.setOnAction(event -> loadMatUnitPrice());
+
+		prodUnitPriceButton.setOnAction(event -> loadProdUnitPrice());
 
 		// listener for search bar text field
 		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -191,7 +195,7 @@ public class MainScreen implements Initializable {
 	/**
 	 * Load FXML for unit price table
 	 */
-	private void loadUnitPrice() {
+	private void loadMatUnitPrice() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Material/MatUnitPriceTable.fxml"));
 			Parent newScene = loader.load();
@@ -200,7 +204,31 @@ public class MainScreen implements Initializable {
 			MatUnitPriceTable matUnitPriceTable = loader.getController();
 			matUnitPriceTable.initData(stage);
 			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("单价系统");
+			stage.setTitle("原料单价系统");
+			stage.setScene(new Scene(newScene));
+			stage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	/**
+	 * Load FXML for unit price table
+	 */
+	private void loadProdUnitPrice() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdUnitPriceTable.fxml"));
+			Parent newScene = loader.load();
+			Stage stage = new Stage();
+
+			ProdUnitPriceTable prodUnitPriceTable = loader.getController();
+			prodUnitPriceTable.initData(stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("产品单价系统");
 			stage.setScene(new Scene(newScene));
 			stage.show();
 		} catch (Exception e) {

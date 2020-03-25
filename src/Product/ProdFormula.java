@@ -212,6 +212,16 @@ public class ProdFormula {
                 error.WriteToLog();
             }
         });
+        unitPrice.setOnMouseClicked(keyEvent -> {
+            try {
+                unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        });
         
     }
 
