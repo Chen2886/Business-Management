@@ -323,6 +323,4 @@ public class ProdUnitPriceTable {
     private void modifyPrice(ProdUnitPrice prodUnitPrice) {
 
     }
-
-
 }
