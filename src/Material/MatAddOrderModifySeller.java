@@ -98,7 +98,7 @@ public class MatAddOrderModifySeller {
 		// if escape key is detected anywhere
 		MatAddOrderModifySellerTabPane.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
-				if (ConfirmBox.display("确认", "确定关闭窗口？进度不会被保存", "是", "否"))
+				if (ConfirmBox.display(ConfirmMessage.CLOSEWINDOW))
 					currentStage.close();
 			}
 		});

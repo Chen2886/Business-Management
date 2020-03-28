@@ -25,6 +25,13 @@ public class ConfirmBox {
 	static boolean answer;
 	private static final String mediumFont = "-fx-font: 18 arial;";
 
+	public static boolean display(ConfirmMessage confirmMessage) {
+		if (confirmMessage == ConfirmMessage.CLOSEWINDOW)
+			return display("确认", "确定关闭窗口？进度即将还原。", "是","否");
+		else
+			return false;
+	}
+
 	public static boolean display(String title, String message, String yesButtonMessage, String noButtonMessage) {
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
