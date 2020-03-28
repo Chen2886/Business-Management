@@ -756,16 +756,23 @@ public class MatAddOrderModifySeller {
 	 * Obtain all the new seller information, add seller, and push it to database
 	 */
 	private void addSeller(boolean cont) {
-		MatSeller newSeller = new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "");
-		Method setter;
 
+		// initialize new seller
+		MatSeller newSeller = new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "");
+
+		// setting all the new information
+		Method setter;
 		for (TextField textField : matAddSellerInputArray) {
 			if (!textField.getText().equals("")) {
 				try {
 					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matAddSellerInputArray.indexOf(textField)], String.class);
 					setter.invoke(newSeller, textField.getText());
 				} catch (Exception e) {
+					AlertBox.display("错误", "添加错误，联系管理员");
 					e.printStackTrace();
+					HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+							e.getMessage(), e.getStackTrace(), false);
+					error.WriteToLog();
 				}
 			}
 		}
