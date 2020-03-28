@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdSearchOrder">
+    <GridPane fx:id="prodSearchOrderGrid" alignment="CENTER" hgap="30.0" vgap="10.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" VBox.vgrow="ALWAYS">
+        <columnConstraints>
+            <ColumnConstraints/>
+            <ColumnConstraints/>
+            <ColumnConstraints/>
+            <ColumnConstraints/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+        <Label fx:id="prodSearchOrderTitle" alignment="CENTER" contentDisplay="CENTER" text="搜索产品" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+            <font>
+                <Font size="30.0" />
+            </font>
+        </Label>
+    </GridPane>
+    <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="300.0" spacing="10.0"
+          AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0">
+        <Button fx:id="prodSearchOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false"
+                styleClass="actionButtons" stylesheets="../stylesheet.css" text="取消" textAlignment="CENTER">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+        <Button fx:id="prodSearchOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false"
+                styleClass="actionButtons" stylesheets="../stylesheet.css" text="完成" textAlignment="CENTER">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+    </HBox>
+</AnchorPane>
