@@ -51,7 +51,7 @@ public class MatEditUnitPrice {
                 MatUnitPriceTable.updateAllUnitPrice(newMatUnitPrice.getName(), newMatUnitPrice.getUnitPrice());
             stage.close();
         } catch (SQLException e) {
-            AlertBox.display("错误", "无法更新，确保新的名称唯一。");
+            AlertBox.display("错误", "无法更新，确保新的名称唯一");
             e.printStackTrace();
             HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
