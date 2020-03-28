@@ -64,7 +64,8 @@ public class MatGenerateExcel {
 
             XSSFWorkbook workbook;
             XSSFSheet sheet;
-            File excelFile = new File(fileName);
+            String desktopPath = System.getProperty("user.home") + "/Desktop/";
+            File excelFile = new File(desktopPath + fileName);
 
             if (excelFile.exists()) {
                 if (!excelFile.delete()) AlertBox.display("错误", "无法删除文件");
