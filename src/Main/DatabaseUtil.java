@@ -1346,6 +1346,39 @@ public class DatabaseUtil {
     }
 
     /**
+     * Insert an unit price into the database
+     * @param prodUnitPrice specified prod unit price
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void UpdateProdUnitPrice(ProdUnitPrice prodUnitPrice) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "UPDATE [productUnitPrice] SET name = ?, price = ?, orderDateYear = ?, " +
+                    "orderDateMonth = ?, orderDateDay = ?, customer = ?, note = ?, sku = ? WHERE serialNum = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, prodUnitPrice.getName());
+            preparedStatement.setDouble(2, prodUnitPrice.getUnitPrice());
+            preparedStatement.setInt(3, prodUnitPrice.getDate().getY());
+            preparedStatement.setInt(4, prodUnitPrice.getDate().getM());
+            preparedStatement.setInt(5, prodUnitPrice.getDate().getD());
+            preparedStatement.setString(6, prodUnitPrice.getCustomer());
+            preparedStatement.setString(7, prodUnitPrice.getNote());
+            preparedStatement.setString(8, prodUnitPrice.getSku());
+            preparedStatement.setInt(9, prodUnitPrice.getSerialNum());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Execute a given command related to mat order
      * @return command result
      * @throws SQLException if any error occurs while operating on database
