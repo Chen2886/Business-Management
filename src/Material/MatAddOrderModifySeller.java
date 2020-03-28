@@ -440,26 +440,32 @@ public class MatAddOrderModifySeller {
 	 * @param newSeller the new seller that needs to be updated
 	 */
 	private void updateSeller(MatSeller newSeller) {
-		Method setter;
 
+		// set the new seller object with new information
+		Method setter;
 		for (TextField textField : matEditSellerInputArray) {
 			if (textField.getText() != null && !textField.getText().equals("")) {
 				try {
 					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matEditSellerInputArray.indexOf(textField)], String.class);
 					setter.invoke(newSeller, textField.getText());
 				} catch (Exception e) {
+					AlertBox.display("错误", "更新错误，联系管理员");
 					e.printStackTrace();
+					HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+							e.getMessage(), e.getStackTrace(), false);
+					error.WriteToLog();
 				}
 			}
 		}
 
+		// push to databases
 		try {
 			DatabaseUtil.UpdateMatSellerInMain(newSeller);
 			DatabaseUtil.UpdateMatSellerInSeller(newSeller);
 			allMatSeller = DatabaseUtil.GetAllMatSellers();
 			currentStage.close();
 		} catch (Exception e) {
-			AlertBox.display("错误", "添加错误");
+			AlertBox.display("错误", "更新错误，管理员");
 			e.printStackTrace();
 			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
