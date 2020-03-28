@@ -168,8 +168,10 @@ public class MatAddOrderModifySeller {
 			}
 		}
 
+		// resetting grid constraints
 		row = 1;
 		col = 1;
+
 		// setting up all the text field
 		matOrderInputArray = new ArrayList<>();
 		for(int i = 0; i < propertyHeaders.length; i++) {
@@ -187,6 +189,7 @@ public class MatAddOrderModifySeller {
 			else if (i == propertyHeaders.length - 1) {
 				ComboBox<String> sellerComboBox = new ComboBox<>();
 
+				// getting all the company names
 				String[] allSellerCompany = new String[allMatSeller.size()];
 				for (int j = 0; j < allMatSeller.size(); j++) {
 					allSellerCompany[j] = allMatSeller.get(j).getCompanyName();
@@ -204,10 +207,10 @@ public class MatAddOrderModifySeller {
 				DatePicker datePicker = new DatePicker();
 				datePicker.setMaxWidth(Double.MAX_VALUE);
 
-				datePicker.setConverter(new StringConverter<LocalDate>() {
+				datePicker.setConverter(new StringConverter<>() {
 					@Override
 					public String toString(LocalDate localDate) {
-						if (localDate==null) {
+						if (localDate == null) {
 							return "0/0/0";
 						}
 						return dateTimeFormatter.format(localDate);
@@ -215,7 +218,7 @@ public class MatAddOrderModifySeller {
 
 					@Override
 					public LocalDate fromString(String string) {
-						if (string==null || string.isEmpty()) {
+						if (string == null || string.isEmpty()) {
 							return null;
 						}
 						return LocalDate.from(dateTimeFormatter.parse(string));
