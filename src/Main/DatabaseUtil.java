@@ -1379,6 +1379,61 @@ public class DatabaseUtil {
     }
 
     /**
+     * Insert an unit price into the database
+     * @param oldMatUnitPrice original unit price
+     * @param newMatUnitPrice new unit price to replace the old one
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void UpdateMatUnitPrice(MatUnitPrice oldMatUnitPrice, MatUnitPrice newMatUnitPrice) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "UPDATE [materialUnitPrice] SET name = ?, price = ?, note = ? " +
+                    "WHERE name = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, newMatUnitPrice.getName());
+            preparedStatement.setDouble(2, newMatUnitPrice.getUnitPrice());
+            preparedStatement.setString(3, newMatUnitPrice.getNote());
+            preparedStatement.setString(4, oldMatUnitPrice.getName());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Update all mat unit price in material management
+     * @param name the name of material
+     * @param price new price
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void UpdateAllMatUnitPrice(String name, double price) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "UPDATE [materialManagement] SET unitPrice = ? WHERE name = ? AND unitPrice = 0.0";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setDouble(1, price);
+            preparedStatement.setString(2, name);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Execute a given command related to mat order
      * @return command result
      * @throws SQLException if any error occurs while operating on database

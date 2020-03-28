@@ -1,15 +1,20 @@
 package Material;
 
 import Main.*;
+import Product.ProdEditUnitPriceTable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -62,6 +67,11 @@ public class MatUnitPriceTable {
     }
 
     private void init() {
+
+        matNameTextField.setPromptText("输入" + headers[0]);
+        matPriceTextField.setPromptText("输入" + headers[1]);
+        matNoteTextField.setPromptText("输入" + headers[2]);
+
         // setting up the image for search bar
         try {
             FileInputStream input = new FileInputStream("src/iconmonstr-magnifier-4-240.png");
@@ -181,6 +191,8 @@ public class MatUnitPriceTable {
             allUnitPrices = DatabaseUtil.GetAllMatUnitPrice();
             matTable.getItems().clear();
             matTable.getItems().setAll(allUnitPrices);
+            if (ConfirmBox.display("确认", "是否更新所有此原料没有单价的订单？", "是", "否"))
+                updateAllUnitPrice(matUnitPrice.getName(), matUnitPrice.getUnitPrice());
         } catch (SQLException e) {
             AlertBox.display("错误", "无法添加");
             e.printStackTrace();
@@ -208,8 +220,41 @@ public class MatUnitPriceTable {
     }
 
     private void modifyPrice(MatUnitPrice matUnitPrice) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("MatEditUnitPrice.fxml"));
+            Parent newScene = loader.load();
+            Stage stage = new Stage();
 
+            MatEditUnitPrice matEditUnitPrice = loader.getController();
+            matEditUnitPrice.initData(stage, matUnitPrice);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("配方");
+            stage.setScene(new Scene(newScene));
+            stage.showAndWait();
+            allUnitPrices = DatabaseUtil.GetAllMatUnitPrice();
+            tempQuickSearchList = FXCollections.observableArrayList(allUnitPrices);
+            searchBarTextField.setText("");
+            matTable.getItems().clear();
+            matTable.getItems().setAll(allUnitPrices);
+        } catch (Exception e) {
+            AlertBox.display("错误", "窗口错误");
+            e.printStackTrace();
+            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
     }
 
+    public static void updateAllUnitPrice(String name, double price) {
+        try {
+            DatabaseUtil.UpdateAllMatUnitPrice(name, price);
+        } catch (SQLException e) {
+            AlertBox.display("错误", "无法更新");
+            e.printStackTrace();
+            HandleError error = new HandleError(MatUnitPrice.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
+    }
 
 }
