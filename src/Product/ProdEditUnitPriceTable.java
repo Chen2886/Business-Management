@@ -44,6 +44,13 @@ public class ProdEditUnitPriceTable {
     }
 
     private void init() {
+
+        // button actions
+        cancelButton.setOnAction(event -> {
+            if (ConfirmBox.display("确认", "确定关闭窗口？单价不会被保存", "是", "否"))
+                stage.close();
+        });
+
         Method getter;
         inputArrayList = new ArrayList<>();
 
@@ -125,12 +132,6 @@ public class ProdEditUnitPriceTable {
                 error.WriteToLog();
             }
         }
-
-        // button actions
-        cancelButton.setOnAction(event -> {
-            if (ConfirmBox.display("确认", "确定关闭窗口？单价不会被保存", "是", "否"))
-                stage.close();
-        });
 
         completeButton.setOnAction(event -> updateUnitPrice());
 

@@ -3,8 +3,6 @@ package Product;
 // from my other packages
 import Main.*;
 
-import java.text.DecimalFormat;
-
 public class ProductOrder {
 
     private int serialNum;
@@ -15,14 +13,16 @@ public class ProductOrder {
     private String note;
     private Date orderDate;
 
-    // kgAmount = unitAmount * amount;
-    // totalPrice = kgAmount * unitPrice;
+    /**
+     kgAmount = unitAmount * amount;
+     totalPrice = kgAmount * unitPrice;
+     */
     private double unitAmount; //规格
-    private double amount;  //数量
-    private double kgAmount; //公斤
+    private double amount;     //数量
+    private double kgAmount;   //公斤
     private double unitPrice;  //单价
-    private double totalPrice;  //总价
-    private double basePrice; //成本价
+    private double totalPrice; //总价
+    private double basePrice;  //成本价
 
     private int formulaIndex;
 
@@ -34,9 +34,9 @@ public class ProductOrder {
         this.note = "";
         this.orderDate = new Date(0, 0, 0);
         this.unitAmount = Math.round(0.0 * 100.0) / 100.0;
-        this.amount = Math.round(0.0 * 100.0) / 100.0;;
-        this.unitPrice = Math.round(0.0 * 100.0) / 100.0;;
-        this.basePrice = Math.round(0.0 * 100.0) / 100.0;;
+        this.amount = Math.round(0.0 * 100.0) / 100.0;
+        this.unitPrice = Math.round(0.0 * 100.0) / 100.0;
+        this.basePrice = Math.round(0.0 * 100.0) / 100.0;
         this.formulaIndex = -1;
         setKgAmount();
         setTotalPrice();

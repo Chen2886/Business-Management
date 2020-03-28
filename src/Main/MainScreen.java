@@ -206,7 +206,8 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("原料单价系统");
 			stage.setScene(new Scene(newScene));
-			stage.show();
+			stage.showAndWait();
+			resetTable();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
 			e.printStackTrace();
