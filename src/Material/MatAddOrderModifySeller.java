@@ -86,7 +86,11 @@ public class MatAddOrderModifySeller {
 	}
 
 	/**
-	 * Initialize all the element on the screen
+	 * Initialized element:
+	 * - title size
+	 * - button actions
+	 * - get all the mat sellers
+	 * - call 3 other init functions to init visual elements
 	 */
 	public void init() {
 
@@ -104,32 +108,23 @@ public class MatAddOrderModifySeller {
 		});
 
 		// mat add order buttons
-		matAddOrderCompleteButton.setOnAction(actionEvent -> {
-			addOrder();
-		});
-		matAddOrderContinueButton.setOnAction(actionEvent -> {
-			continueOrder();
-		});
+		matAddOrderCompleteButton.setOnAction(actionEvent -> addOrder());
+		matAddOrderContinueButton.setOnAction(actionEvent -> continueOrder());
 		matAddOrderCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定取消？此订单不会被保存", "确认", "取消"))
-				currentStage.close();
+			if (ConfirmBox.display(ConfirmMessage.CANCEL)) currentStage.close();
 		});
 
 		// mat add seller buttons
-		matAddSellerCompleteButton.setOnAction(actionEvent -> {
-			addSeller(false);
-		});
-		matAddSellerContinueButton.setOnAction(actionEvent -> {
-			addSeller(true);
-		});
+		matAddSellerCompleteButton.setOnAction(actionEvent -> addSeller(false));
+		matAddSellerContinueButton.setOnAction(actionEvent -> addSeller(true));
 		matAddSellerCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定取消？此供应商不会被保存", "确认", "取消"))
+			if (ConfirmBox.display("确认", "确定取消？供应商即将还原（不会被保存）。", "是", "否"))
 				currentStage.close();
 		});
 
 		// mat edit seller, the rest two is in startEditMatSeller
 		matEditSellerCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定关闭窗口？", "是", "否"))
+			if (ConfirmBox.display("确认", "确定取消？供应商即将还原（不会被保存）。", "是", "否"))
 				currentStage.close();
 		});
 
@@ -154,19 +149,19 @@ public class MatAddOrderModifySeller {
 	 * initialize all labels and text fields for add mat order grid
 	 */
 	private void initAddMatOrder() {
+
+		// grid constraints
 		int row = 1;
 		int col = 0;
 
 		// setting up all the labels
-		ArrayList<Label> matOrderLabelArray = new ArrayList<>();
 		for(int i = 0; i < tableHeaders.length; i++) {
 			Label newLabel = new Label(tableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;" +
 					"-fx-alignment: center-right;");
 
-			// newLabel.setMaxWidth(Double.MAX_VALUE);
 			GridPane.setConstraints(newLabel, col, row++);
-			matOrderLabelArray.add(newLabel);
+			matAddOrderGrid.getChildren().add(newLabel);
 			if ((i + 6) % 5 == 0) {
 				row = 1;
 				col += 2;
@@ -251,7 +246,6 @@ public class MatAddOrderModifySeller {
 		// * setting up grid properties
 		matAddOrderGrid.setVgap(10);
 		matAddOrderGrid.setHgap(10);
-		matAddOrderGrid.getChildren().addAll(matOrderLabelArray);
 		matAddOrderGrid.getChildren().addAll(matOrderInputArray);
 	}
 
