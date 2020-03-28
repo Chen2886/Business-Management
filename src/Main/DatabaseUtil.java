@@ -12,7 +12,14 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DatabaseUtil {
+    
+    // database location
     private static String dataBaseLocationFile = "jdbc:sqlite:BusinessCashFlow.db";
+
+    /**
+     * connection that is required to connect to the database, all operations are done with this connection
+     * to prevent error when more than one connection is open
+     */
     private static Connection connection;
 
     /**
@@ -22,6 +29,8 @@ public class DatabaseUtil {
         try {
             ConnectToDB();
             Statement statement = connection.createStatement();
+            
+            // seller has a different serialNum name
             if (tableName.equals("seller")) {
                 ResultSet resultSet = statement.executeQuery(String.format("SELECT max(sellerId) FROM [%s]", tableName));
                 return resultSet.getInt("max(sellerId)");
@@ -30,7 +39,7 @@ public class DatabaseUtil {
                 return resultSet.getInt("max(serialNum)");
             }
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -46,12 +55,14 @@ public class DatabaseUtil {
     public static void CheckIfDBExists() throws SQLException {
         try {
             ConnectToDB();
+            
+            // if connection can not be established, then we need to create a database
             if (connection == null) {
                 CloseConnectionToDB();
                 CreateNewDB();
             }
         } catch (SQLException e) {
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -61,7 +72,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * Create database if not exist
+     * Create database
      * @throws SQLException if any error occurs while operating on database
      */
     private static void CreateNewDB() throws SQLException {
@@ -72,7 +83,7 @@ public class DatabaseUtil {
                 DatabaseMetaData meta = connection.getMetaData();
             }
         } catch (SQLException e) {
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -82,18 +93,17 @@ public class DatabaseUtil {
     }
 
     /**
-     * Update connection to the database
+     * Connect to database if a connection does not exist
      * @throws SQLException If connection cannot be established to the database
      */
     private static void ConnectToDB() throws SQLException {
-        if (connection!=null) {
+        if (connection != null)
             return;
-        }
         try {
             connection = DriverManager.getConnection(dataBaseLocationFile);
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -104,14 +114,14 @@ public class DatabaseUtil {
      * Terminate any connection to database.
      */
     public static void CloseConnectionToDB() {
-        if (connection == null) {
+        if (connection == null)
             return;
-        }
         try {
             connection.close();
             connection = null;
         } catch (SQLException e) {
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            e.printStackTrace();
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             connection = null;
@@ -140,9 +150,8 @@ public class DatabaseUtil {
                 else if ("materialUnitPrice".equals(resultSet.getString("TABLE_NAME"))) numOfTable++;
             }
 
-            if (numOfTable == 7) {
-                CloseConnectionToDB();
-            } else {
+            if (numOfTable == 7) CloseConnectionToDB();
+            else {
                 CreateNewTable("materialManagement");
                 CreateNewTable("seller");
                 CreateNewTable("productManagement");
@@ -154,7 +163,7 @@ public class DatabaseUtil {
         } catch (SQLException e) {
             e.printStackTrace();
             e.getMessage();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -174,105 +183,113 @@ public class DatabaseUtil {
             Statement statement = connection.createStatement();
             String SQLCommand = "";
 
-            if (tableName.equals("materialManagement")) {
-                // 34 Col
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [materialManagement] (" +
-                        "serialNum 		INTEGER	PRIMARY KEY	NOT NULL,\n" +
-                        "sku     		TEXT	NOT NULL,\n" +
-                        "name    		TEXT	NOT NULL,\n" +
-                        "type    		TEXT	NOT NULL,\n" +
-                        "orderDateYear	INTEGER	NOT NULL,\n" +
-                        "orderDateMonth	INTEGER	NOT NULL,\n" +
-                        "orderDateDay	INTEGER	NOT NULL,\n" +
-                        "paymentDateYear	INTEGER	NOT NULL,\n" +
-                        "paymentDateMonth	INTEGER	NOT NULL,\n" +
-                        "paymentDateDay 	INTEGER	NOT NULL,\n" +
-                        "arrivalDateYear	INTEGER	NOT NULL,\n" +
-                        "arrivalDateMonth	INTEGER	NOT NULL,\n" +
-                        "arrivalDateDay 	INTEGER	NOT NULL,\n" +
-                        "invoiceDateYear	INTEGER	NOT NULL,\n" +
-                        "invoiceDateMonth	INTEGER	NOT NULL,\n" +
-                        "invoiceDateDay 	INTEGER	NOT NULL,\n" +
-                        "invoice		TEXT			,\n" +
-                        "unitAmount		REAL	NOT NULL,\n" +
-                        "amount			REAL	NOT NULL,\n" +
-                        "kgAmount		REAL			,\n" +
-                        "unitPrice		REAL	        ,\n" +
-                        "totalPrice		REAL			,\n" +
-                        "signed 		TEXT			,\n" +
-                        "skuSeller  	TEXT			,\n" +
-                        "note			TEXT			,\n" +
-                        "sellerId		INTEGER	NOT NULL,\n" +
-                        "companyName	TEXT	NOT NULL,\n" +
-                        "contactName	TEXT	NOT NULL,\n" +
-                        "mobile 		TEXT			,\n" +
-                        "landLine		TEXT			,\n" +
-                        "fax			TEXT	        ,\n" +
-                        "accountNum		TEXT			,\n" +
-                        "bankAddress	TEXT			,\n" +
-                        "address		TEXT			\n" +
-                        ");";
-            } else if (tableName.equals("seller")) {
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [seller] (\n" +
-                        "sellerId	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
-                        "companyName	TEXT	NOT NULL,\n" +
-                        "contactName	TEXT	NOT NULL,\n" +
-                        "mobile 		TEXT			,\n" +
-                        "landLine		TEXT			,\n" +
-                        "fax			TEXT	        ,\n" +
-                        "accountNum		TEXT			,\n" +
-                        "bankAddress	TEXT			,\n" +
-                        "address		TEXT			\n" +
-                        ");";
-            } else if (tableName.equals("productManagement")) {
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [productManagement] (\n" +
-                        "serialNum	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
-                        "sku        	TEXT	        ,\n" +
-                        "name       	TEXT	        ,\n" +
-                        "customer 		TEXT			,\n" +
-                        "note   		TEXT			,\n" +
-                        "orderDateYear	INTEGER			,\n" +
-                        "orderDateMonth	INTEGER			,\n" +
-                        "orderDateDay	INTEGER			,\n" +
-                        "unitAmount		REAL	        ,\n" +
-                        "amount 		REAL			,\n" +
-                        "unitPrice  	REAL			,\n" +
-                        "basePrice  	REAL			,\n" +
-                        "formulaIndex   INTEGER			\n" +
-                        ");";
-            } else if (tableName.equals("formula")) {
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [formula] (\n" +
-                        "serialNum	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
-                        "formula        BLOB			 \n" +
-                        ");";
-            } else if (tableName.equals("newestFormula")) {
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [newestFormula] (\n" +
-                        "name   	 	TEXT	PRIMARY KEY	NOT NULL,\n" +
-                        "formulaIndex   INTEGER			 \n" +
-                        ");";
-            } else if (tableName.equals("productUnitPrice")) {
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [productUnitPrice] (\n" +
-                        "serialNum   	INTEGER	PRIMARY KEY	NOT NULL,\n" +
-                        "name	        TEXT			,\n" +
-                        "price          REAL			,\n" +
-                        "orderDateYear	INTEGER			,\n" +
-                        "orderDateMonth	INTEGER			,\n" +
-                        "orderDateDay	INTEGER			,\n" +
-                        "customer   	TEXT			,\n" +
-                        "note       	TEXT			,\n" +
-                        "sku        	TEXT			\n" +
-                        ");";
-            } else if (tableName.equals("materialUnitPrice")) {
-                SQLCommand = "CREATE TABLE IF NOT EXISTS [materialUnitPrice] (\n" +
-                        "name   	 	TEXT	PRIMARY KEY	NOT NULL,\n" +
-                        "price          REAL    NOT NULL,\n" +
-                        "note           TEXT			 \n" +
-                        ");";
+            switch (tableName) {
+                case "materialManagement":
+                    // 34 Col
+                    SQLCommand = "CREATE TABLE IF NOT EXISTS [materialManagement] (" +
+                            "serialNum 		INTEGER	PRIMARY KEY	NOT NULL,\n" +
+                            "sku     		TEXT	NOT NULL,\n" +
+                            "name    		TEXT	NOT NULL,\n" +
+                            "type    		TEXT	NOT NULL,\n" +
+                            "orderDateYear	INTEGER	NOT NULL,\n" +
+                            "orderDateMonth	INTEGER	NOT NULL,\n" +
+                            "orderDateDay	INTEGER	NOT NULL,\n" +
+                            "paymentDateYear	INTEGER	NOT NULL,\n" +
+                            "paymentDateMonth	INTEGER	NOT NULL,\n" +
+                            "paymentDateDay 	INTEGER	NOT NULL,\n" +
+                            "arrivalDateYear	INTEGER	NOT NULL,\n" +
+                            "arrivalDateMonth	INTEGER	NOT NULL,\n" +
+                            "arrivalDateDay 	INTEGER	NOT NULL,\n" +
+                            "invoiceDateYear	INTEGER	NOT NULL,\n" +
+                            "invoiceDateMonth	INTEGER	NOT NULL,\n" +
+                            "invoiceDateDay 	INTEGER	NOT NULL,\n" +
+                            "invoice		TEXT			,\n" +
+                            "unitAmount		REAL	NOT NULL,\n" +
+                            "amount			REAL	NOT NULL,\n" +
+                            "kgAmount		REAL			,\n" +
+                            "unitPrice		REAL	        ,\n" +
+                            "totalPrice		REAL			,\n" +
+                            "signed 		TEXT			,\n" +
+                            "skuSeller  	TEXT			,\n" +
+                            "note			TEXT			,\n" +
+                            "sellerId		INTEGER	NOT NULL,\n" +
+                            "companyName	TEXT	NOT NULL,\n" +
+                            "contactName	TEXT	NOT NULL,\n" +
+                            "mobile 		TEXT			,\n" +
+                            "landLine		TEXT			,\n" +
+                            "fax			TEXT	        ,\n" +
+                            "accountNum		TEXT			,\n" +
+                            "bankAddress	TEXT			,\n" +
+                            "address		TEXT			\n" +
+                            ");";
+                    break;
+                case "seller":
+                    SQLCommand = "CREATE TABLE IF NOT EXISTS [seller] (\n" +
+                            "sellerId	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
+                            "companyName	TEXT	NOT NULL,\n" +
+                            "contactName	TEXT	NOT NULL,\n" +
+                            "mobile 		TEXT			,\n" +
+                            "landLine		TEXT			,\n" +
+                            "fax			TEXT	        ,\n" +
+                            "accountNum		TEXT			,\n" +
+                            "bankAddress	TEXT			,\n" +
+                            "address		TEXT			\n" +
+                            ");";
+                    break;
+                case "productManagement":
+                    SQLCommand = "CREATE TABLE IF NOT EXISTS [productManagement] (\n" +
+                            "serialNum	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
+                            "sku        	TEXT	        ,\n" +
+                            "name       	TEXT	        ,\n" +
+                            "customer 		TEXT			,\n" +
+                            "note   		TEXT			,\n" +
+                            "orderDateYear	INTEGER			,\n" +
+                            "orderDateMonth	INTEGER			,\n" +
+                            "orderDateDay	INTEGER			,\n" +
+                            "unitAmount		REAL	        ,\n" +
+                            "amount 		REAL			,\n" +
+                            "unitPrice  	REAL			,\n" +
+                            "basePrice  	REAL			,\n" +
+                            "formulaIndex   INTEGER			\n" +
+                            ");";
+                    break;
+                case "formula":
+                    SQLCommand = "CREATE TABLE IF NOT EXISTS [formula] (\n" +
+                            "serialNum	 	INTEGER	PRIMARY KEY	NOT NULL,\n" +
+                            "formula        BLOB			 \n" +
+                            ");";
+                    break;
+                case "newestFormula":
+                    SQLCommand = "CREATE TABLE IF NOT EXISTS [newestFormula] (\n" +
+                            "name   	 	TEXT	PRIMARY KEY	NOT NULL,\n" +
+                            "formulaIndex   INTEGER			 \n" +
+                            ");";
+                    break;
+                case "productUnitPrice":
+                    SQLCommand = "CREATE TABLE IF NOT EXISTS [productUnitPrice] (\n" +
+                            "serialNum   	INTEGER	PRIMARY KEY	NOT NULL,\n" +
+                            "name	        TEXT			,\n" +
+                            "price          REAL			,\n" +
+                            "orderDateYear	INTEGER			,\n" +
+                            "orderDateMonth	INTEGER			,\n" +
+                            "orderDateDay	INTEGER			,\n" +
+                            "customer   	TEXT			,\n" +
+                            "note       	TEXT			,\n" +
+                            "sku        	TEXT			\n" +
+                            ");";
+                    break;
+                case "materialUnitPrice":
+                    SQLCommand = "CREATE TABLE IF NOT EXISTS [materialUnitPrice] (\n" +
+                            "name   	 	TEXT	PRIMARY KEY	NOT NULL,\n" +
+                            "price          REAL    NOT NULL,\n" +
+                            "note           TEXT			 \n" +
+                            ");";
+                    break;
             }
             statement.execute(SQLCommand);
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -293,7 +310,7 @@ public class DatabaseUtil {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             return false;
@@ -327,7 +344,7 @@ public class DatabaseUtil {
 
         } catch (SQLException e) {
             //System.out.println("checkIfSkuExists failed");
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             e.printStackTrace();
@@ -362,7 +379,7 @@ public class DatabaseUtil {
 
         } catch (SQLException e) {
             //System.out.println("checkIfSkuExists failed");
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             e.printStackTrace();
@@ -373,7 +390,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * Given a name, see if newest formula table has it
+     * Given a name, see if newest formula table contains the name
      * @param name the name that needs to be true
      * @return true if contains, false if does not contain
      */
@@ -385,11 +402,10 @@ public class DatabaseUtil {
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
             CloseConnectionToDB();
-            if (resultSet.next()) return true;
-            else return false;
+            return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             return false;
@@ -400,7 +416,7 @@ public class DatabaseUtil {
 
     /**
      * Get All the mat order from database
-     * @return a list of all mat order
+     * @return a list of all mat order ordered by sku
      * @throws SQLException if any error occurs while operating on database
      */
     public static ObservableList<MatOrder> GetAllMatOrders() throws SQLException {
@@ -460,7 +476,7 @@ public class DatabaseUtil {
             return orderObservableList;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -470,8 +486,8 @@ public class DatabaseUtil {
     }
 
     /**
-     * Get All the mat order from database
-     * @return a list of all mat order
+     * Get All the product order from database
+     * @return a list of all product order ordered by sku
      * @throws SQLException if any error occurs while operating on database
      */
     public static ObservableList<ProductOrder> GetAllProdOrders() throws SQLException {
@@ -509,7 +525,7 @@ public class DatabaseUtil {
             return orderObservableList;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -519,8 +535,8 @@ public class DatabaseUtil {
     }
 
     /**
-     * Return a list of all sellers available
-     * @return all sellers in the database
+     * Return a list of all mat sellers available
+     * @return all smat ellers in the database
      * @throws SQLException if any error occurs while operating on database
      */
     public static ObservableList<MatSeller> GetAllMatSellers() throws SQLException {
@@ -545,7 +561,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return sellerObservableList;
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -581,7 +597,7 @@ public class DatabaseUtil {
             return matUnitPriceTableObservableList;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -591,8 +607,8 @@ public class DatabaseUtil {
     }
 
     /**
-     * Get All the mat unit prices from database
-     * @return a list of all mat unit prices
+     * Get All the product unit prices from database
+     * @return a list of all product unit prices
      * @throws SQLException if any error occurs while operating on database
      */
     public static ObservableList<ProdUnitPrice> GetAllProdUnitPrice() throws SQLException {
@@ -625,7 +641,7 @@ public class DatabaseUtil {
             return prodUnitPriceObservableList;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -659,7 +675,7 @@ public class DatabaseUtil {
             return formula;
         } catch (SQLException | IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -670,7 +686,7 @@ public class DatabaseUtil {
 
     /**
      * get the index from the newest formula's name
-     * @param name the name of the formula that needs to be found
+     * @param name name of the formula that needs to be found
      * @return the index
      * @throws SQLException if any error occurs while operating on database
      */
@@ -687,7 +703,7 @@ public class DatabaseUtil {
             return returnVal;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -715,7 +731,7 @@ public class DatabaseUtil {
             return returnVal;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -746,7 +762,7 @@ public class DatabaseUtil {
             return returnVal;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -775,7 +791,7 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             e.printStackTrace();
@@ -786,7 +802,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * Given serial num, delete from database
+     * Given the name of the unit price, delete from database
      * @param name name of the unit prices that needs to be deleted
      */
     public static void DeleteMatUnitPrice(String name) throws SQLException {
@@ -799,7 +815,7 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             e.printStackTrace();
@@ -810,7 +826,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * Given serial num, delete from database
+     * Given the name and the customer, delete from database
      * @param name name of the unit prices that needs to be deleted
      * @param customer customer of the unit prices that needs to be deleted
      */
@@ -825,7 +841,7 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             e.printStackTrace();
@@ -855,7 +871,7 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             e.printStackTrace();
@@ -934,7 +950,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -973,7 +989,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1000,7 +1016,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1034,7 +1050,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1044,7 +1060,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * Add seller into the seller database
+     * Insert seller into the seller database
      * @param seller seller that needs to be added
      * @throws SQLException if any error occurs while operating on database
      */
@@ -1066,7 +1082,7 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1076,8 +1092,8 @@ public class DatabaseUtil {
     }
 
     /**
-     * save formula to formula table
-     * @return the index where Formula was added
+     * Insert formula to formula table
+     * @return the index where Formula was inserted
      */
     public static int AddFormula (Formula formula) throws SQLException {
         String SQLCommand = "INSERT INTO formula (serialNum, formula) VALUES(?,?)";
@@ -1099,7 +1115,7 @@ public class DatabaseUtil {
             return serialNum;
         } catch (SQLException | IOException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1179,7 +1195,7 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             e.printStackTrace();
@@ -1218,7 +1234,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1228,7 +1244,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * update all related order in main
+     * update all order using this seller in main
      * @param newSeller new seller
      * @throws SQLException if any error occurs while operating on database
      */
@@ -1251,7 +1267,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             //System.out.println("UpdateSellerInSeller failed");
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1264,8 +1280,8 @@ public class DatabaseUtil {
      * @throws SQLException if any error occurs while operating on database
      */
     public static void UpdateMatSellerInSeller(MatSeller newSeller) throws SQLException {
-        String SQLCommand = "UPDATE seller SET companyName = ?, contactName = ?, mobile = ?, landLine = ?," +
-                " fax = ?, accountNum = ?, bankAddress = ?, address = ? WHERE sellerId = ?";
+        String SQLCommand = "UPDATE seller SET companyName = ?, contactName = ?, mobile = ?, landLine = ?, " +
+                "fax = ?, accountNum = ?, bankAddress = ?, address = ? WHERE sellerId = ?";
         try {
             ConnectToDB();
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
@@ -1282,7 +1298,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             //System.out.println("UpdateSellerInSeller failed");
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1296,7 +1312,7 @@ public class DatabaseUtil {
      * @param index the index of the formula
      */
     public static void UpdateNewestFormula(boolean exists, String name, int index) {
-        String SQLCommand = "";
+        String SQLCommand;
         if (exists) SQLCommand = "UPDATE newestFormula SET formulaIndex = ? WHERE name = ?";
         else SQLCommand = "INSERT INTO newestFormula (formulaIndex, name) VALUES(?,?)";
         try {
@@ -1308,7 +1324,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
         } finally {
@@ -1317,7 +1333,9 @@ public class DatabaseUtil {
     }
 
     /**
-     * update formula to formula table
+     * Update formula to formula table
+     * @param formula the formula that needs to be updated
+     * @param serialNum the serial num where it needs to be updated
      */
     public static void UpdateFormula (Formula formula, int serialNum) throws SQLException {
         String SQLCommand = "UPDATE formula SET formula = ? WHERE serialNum = ?";
@@ -1336,7 +1354,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException | IOException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1346,7 +1364,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * Insert an unit price into the database
+     * Update a product unit price
      * @param prodUnitPrice specified prod unit price
      * @throws SQLException if any error occurs while operating on database
      */
@@ -1369,7 +1387,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1379,7 +1397,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * Insert an unit price into the database
+     * Update an unit price into the database
      * @param oldMatUnitPrice original unit price
      * @param newMatUnitPrice new unit price to replace the old one
      * @throws SQLException if any error occurs while operating on database
@@ -1398,7 +1416,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1424,7 +1442,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("Main.DatabaseUtil", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1491,7 +1509,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderObservableList;
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1536,7 +1554,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderObservableList;
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1548,7 +1566,7 @@ public class DatabaseUtil {
     /**
      * get all material orders with in the input date range
      * @param input 2d array of size 2, 1st is start date (yyyy-mm-dd), 2nd is end date (yyyy-mm-dd)
-     * @return arraylist of material order
+     * @return ArrayList of material order
      * @throws SQLException if any error occurs while operating on database
      */
     public static ArrayList<MatOrder> SelectMatOrderWithDateRange(int[][] input) throws SQLException {
@@ -1608,7 +1626,7 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderArrayList;
         } catch (SQLException e) {
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
@@ -1618,7 +1636,7 @@ public class DatabaseUtil {
     /**
      * get all product orders with in the input date range
      * @param input 2d array of size 2, 1st is start date (yyyy-mm-dd), 2nd is end date (yyyy-mm-dd)
-     * @return arraylist of product order
+     * @return ArrayList of product order
      * @throws SQLException if any error occurs while operating on database
      */
     public static ArrayList<ProductOrder> SelectProductOrderWithDateRange(int[][] input) throws SQLException {
@@ -1660,7 +1678,7 @@ public class DatabaseUtil {
             return orderArrayList;
         } catch (SQLException e) {
             e.printStackTrace();
-            HandleError error = new HandleError("DataBaseUtility", Thread.currentThread().getStackTrace()[1].getMethodName(),
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
             throw new SQLException();
