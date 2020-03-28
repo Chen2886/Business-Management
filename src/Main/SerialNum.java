@@ -17,7 +17,6 @@ public class SerialNum {
             for (int i = 0; i < tableNames.length; i++) {
                 serialNum[i] = DatabaseUtil.GetNewestSerialNum(tableNames[i]);
             }
-            System.out.println(Arrays.toString(serialNum));
         } catch (Exception e) {
             e.printStackTrace();
             HandleError error = new HandleError(SerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),

@@ -293,27 +293,28 @@ public class MatAddOrderModifySeller {
 			}
 		}
 
-		// setting up grid properties
+		// * setting up grid properties
 		matAddSellerGrid.setVgap(10);
 		matAddSellerGrid.setHgap(10);
 		matAddSellerGrid.getChildren().addAll(matAddSellerInputArray);
 	}
 
 	/**
-	 * initialize all labels and text fields for edit mat order grid
+	 * initialize the initial screen for edit mat seller
 	 */
 	private void initEditMatSeller() {
 
+		// changing hgrow due to switching element on screen
 		problematicColumnOne.setHgrow(Priority.ALWAYS);
 		problematicColumnTwo.setHgrow(Priority.ALWAYS);
 
-		// label
+		// initial temp title
 		Label initialSelectSellerTitle = new Label("选择供应商");
 		initialSelectSellerTitle.setStyle("-fx-font-size: 20px;");
 		initialSelectSellerTitle.setMaxWidth(Double.MAX_VALUE);
 		initialSelectSellerTitle.setAlignment(Pos.CENTER_RIGHT);
 
-		// seller combo box
+		// seller combo box and getting all the company name
 		ComboBox<String> sellerComboBox = new ComboBox<>();
 		String[] allSellerCompany = new String[allMatSeller.size()];
 		for (int j = 0; j < allMatSeller.size(); j++) {
@@ -321,12 +322,14 @@ public class MatAddOrderModifySeller {
 		}
 		sellerComboBox.getItems().setAll(allSellerCompany);
 
+		// initial screen hbox
 		HBox selectInitSeller = new HBox(initialSelectSellerTitle, sellerComboBox);
 		selectInitSeller.setMaxWidth(Double.MAX_VALUE);
 		selectInitSeller.setSpacing(10);
 		selectInitSeller.setAlignment(Pos.CENTER);
 		GridPane.setConstraints(selectInitSeller, 1, 1, 2, 1);
 
+		// initial screen hbox button, to align things correctly
 		Button startEdit = new Button("编辑供应商");
 		startEdit.setStyle("-fx-background-color: #bbbdf6;\n" +
 				"-fx-font-color: black;\n" +
@@ -337,57 +340,67 @@ public class MatAddOrderModifySeller {
 		uselessHBoxForButton.setAlignment(Pos.CENTER);
 		GridPane.setConstraints(uselessHBoxForButton, 1, 2, 2, 1);
 
+		// start edit button action
+		matEditSellerGrid.getChildren().addAll(selectInitSeller, uselessHBoxForButton);
+
+		// start to edit action button
 		startEdit.setOnAction(actionEvent -> {
 			if (sellerComboBox.getSelectionModel().getSelectedItem() != null) {
 				matEditSellerGrid.getChildren().removeAll(uselessHBoxForButton, selectInitSeller);
-				startEditMatSeller(allMatSeller.get(sellerComboBox.getSelectionModel().getSelectedIndex()));
-			}
+				editMatSeller(allMatSeller.get(sellerComboBox.getSelectionModel().getSelectedIndex()));
+			} else
+				AlertBox.display("错误", "选择供应商");
 		});
-
-		matEditSellerGrid.getChildren().addAll(selectInitSeller, uselessHBoxForButton);
 	}
 
 	/**
-	 * Called when user selected a mat seller to update, sets up the screen
+	 * Called when user selected a mat seller to update, sets up the actual edit screen
 	 * @param matSeller the mat seller user selected
 	 */
-	private void startEditMatSeller(MatSeller matSeller) {
+	private void editMatSeller(MatSeller matSeller) {
+
+		// changing hgrow due to switching element on screen
 		problematicColumnOne.setHgrow(Priority.NEVER);
 		problematicColumnTwo.setHgrow(Priority.NEVER);
 
-		// * setting up seller labels
-		// setting up all the labels
-		ArrayList<Label> matEditSellerLabelArray = new ArrayList<>();
+		// initialize the input array
 		matEditSellerInputArray = new ArrayList<>();
+
+		// setting up all the labels
 		int row = 1;
 		int col = 0;
 		for(int i = 0; i < sellerTableHeaders.length; i++) {
 			Label newLabel = new Label(sellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
 			GridPane.setConstraints(newLabel, col, row++);
-			matEditSellerLabelArray.add(newLabel);
+			matEditSellerGrid.getChildren().add(newLabel);
+
+			// math to set the constraints to the correct position
 			if ((i + 5) % 4 == 0) {
 				row = 1;
 				col += 2;
 			}
 		}
 
+		// resetting the grid constraint
 		row = 1;
 		col = 1;
-		// * setting up seller text field
+
+		// setting up seller text field
 		for (int i = 0; i <sellerTableHeaders.length; i++) {
 			TextField newTextField = new TextField();
 			newTextField.setMaxWidth(Double.MAX_VALUE);
 			newTextField.setAlignment(Pos.CENTER_LEFT);
 			newTextField.setPromptText("输入" + sellerTableHeaders[i]);
 
+			// getting the existing information of the selected seller
 			Method getters;
 			try {
 				getters = MatSeller.class.getDeclaredMethod("get" + sellerPropertyHeaders[i]);
 				String value = (String) getters.invoke(matSeller);
 				newTextField.setText(value);
 			} catch (Exception e) {
-				AlertBox.display("错误", "摘取信息错误");
+				AlertBox.display("错误", "读取所选供应商错误，联系管理员。");
 				e.printStackTrace();
 				HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 						e.getMessage(), e.getStackTrace(), false);
@@ -395,14 +408,16 @@ public class MatAddOrderModifySeller {
 			}
 
 			GridPane.setConstraints(newTextField, col, row++);
-
 			matEditSellerInputArray.add(newTextField);
+
+			// math to set the constraints to the correct position
 			if ((i + 5) % 4 == 0) {
 				row = 1;
 				col += 2;
 			}
 		}
 
+		// reset page to initial state
 		matEditSellerResetButton.setOnAction(actionEvent -> {
 			matEditSellerGrid.getChildren().clear();
 			matEditSellerGrid.getChildren().add(matEditSellerTitleLabel);
@@ -410,16 +425,14 @@ public class MatAddOrderModifySeller {
 		});
 
 		matEditSellerCompleteButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "所有使用此供应商的订单会被更新，是否继续？", "继续", "取消"))
+			if (ConfirmBox.display("确认", "是否更新所有使用此供应商的订单？", "是", "否"))
 				updateSeller(matSeller);
 		});
 
 		// * setting up grid properties
 		matEditSellerGrid.setVgap(10);
 		matEditSellerGrid.setHgap(10);
-		matEditSellerGrid.getChildren().addAll(matEditSellerLabelArray);
 		matEditSellerGrid.getChildren().addAll(matEditSellerInputArray);
-
 	}
 
 	/**
