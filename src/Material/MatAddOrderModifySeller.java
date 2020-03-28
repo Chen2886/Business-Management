@@ -210,21 +210,16 @@ public class MatAddOrderModifySeller {
 				datePicker.setConverter(new StringConverter<>() {
 					@Override
 					public String toString(LocalDate localDate) {
-						if (localDate == null) {
-							return "0/0/0";
-						}
+						if (localDate == null) return "0/0/0";
 						return dateTimeFormatter.format(localDate);
 					}
 
 					@Override
 					public LocalDate fromString(String string) {
-						if (string == null || string.isEmpty()) {
-							return null;
-						}
+						if (string == null || string.isEmpty()) return null;
 						return LocalDate.from(dateTimeFormatter.parse(string));
 					}
 				});
-
 
 				GridPane.setConstraints(datePicker, col, row++);
 				matOrderInputArray.add(datePicker);
@@ -237,9 +232,9 @@ public class MatAddOrderModifySeller {
 				newTextField.setPromptText("输入" + tableHeaders[i]);
 				GridPane.setConstraints(newTextField, col, row++);
 				matOrderInputArray.add(newTextField);
-
 			}
 
+			// math to set the constraints to the correct position
 			if ((i + 6) % 5 == 0) {
 				row = 1;
 				col += 2;
@@ -256,26 +251,33 @@ public class MatAddOrderModifySeller {
 	 * initialize all labels and text fields for add mat seller grid
 	 */
 	private void initAddMatSeller() {
-		// * setting up seller labels
-		// setting up all the labels
-		ArrayList<Label> matSellerLabelArray = new ArrayList<>();
+
+		// initialize the input array
 		matAddSellerInputArray = new ArrayList<>();
+
+		// grid pane constraints
 		int row = 1;
 		int col = 0;
+
+		// setting up all the labels
 		for(int i = 0; i < sellerTableHeaders.length; i++) {
 			Label newLabel = new Label(sellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
 			GridPane.setConstraints(newLabel, col, row++);
-			matSellerLabelArray.add(newLabel);
+			matAddSellerGrid.getChildren().add(newLabel);
+
+			// math to set the constraints to the correct position
 			if ((i + 5) % 4 == 0) {
 				row = 1;
 				col += 2;
 			}
 		}
 
+		// reset constraint
 		row = 1;
 		col = 1;
-		// * setting up seller text field
+
+		// setting up seller text field
 		for (int i = 0; i <sellerTableHeaders.length; i++) {
 			TextField newTextField = new TextField();
 			newTextField.setMaxWidth(Double.MAX_VALUE);
@@ -283,16 +285,17 @@ public class MatAddOrderModifySeller {
 			newTextField.setPromptText("输入" + sellerTableHeaders[i]);
 			GridPane.setConstraints(newTextField, col, row++);
 			matAddSellerInputArray.add(newTextField);
+
+			// math to set the constraints to the correct position
 			if ((i + 5) % 4 == 0) {
 				row = 1;
 				col += 2;
 			}
 		}
 
-		// * setting up grid properties
+		// setting up grid properties
 		matAddSellerGrid.setVgap(10);
 		matAddSellerGrid.setHgap(10);
-		matAddSellerGrid.getChildren().addAll(matSellerLabelArray);
 		matAddSellerGrid.getChildren().addAll(matAddSellerInputArray);
 	}
 
