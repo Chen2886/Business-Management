@@ -6,4 +6,4 @@ if [[ -z "$message" ]]; then
 fi
 git add .
 git commit -m "Date: `date`, changes: \"$message\""
-git push origin dev
+git push origin master
