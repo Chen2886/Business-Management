@@ -83,7 +83,7 @@ public class MainScreen implements Initializable {
 
 		// setting up the image for search bar
 		try {
-			FileInputStream input = new FileInputStream("src/iconmonstr-magnifier-4-240.png");
+			FileInputStream input = new FileInputStream("iconmonstr-magnifier-4-240.png");
 			Image searchBarImage = new Image(input);
 			searchImageView.setImage(searchBarImage);
 		} catch (Exception e) {
