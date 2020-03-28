@@ -28,6 +28,8 @@ public class ConfirmBox {
 	public static boolean display(ConfirmMessage confirmMessage) {
 		if (confirmMessage == ConfirmMessage.CLOSEWINDOW)
 			return display("确认", "确定关闭窗口？进度即将还原。", "是","否");
+		else if (confirmMessage == ConfirmMessage.CANCEL)
+			return display("确认", "确定取消？订单即将还原（不会被保存）。", "是","否");
 		else
 			return false;
 	}

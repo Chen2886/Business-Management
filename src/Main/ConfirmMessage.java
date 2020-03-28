@@ -1,5 +1,5 @@
 package Main;
 
 public enum ConfirmMessage {
-    CLOSEWINDOW,
+    CLOSEWINDOW,CANCEL,
 }
