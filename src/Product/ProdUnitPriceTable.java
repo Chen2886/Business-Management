@@ -5,14 +5,18 @@ import Material.MatUnitPrice;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -138,7 +142,7 @@ public class ProdUnitPriceTable {
             }
         }
 
-        // set up all the text fields
+        // set up all the text fields and labels
         inputArrayList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
 
@@ -321,6 +325,28 @@ public class ProdUnitPriceTable {
     }
 
     private void modifyPrice(ProdUnitPrice prodUnitPrice) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ProdEditUnitPriceTable.fxml"));
+            Parent newScene = loader.load();
+            Stage stage = new Stage();
 
+            ProdEditUnitPriceTable prodEditUnitPriceTable = loader.getController();
+            prodEditUnitPriceTable.initData(stage, prodUnitPrice);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("配方");
+            stage.setScene(new Scene(newScene));
+            stage.showAndWait();
+            allUnitPrices = DatabaseUtil.GetAllProdUnitPrice();
+            tempQuickSearchList = FXCollections.observableArrayList(allUnitPrices);
+            searchBarTextField.setText("");
+            prodTable.getItems().clear();
+            prodTable.getItems().setAll(allUnitPrices);
+        } catch (Exception e) {
+            AlertBox.display("错误", "窗口错误");
+            e.printStackTrace();
+            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
     }
 }
