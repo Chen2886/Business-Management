@@ -478,7 +478,7 @@ public class MatAddOrderModifySeller {
 	 */
 	private void clearAddOrderFields() {
 		for (int i = 0; i < matOrderInputArray.size(); i++) {
-			if (i != 0 && i != 3) {
+			if (i != 0 && i != 1) {
 				if (matOrderInputArray.get(i) instanceof TextField) ((TextField) matOrderInputArray.get(i)).clear();
 				if (matOrderInputArray.get(i) instanceof DatePicker) ((DatePicker) matOrderInputArray.get(i)).setValue(null);
 				if (matOrderInputArray.get(i) instanceof ComboBox) ((ComboBox) matOrderInputArray.get(i)).getSelectionModel().select(null);
@@ -508,7 +508,11 @@ public class MatAddOrderModifySeller {
 	 * Obtain all the new information, add order, and push it to database
 	 */
 	private void addOrder() {
+
+		// initialize a new order
 		MatOrder newOrder = new MatOrder(SerialNum.getSerialNum(DBOrder.MAT), "");
+
+		// index from the input array
 		int i = 0;
 
 		try {
@@ -527,9 +531,8 @@ public class MatAddOrderModifySeller {
 		newOrder.setName(nameOfMat);
 
 		if (sku.equals("") && nameOfMat.equals("")) {
-			if (ConfirmBox.display("数据错误","没有输入数据，结束输入？", "是", "否" )) {
+			if (ConfirmBox.display("错误","没有输入数据，结束输入？", "是", "否" ))
 				currentStage.close();
-			}
 			return;
 		}
 
@@ -545,6 +548,7 @@ public class MatAddOrderModifySeller {
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
 		} catch (NullPointerException ignored) {}
 		i++;
+
 		try {
 			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
@@ -570,7 +574,7 @@ public class MatAddOrderModifySeller {
 		} catch (NullPointerException ignored) {
 
 		} catch (Exception e) {
-			AlertBox.display("错误", "单价格式输入错误, 数字为0");
+			AlertBox.display("错误", "规格格式输入错误, 数字默认0");
 		}
 		i++;
 
@@ -580,7 +584,7 @@ public class MatAddOrderModifySeller {
 
 		}
 		catch (Exception e) {
-			AlertBox.display("错误", "单价格式输入错误, 数字为0");
+			AlertBox.display("错误", "数量格式输入错误, 数字默认0");
 		}
 		i++;
 
@@ -589,7 +593,7 @@ public class MatAddOrderModifySeller {
 		} catch (NullPointerException ignored) {
 
 		} catch (Exception e) {
-			AlertBox.display("错误", "单价格式输入错误, 数字为0");
+			AlertBox.display("错误", "单价格式输入错误, 数字默认0");
 		}
 		i++;
 
@@ -616,15 +620,23 @@ public class MatAddOrderModifySeller {
 			DatabaseUtil.AddMatOrder(newOrder);
 			currentStage.close();
 		} catch (SQLException e) {
-			AlertBox.display("错误", "无法更新");
+			AlertBox.display("错误", "更新错误，联系管理员");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
 		}
 	}
 
 	/**
-	 * Obtain all the new information, add order, and push it to database
+	 * Obtain all the new information, push new order to database, and clear fields
 	 */
 	private void continueOrder() {
+
+		// initialize a new order
 		MatOrder newOrder = new MatOrder(SerialNum.getSerialNum(DBOrder.MAT), "");
+
+		// index from the input array
 		int i = 0;
 
 		try {
@@ -643,9 +655,8 @@ public class MatAddOrderModifySeller {
 		newOrder.setName(nameOfMat);
 
 		if (sku.equals("") && nameOfMat.equals("")) {
-			if (ConfirmBox.display("数据错误","没有输入数据，结束输入？", "是", "否" )) {
+			if (ConfirmBox.display("错误","没有输入数据，结束输入？", "是", "否" ))
 				currentStage.close();
-			}
 			return;
 		}
 
@@ -655,7 +666,7 @@ public class MatAddOrderModifySeller {
 		} catch (NullPointerException ignored) {}
 
 		try {
-			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
+			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
@@ -663,7 +674,7 @@ public class MatAddOrderModifySeller {
 		i++;
 
 		try {
-			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
+			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
@@ -671,7 +682,7 @@ public class MatAddOrderModifySeller {
 		i++;
 
 		try {
-			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
+			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
@@ -684,16 +695,34 @@ public class MatAddOrderModifySeller {
 
 		try {
 			newOrder.setUnitAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
-			i++;
-			newOrder.setAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
-			i++;
-			newOrder.setUnitPrice(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
-			i++;
-			newOrder.setKgAmount();
-			newOrder.setTotalPrice();
+		} catch (NullPointerException ignored) {
+
 		} catch (Exception e) {
-			AlertBox.display("错误", "数字格式输入错误, 数字为0");
+			AlertBox.display("错误", "规格格式输入错误, 数字默认0");
 		}
+		i++;
+
+		try {
+			newOrder.setAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
+		} catch (NullPointerException ignored) {
+
+		}
+		catch (Exception e) {
+			AlertBox.display("错误", "数量格式输入错误, 数字默认0");
+		}
+		i++;
+
+		try {
+			newOrder.setUnitPrice(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
+		} catch (NullPointerException ignored) {
+
+		} catch (Exception e) {
+			AlertBox.display("错误", "单价格式输入错误, 数字默认0");
+		}
+		i++;
+
+		newOrder.setKgAmount();
+		newOrder.setTotalPrice();
 
 		try {
 			newOrder.setSigned(((TextField) matOrderInputArray.get(i++)).getText());
@@ -715,7 +744,11 @@ public class MatAddOrderModifySeller {
 			DatabaseUtil.AddMatOrder(newOrder);
 			clearAddOrderFields();
 		} catch (SQLException e) {
-			AlertBox.display("错误", "无法更新");
+			AlertBox.display("错误", "更新错误，联系管理员");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
 		}
 	}
 

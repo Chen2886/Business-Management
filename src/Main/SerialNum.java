@@ -31,7 +31,6 @@ public class SerialNum {
      */
     public static int getSerialNum(DBOrder table) {
         serialNum[table.getValue()]++;
-        System.out.println(Arrays.toString(serialNum));
         return serialNum[table.getValue()];
     }
 }
