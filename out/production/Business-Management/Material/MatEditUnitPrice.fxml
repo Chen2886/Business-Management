@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Material.MatEditUnitPrice"
+            prefHeight="200.0" prefWidth="800.0">
+    <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="40.0" text="编辑产品单价" textAlignment="CENTER" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10">
+        <font>
+            <Font size="24.0" />
+        </font>
+    </Label>
+    <HBox fx:id="matInfoHBox" alignment="CENTER" prefHeight="55.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="原料名称" textAlignment="CENTER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <TextField fx:id="matNameTextField" />
+        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="原料单价" textAlignment="CENTER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <TextField fx:id="matPriceTextField" />
+        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="备注" textAlignment="CENTER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <TextField fx:id="matNoteTextField" />
+    </HBox>
+    <HBox alignment="CENTER_RIGHT" prefHeight="35.0" prefWidth="421.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <Button fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="取消" textAlignment="RIGHT">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Button>
+        <Button fx:id="completeButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="完成" textAlignment="RIGHT">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Button>
+    </HBox>
+</AnchorPane>

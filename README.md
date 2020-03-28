@@ -1,7 +1,7 @@
-# OrderManagement
+# Management
+A Desktop app written in JavaFX and CSS to manage the company's order history.
 
-## Add Order
-![image](https://imgur.com/FwbyGjN.png)
+---
 
-## Modify/Search Orders
-![image](https://imgur.com/BG7izaw.png)
+### Current progress
+![alt text](https://imgur.com/QOZUjr3.png)

@@ -1,0 +1,120 @@
+// Main background
+.parent{
+    -fx-background-color: #fff;
+}
+
+// left sidebar
+.sidebar{
+    -fx-background-color: #947eb0;
+}
+
+// top left box
+.topLeftBox {
+    -fx-background-color: #bbbdf6;
+    -fx-font-size:25px;
+}
+
+// For all the default buttons
+.button {
+    -fx-background-color: #bbbdf6;
+    -fx-font-size: 25px;
+}
+
+// hover over button
+.button:hover {
+    -fx-cursor: hand;
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+}
+
+// For all the default labels
+.labels {
+    -fx-alignment: center;
+    -fx-text-fill: #050A05;
+}
+
+// for odd rows
+.table-row-cell:dtta_dep {
+    -fx-text-background-color: black;
+    -fx-background: grey;
+}
+
+// for even rows
+.table-row-cell:dtta_dest {
+    -fx-text-fill: black;
+}
+
+// change color for selected rows
+.table-row-cell:selected {
+    -fx-background-color: #947eb0;
+}
+
+// set table cell font size
+.table-view .table-cell{
+    -fx-font-size: 18px;
+}
+
+// change size of table column header
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-font-weight:bold;
+    -fx-font-size: 18px;
+}
+
+// buttons within the table view
+.actionButtons {
+    -fx-background-color: #bbbdf6;
+    -fx-font-color: black;
+    -fx-font-size: 18px;
+}
+
+// change appearance when hovered over buttons
+.actionButtons:hover {
+    -fx-cursor: hand;
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+}
+
+// change size of tabs
+.main-screen-tab {
+    -fx-pref-width: 745;
+    -fx-font-size: 20px;
+    -fx-alignment: center;
+}
+
+.main-screen-tab:hover {
+    -fx-cursor: hand;
+}
+
+.add-order-tab {
+    -fx-pref-width: 325;
+    -fx-font-size: 20px;
+    -fx-alignment: center;
+}
+
+.add-order-tab:hover {
+    -fx-cursor: hand;
+}
+
+.edit-grid {
+    -fx-border-style: solid inside;
+    -fx-border-width: 2px;
+    -fx-border-color: black;
+}
+
+.search-text-field {
+    -fx-border-color: black;
+    -fx-border-width: 0 0 2 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: grey;
+}
+
+.search-text-field:hover {
+    -fx-text-fill: black;
+}
+
+.search-text-field:focused {
+    -fx-text-fill: black;
+}
+
+.default-button {
+    -fx-text-fill: black;
+}
