@@ -470,7 +470,6 @@ public class MatAddOrderModifySeller {
 			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
-			currentStage.close();
 		}
 	}
 
@@ -500,10 +499,9 @@ public class MatAddOrderModifySeller {
 	 * @return the specified seller
 	 */
 	private MatSeller findSeller(String CompanyName) {
-		for (MatSeller seller : allMatSeller) {
+		for (MatSeller seller : allMatSeller)
 			if (seller.getCompanyName().equals(CompanyName)) return seller;
-		}
-		return new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "NOT FOUND");
+		return null;
 	}
 
 	/**
