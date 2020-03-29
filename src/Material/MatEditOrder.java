@@ -282,16 +282,33 @@ public class MatEditOrder {
 
 		try {
 			newOrder.setUnitAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
-			i++;
-			newOrder.setAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
-			i++;
-			newOrder.setUnitPrice(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
-			i++;
-			newOrder.setKgAmount();
-			newOrder.setTotalPrice();
+		} catch (NullPointerException ignored) {
+
 		} catch (Exception e) {
-			AlertBox.display("错误", "数字格式输入错误，数字为0");
+			AlertBox.display("错误", "规格格式输入错误, 数字默认0");
 		}
+		i++;
+
+		try {
+			newOrder.setAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+		} catch (NullPointerException ignored) {
+
+		} catch (Exception e) {
+			AlertBox.display("错误", "数量格式输入错误, 数字默认0");
+		}
+		i++;
+
+		try {
+			newOrder.setUnitPrice(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
+		} catch (NullPointerException ignored) {
+
+		} catch (Exception e) {
+			AlertBox.display("错误", "单价格式输入错误, 数字默认0");
+		}
+		i++;
+
+		newOrder.setKgAmount();
+		newOrder.setTotalPrice();
 
 		try {
 			newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());

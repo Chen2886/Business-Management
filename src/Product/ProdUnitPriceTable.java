@@ -268,8 +268,8 @@ public class ProdUnitPriceTable {
                         try {
                             setter = ProdUnitPrice.class.getDeclaredMethod("set" + propertyMethod[i], double.class);
                             setter.invoke(prodUnitPrice, Double.parseDouble(currentTextField.getText()));
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } catch (Exception ignored) {
+                            AlertBox.display("错误", "单价格式输入错误, 数字默认0");
                         }
                     }
                 }
@@ -280,9 +280,7 @@ public class ProdUnitPriceTable {
                         try {
                             setter = ProdUnitPrice.class.getDeclaredMethod("set" + propertyMethod[i], String.class);
                             setter.invoke(prodUnitPrice, currentTextField.getText());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } catch (Exception ignored) { }
                     }
                 }
             }

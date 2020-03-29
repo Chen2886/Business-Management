@@ -4,6 +4,7 @@ import Main.AlertBox;
 import Main.ConfirmBox;
 import Main.DatabaseUtil;
 import Main.HandleError;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -43,8 +44,15 @@ public class MatEditUnitPrice {
     }
 
     private void updateMatPrice() {
-        MatUnitPrice newMatUnitPrice = new MatUnitPrice(matNameTextField.getText(),
-                Double.parseDouble(matPriceTextField.getText()), matNoteTextField.getText());
+        MatUnitPrice newMatUnitPrice;
+        try {
+            newMatUnitPrice = new MatUnitPrice(matNameTextField.getText(),
+                    Double.parseDouble(matPriceTextField.getText()), matNoteTextField.getText());
+        } catch (Exception e) {
+            newMatUnitPrice = new MatUnitPrice(matNameTextField.getText(),
+                    0.0, matNoteTextField.getText());
+            AlertBox.display("错误", "单价格式输入错误, 数字默认0");
+        }
         try {
             DatabaseUtil.UpdateMatUnitPrice(matUnitPrice, newMatUnitPrice);
             if (ConfirmBox.display("确认", "是否更新所有此原料没有单价的订单？", "是", "否"))

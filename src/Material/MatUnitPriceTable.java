@@ -181,7 +181,7 @@ public class MatUnitPriceTable {
             try {
                 matUnitPrice.setUnitPrice(Double.parseDouble(matPriceTextField.getText()));
             } catch (Exception e) {
-                AlertBox.display("错误", "数字输入错误");
+                AlertBox.display("错误", "单价格式输入错误, 数字默认0");
                 matUnitPrice.setUnitPrice(0.0);
             }
             matUnitPrice.setNote(matNoteTextField.getText() == null ? "" : matNoteTextField.getText());

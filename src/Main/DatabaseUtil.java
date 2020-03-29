@@ -343,7 +343,6 @@ public class DatabaseUtil {
             }
 
         } catch (SQLException e) {
-            //System.out.println("checkIfSkuExists failed");
             HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
@@ -378,7 +377,6 @@ public class DatabaseUtil {
             }
 
         } catch (SQLException e) {
-            //System.out.println("checkIfSkuExists failed");
             HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
@@ -1265,7 +1263,6 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            //System.out.println("UpdateSellerInSeller failed");
             HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
@@ -1296,7 +1293,6 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            //System.out.println("UpdateSellerInSeller failed");
             HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
