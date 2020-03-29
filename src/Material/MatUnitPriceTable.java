@@ -139,7 +139,7 @@ public class MatUnitPriceTable {
         Callback<TableColumn<MatUnitPrice, String>, TableCell<MatUnitPrice, String>> cellFactory = new Callback<>() {
             @Override
             public TableCell<MatUnitPrice, String> call(TableColumn<MatUnitPrice, String> matOrderStringTableColumn) {
-                TableCell<MatUnitPrice, String> cell = new TableCell<>() {
+                return new TableCell<>() {
                     // define new buttons
                     Button edit = new Button("编辑");
                     Button delete = new Button("删除");
@@ -163,7 +163,6 @@ public class MatUnitPriceTable {
                         setText(null);
                     }
                 };
-                return cell;
             }
         };
 

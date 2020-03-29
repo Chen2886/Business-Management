@@ -1,9 +1,5 @@
 package Main;
 
-// from my other packages
-import Material.*;
-import Product.*;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,8 +40,6 @@ public class HandleError {
 
 	@Override
 	public String toString() {
-		String returnVal = "";
-
 		String ignoredError =                 "****************!THIS IS AN IGNORED ERROR IN PROGRAM!***************\n";
 		String startHeader =                  "=====================start of an error reported=====================\n";
 		String classHeader =    String.format("Class Name:    %s\n", className);
