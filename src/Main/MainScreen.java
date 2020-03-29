@@ -11,6 +11,8 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.Callback;
@@ -309,11 +311,6 @@ public class MainScreen implements Initializable {
 		// array of columns
 		Collection<TableColumn<MatOrder, ?>> orderColumnArrayList = new ArrayList<>();
 
-		// setting up first action column
-		TableColumn actionColumn = new TableColumn("动作");
-		actionColumn.setSortable(false);
-		orderColumnArrayList.add(actionColumn);
-
 		// loop to set up all regular columns
 		for (int i = 0; i < matHeaders.length; i++) {
 			if (i == 8 || i == 9 || i == 10 || i == 11 || i == 12) {
@@ -346,40 +343,6 @@ public class MainScreen implements Initializable {
 			}
 		}
 
-		// Setting a call back to handle the first column of action buttons
-		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> cellFactory = new Callback<>() {
-					@Override
-					public TableCell<MatOrder, String> call(TableColumn<MatOrder, String> matOrderStringTableColumn) {
-						TableCell<MatOrder, String> cell = new TableCell<>() {
-							// define new buttons
-							Button edit = new Button("编辑");
-							Button delete = new Button("删除");
-							HBox actionButtons = new HBox(edit, delete);
-
-							@Override
-							public void updateItem(String item, boolean empty) {
-								super.updateItem(item, empty);
-								if (empty) {
-									setGraphic(null);
-								} else {
-									edit.setOnAction(event -> modifyMatOrder(getTableView().getItems().get(getIndex())));
-									delete.setOnAction(event -> deleteMatOrder(getTableView().getItems().get(getIndex())));
-
-									edit.getStyleClass().add("actionButtons");
-									delete.getStyleClass().add("actionButtons");
-									actionButtons.setSpacing(5);
-									actionButtons.setAlignment(Pos.CENTER);
-									setGraphic(actionButtons);
-								}
-								setText(null);
-							}
-						};
-						return cell;
-					}
-				};
-
-		actionColumn.setCellFactory(cellFactory);
-
 		// filling the table
 		matTableView.setItems(selectedMatOrders);
 		matTableView.getColumns().setAll(orderColumnArrayList);
@@ -395,6 +358,13 @@ public class MainScreen implements Initializable {
 			});
 			return row;
 		});
+
+		matTableView.setOnKeyReleased(keyEvent -> {
+			System.out.println("here");
+			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
+				deleteMatOrder(matTableView.getSelectionModel().getSelectedItem());
+			}
+		});
 	}
 
 	/**
@@ -404,11 +374,6 @@ public class MainScreen implements Initializable {
 	public void fillProdTable(ObservableList<ProductOrder> selectedProdOrders) {
 		// array of columns
 		Collection<TableColumn<ProductOrder, ?>> productColumnArrayList = new ArrayList<>();
-
-		// setting up first action column
-		TableColumn actionColumn = new TableColumn("动作");
-		actionColumn.setSortable(false);
-		productColumnArrayList.add(actionColumn);
 
 		// loop to set up all regular columns
 		for (int i = 0; i < prodHeaders.length; i++) {
@@ -436,42 +401,6 @@ public class MainScreen implements Initializable {
 			}
 		}
 
-		// Setting a call back to handle the first column of action buttons
-		Callback<TableColumn<ProductOrder, String>, TableCell<ProductOrder, String>> cellFactory = new Callback<>() {
-			@Override
-			public TableCell<ProductOrder, String> call(TableColumn<ProductOrder, String> matOrderStringTableColumn) {
-				TableCell<ProductOrder, String> cell = new TableCell<>() {
-					// define new buttons
-					Button edit = new Button("编辑");
-					Button delete = new Button("删除");
-					Button formula = new Button("配方");
-					HBox actionButtons = new HBox(edit, delete, formula);
-
-					@Override
-					public void updateItem(String item, boolean empty) {
-						super.updateItem(item, empty);
-						if (empty) {
-							setGraphic(null);
-						} else {
-							edit.setOnAction(event -> modifyProdOrder(getTableView().getItems().get(getIndex())));
-							delete.setOnAction(event -> deleteProdOrder(getTableView().getItems().get(getIndex())));
-							formula.setOnAction(event -> prodFormula(getTableView().getItems().get(getIndex())));
-							edit.getStyleClass().add("actionButtons");
-							delete.getStyleClass().add("actionButtons");
-							formula.getStyleClass().add("actionButtons");
-							actionButtons.setSpacing(5);
-							actionButtons.setAlignment(Pos.CENTER);
-							setGraphic(actionButtons);
-						}
-						setText(null);
-					}
-				};
-				return cell;
-			}
-		};
-
-		actionColumn.setCellFactory(cellFactory);
-
 		// filling the table
 		prodTableView.setItems(selectedProdOrders);
 		prodTableView.getColumns().setAll(productColumnArrayList);
@@ -480,12 +409,15 @@ public class MainScreen implements Initializable {
 		prodTableView.setRowFactory( tv -> {
 			TableRow<ProductOrder> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
-				if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-					ProductOrder order = row.getItem();
-					modifyProdOrder(order);
-				}
+				if (event.getButton() == MouseButton.SECONDARY) prodFormula(row.getItem());
+				else if (event.getClickCount() == 2 && (!row.isEmpty())) modifyProdOrder(row.getItem());
 			});
 			return row;
+		});
+
+		prodTableView.setOnKeyReleased(keyEvent -> {
+			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE)
+				deleteProdOrder(prodTableView.getSelectionModel().getSelectedItem());
 		});
 	}
 
