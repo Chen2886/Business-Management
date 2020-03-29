@@ -9,14 +9,18 @@ import javafx.fxml.*;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.Callback;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
@@ -75,6 +79,10 @@ public class MainScreen implements Initializable {
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		matTab.setStyle("-fx-pref-width: " + screenSize.width / 3 + ";");
+		prodTab.setStyle("-fx-pref-width: " + screenSize.width / 3 + ";");
 
 		resetButton.setText("重置\n表格");
 		searchButton.setText("精确\n搜索");

@@ -64,9 +64,9 @@
 
 // change size of tabs
 .main-screen-tab {
-    -fx-pref-width: 745;
     -fx-font-size: 20px;
     -fx-alignment: center;
+    -fx-pref-height: 35;
 }
 
 .main-screen-tab:hover {
