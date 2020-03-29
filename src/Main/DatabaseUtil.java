@@ -715,7 +715,7 @@ public class DatabaseUtil {
     /**
      * get the unit price from the name provided
      * @param name the name of the formula that needs to be found
-     * @return the unit price, -1 it not found
+     * @return the unit price, 0 it not found
      * @throws SQLException if any error occurs while operating on database
      */
     public static double GetMatUnitPrice(String name) throws SQLException {
@@ -726,7 +726,7 @@ public class DatabaseUtil {
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
-            double returnVal = resultSet.next() ? resultSet.getDouble(1) : -1;
+            double returnVal = resultSet.next() ? resultSet.getDouble(1) : 0;
             CloseConnectionToDB();
             return returnVal;
         } catch (SQLException e) {
@@ -744,7 +744,7 @@ public class DatabaseUtil {
      * get the unit price from the name provided
      * @param customer of the product that needs to be found
      * @param name the name of the product that needs to be found
-     * @return the unit price, -1 it not found
+     * @return the unit price, 0 it not found
      * @throws SQLException if any error occurs while operating on database
      */
     public static double GetProdUnitPrice(String name, String customer) throws SQLException {
@@ -755,9 +755,8 @@ public class DatabaseUtil {
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, customer);
-            System.out.println(name + " " + customer);
             ResultSet resultSet = preparedStatement.executeQuery();
-            double returnVal = resultSet.next() ? resultSet.getDouble(1) : -1;
+            double returnVal = resultSet.next() ? resultSet.getDouble(1) : 0;
             CloseConnectionToDB();
             return returnVal;
         } catch (SQLException e) {
@@ -1438,6 +1437,33 @@ public class DatabaseUtil {
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setDouble(1, price);
             preparedStatement.setString(2, name);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Update all mat unit price in material management
+     * @param name the name of material
+     * @param price new price
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void UpdateAllProdUnitPrice(String name, String customer, double price) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "UPDATE [productManagement] SET unitPrice = ? WHERE name = ? AND customer = ? AND unitPrice = 0.0";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setDouble(1, price);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, customer);
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {

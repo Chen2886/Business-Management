@@ -238,7 +238,8 @@ public class MainScreen implements Initializable {
 			Scene scene = new Scene(newScene);
 			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
 			stage.setScene(scene);
-			stage.show();
+			stage.showAndWait();
+			resetTable();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
 			e.printStackTrace();
@@ -501,10 +502,12 @@ public class MainScreen implements Initializable {
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("编辑订单");
+
 			Scene scene = new Scene(newScene);
 			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
 			stage.setScene(scene);
 			stage.showAndWait();
+
 			matTableView.getItems().clear();
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			matTableView.getItems().setAll(allMatOrderList);
@@ -707,7 +710,8 @@ public class MainScreen implements Initializable {
 			Scene scene = new Scene(newScene);
 			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
 			stage.setScene(scene);
-			stage.show();
+			stage.showAndWait();
+			resetTable();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
 			e.printStackTrace();

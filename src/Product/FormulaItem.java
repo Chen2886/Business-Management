@@ -1,5 +1,7 @@
 package Product;
 
+import Main.DatabaseUtil;
+
 import java.io.Serializable;
 
 public class FormulaItem implements Serializable {
@@ -35,6 +37,14 @@ public class FormulaItem implements Serializable {
     }
 
     public double getUnitPrice() {
+        if (unitPrice == 0.0) {
+            try {
+                setUnitPrice(DatabaseUtil.GetMatUnitPrice(name));
+                setTotalPrice();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return Math.round(unitPrice * 100.0) / 100.0;
     }
 

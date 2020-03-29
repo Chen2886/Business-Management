@@ -3,6 +3,7 @@ package Product;
 import Main.AlertBox;
 import Main.ConfirmBox;
 import Main.HandleError;
+import Main.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -15,6 +16,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -257,8 +260,9 @@ public class ProdFormulaEdit {
     private void convertItemToFormula(FormulaItem item) {
         Formula newFormula = FormulaItem.convertToFormula(item);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/ProdFormulaEdit.fxml"));
-            Parent newScene = loader.load();
+            FXMLLoader loader = new FXMLLoader();
+            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormulaEdit.fxml"));
+            Parent newScene = loader.load(fileInputStream);
             Stage stage = new Stage();
 
             ProdFormulaEdit prodFormulaEdit = loader.getController();
@@ -266,7 +270,11 @@ public class ProdFormulaEdit {
 
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("编辑配方");
-            stage.setScene(new Scene(newScene));
+
+            Scene scene = new Scene(newScene);
+            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            stage.setScene(scene);
+
             stage.showAndWait();
             calcUnitPrice();
         } catch (Exception e) {
