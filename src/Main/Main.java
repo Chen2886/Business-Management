@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
@@ -41,6 +42,11 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		Scene scene = Main.loadFXML("MainScreen.fxml");
+
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		stage.setWidth(screenSize.width);
+		stage.setHeight(screenSize.height);
+
 		stage.setScene(scene);
 		this.stage = stage;
 		stage.show();
