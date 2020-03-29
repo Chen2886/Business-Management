@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -129,7 +130,7 @@ public class ProdFormula {
             formulaInfoHBox.getChildren().add(newLabel);
 
             TextField newTextField = new TextField();
-            newTextField.setPromptText("输入" + formulaInfoHeader[i]);
+            newTextField.setDisable(true);
             try {
                 getter = ProductOrder.class.getDeclaredMethod("get" + formulaInfoProperty[i]);
                 newTextField.setText(String.valueOf(getter.invoke(selectedOrder)));
@@ -186,6 +187,12 @@ public class ProdFormula {
         addItemButton.setOnAction(event -> {
             addItem();
             defaultButton.setVisible(false);
+        });
+        addItemButton.setOnKeyReleased(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                addItem();
+                defaultButton.setVisible(false);
+            }
         });
 
         // auto price

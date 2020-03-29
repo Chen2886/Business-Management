@@ -69,7 +69,7 @@ public class MatGenerateExcel {
 
             if (excelFile.exists()) {
                 if (!excelFile.delete()) AlertBox.display("错误", "无法删除文件");
-                if (!excelFile.createNewFile()) AlertBox.display("错误", "无法删除文件");
+                if (!excelFile.createNewFile()) AlertBox.display("错误", "无法创建文件");
             }
 
             workbook = new XSSFWorkbook();
