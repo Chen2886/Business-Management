@@ -1310,7 +1310,7 @@ public class DatabaseUtil {
      * @param name the name of the formula
      * @param index the index of the formula
      */
-    public static void UpdateNewestFormula(boolean exists, String name, int index) {
+    public static void UpdateNewestFormula(boolean exists, String name, int index) throws SQLException {
         String SQLCommand;
         if (exists) SQLCommand = "UPDATE newestFormula SET formulaIndex = ? WHERE name = ?";
         else SQLCommand = "INSERT INTO newestFormula (formulaIndex, name) VALUES(?,?)";
@@ -1326,6 +1326,7 @@ public class DatabaseUtil {
             HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
+            throw new SQLException();
         } finally {
             CloseConnectionToDB();
         }
