@@ -1,7 +1,6 @@
 package Material;
 
 import Main.*;
-import Product.ProdEditUnitPriceTable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -220,7 +219,7 @@ public class MatUnitPriceTable {
 
     private void modifyPrice(MatUnitPrice matUnitPrice) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("MatEditUnitPrice.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/MatEditUnitPrice.fxml"));
             Parent newScene = loader.load();
             Stage stage = new Stage();
 

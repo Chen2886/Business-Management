@@ -2,9 +2,7 @@ package Product;
 
 import Main.AlertBox;
 import Main.ConfirmBox;
-import Main.DatabaseUtil;
 import Main.HandleError;
-import Material.MatAddOrderModifySeller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -17,9 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.io.*;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ProdFormulaEdit {
@@ -261,7 +257,7 @@ public class ProdFormulaEdit {
     private void convertItemToFormula(FormulaItem item) {
         Formula newFormula = FormulaItem.convertToFormula(item);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ProdFormulaEdit.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/ProdFormulaEdit.fxml"));
             Parent newScene = loader.load();
             Stage stage = new Stage();
 

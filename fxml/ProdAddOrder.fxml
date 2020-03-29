@@ -27,17 +27,20 @@
     </GridPane>
     <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="300.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0">
         <children>
-            <Button fx:id="prodAddOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="取消" textAlignment="CENTER">
+            <Button fx:id="prodAddOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons"
+                    text="取消" textAlignment="CENTER">
                 <font>
                     <Font size="18.0" />
                 </font>
             </Button>
-            <Button fx:id="prodAddOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="完成" textAlignment="CENTER">
+            <Button fx:id="prodAddOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons"
+                    text="完成" textAlignment="CENTER">
                 <font>
                     <Font size="18.0" />
                 </font>
             </Button>
-            <Button fx:id="prodAddOrderContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="保存并继续添加" textAlignment="CENTER">
+            <Button fx:id="prodAddOrderContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons"
+                    text="保存并继续添加" textAlignment="CENTER">
                 <font>
                     <Font size="18.0" />
                 </font>

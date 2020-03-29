@@ -1,7 +1,6 @@
 package Product;
 
 import Main.*;
-import Material.MatUnitPrice;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -326,7 +324,7 @@ public class ProdUnitPriceTable {
 
     private void modifyPrice(ProdUnitPrice prodUnitPrice) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ProdEditUnitPriceTable.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/ProdEditUnitPriceTable.fxml"));
             Parent newScene = loader.load();
             Stage stage = new Stage();
 
