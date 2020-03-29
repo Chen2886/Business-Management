@@ -27,20 +27,14 @@ public class ProdFormula {
     private static String[] formulaInfoHeader = new String[]{"配方名称", "成本价"};
     private static String[] formulaInfoProperty = new String[]{"Name", "BasePrice"};
 
-    @FXML
-    HBox formulaInfoHBox;
-    @FXML
-    Button cancelButton;
-    @FXML
-    Button saveButton;
-    @FXML
-    Button saveNewButton;
-    @FXML
-    TableView<Formula> formulaTable;
-    @FXML
-    TableView<FormulaItem> formulaItemTable;
-    @FXML
-    HBox infoHBox;
+    public Button defaultButton;
+    @FXML HBox formulaInfoHBox;
+    @FXML Button cancelButton;
+    @FXML Button saveButton;
+    @FXML Button saveNewButton;
+    @FXML TableView<Formula> formulaTable;
+    @FXML TableView<FormulaItem> formulaItemTable;
+    @FXML HBox infoHBox;
 
     Button addItemButton;
 
@@ -109,10 +103,12 @@ public class ProdFormula {
         });
         saveNewButton.setOnAction(event -> saveNewFormula());
         saveButton.setOnAction(event -> saveFormula());
+        defaultButton.setOnAction(event -> saveDefaultFormula());
 
         if (formula == null) {
             formula = new Formula(selectedOrder.getName());
             isNewFormula = true;
+            defaultButton.setVisible(false);
         } else {
             isNewFormula = false;
         }
@@ -187,7 +183,10 @@ public class ProdFormula {
         addItemButton = new Button("添加");
         addItemButton.setStyle("-fx-font-size: 18px;");
         infoHBox.getChildren().add(addItemButton);
-        addItemButton.setOnAction(event -> addItem());
+        addItemButton.setOnAction(event -> {
+            addItem();
+            defaultButton.setVisible(false);
+        });
 
         // auto price
         TextField totalPrice = inputArray.get(3);
@@ -284,9 +283,11 @@ public class ProdFormula {
                             delete.setOnAction(event -> {
                                 if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
                                     removeItemFromList(getTableView().getItems().get(getIndex()));
+                                defaultButton.setVisible(false);
                             });
                             edit.setOnAction(event -> {
                                 convertItemToFormula(getTableView().getItems().get(getIndex()));
+                                defaultButton.setVisible(false);
                             });
 
                             edit.getStyleClass().add("actionButtons");
@@ -540,7 +541,7 @@ public class ProdFormula {
      * Save the formula to the selected order, and push formula to database
      */
     private void saveNewFormula() {
-        if (!isNewFormula && !ConfirmBox.display("确认", "确定另存为此配方，以后此产品默认此新配方？之前产品的配方不会被更该", "是", "否"))
+        if (!isNewFormula && !ConfirmBox.display("确认", "确定另存为？之前配方不会被更该。", "是", "否"))
             return;
         try {
 
@@ -554,13 +555,8 @@ public class ProdFormula {
             selectedOrder.setFormulaIndex(index);
             DatabaseUtil.UpdateProdOrder(selectedOrder);
 
-            if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName()))
-                DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), index);
-            else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), index);
-
             DatabaseUtil.UpdateProdOrder(selectedOrder);
-
-            currentStage.close();
+            defaultButton.setVisible(true);
         } catch (SQLException e) {
             e.printStackTrace();
             HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -577,7 +573,7 @@ public class ProdFormula {
             saveNewFormula();
             return;
         }
-        if (!ConfirmBox.display("确认", "确定更新此配方？所有使用此配方的产品即将被更新", "是", "否"))
+        if (!ConfirmBox.display("确认", "确定更新此配方？所有使用此配方的产品即将被更新。", "是", "否"))
             return;
         try {
             ArrayList<FormulaItem> newItemList = new ArrayList<>(formulaItemTable.getItems());
@@ -588,14 +584,28 @@ public class ProdFormula {
             selectedOrder.setBasePrice(calcUnitPrice());
 
             DatabaseUtil.UpdateFormula(formula, selectedOrder.getFormulaIndex());
+            DatabaseUtil.UpdateProdOrder(selectedOrder);
+            defaultButton.setVisible(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
+    }
+
+    /**
+     * Set current formula to be default for this product
+     */
+    private void saveDefaultFormula() {
+        try {
             if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName()))
                 DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), selectedOrder.getFormulaIndex());
             else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), selectedOrder.getFormulaIndex());
-
-            DatabaseUtil.UpdateProdOrder(selectedOrder);
-
+            AlertBox.display("成功", "设置成功");
             currentStage.close();
         } catch (SQLException e) {
+            AlertBox.display("错误", "设置默认错误");
             e.printStackTrace();
             HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);

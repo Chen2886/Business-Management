@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -36,6 +37,10 @@ public class AlertBox {
 		closeButton.setPadding(new Insets(10, 10, 10, 10));
 		closeButton.setAlignment(Pos.BOTTOM_RIGHT);
 		closeButton.setOnAction(e -> window.close());
+		closeButton.setOnKeyReleased(keyEvent -> {
+			if (keyEvent.getCode() == KeyCode.ENTER)
+				window.close();
+		});
 
 		VBox layout = new VBox();
 		layout.setPadding(new Insets(10, 10, 10, 10));
