@@ -1,6 +1,7 @@
 package Product;
 
 import Main.*;
+import Material.MatUnitPrice;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -286,6 +288,9 @@ public class ProdUnitPriceTable {
             }
 
             DatabaseUtil.AddProdUnitPrice(prodUnitPrice);
+            if (ConfirmBox.display("确认", "需要更新所有没有单价的订单吗？", "是", "否"))
+                updateAllUnitPrice(prodUnitPrice.getName(), prodUnitPrice.getCustomer(), prodUnitPrice.getUnitPrice());
+
             allUnitPrices = DatabaseUtil.GetAllProdUnitPrice();
             prodTable.getItems().clear();
             prodTable.getItems().setAll(allUnitPrices);
@@ -324,16 +329,22 @@ public class ProdUnitPriceTable {
 
     private void modifyPrice(ProdUnitPrice prodUnitPrice) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/ProdEditUnitPriceTable.fxml"));
-            Parent newScene = loader.load();
+
+            FXMLLoader loader = new FXMLLoader();
+            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdEditUnitPriceTable.fxml"));
+            Parent newScene = loader.load(fileInputStream);
             Stage stage = new Stage();
 
             ProdEditUnitPriceTable prodEditUnitPriceTable = loader.getController();
             prodEditUnitPriceTable.initData(stage, prodUnitPrice);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("配方");
-            stage.setScene(new Scene(newScene));
+
+            Scene scene = new Scene(newScene);
+            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            stage.setScene(scene);
             stage.showAndWait();
+
             allUnitPrices = DatabaseUtil.GetAllProdUnitPrice();
             tempQuickSearchList = FXCollections.observableArrayList(allUnitPrices);
             searchBarTextField.setText("");
@@ -343,6 +354,18 @@ public class ProdUnitPriceTable {
             AlertBox.display("错误", "窗口错误");
             e.printStackTrace();
             HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
+    }
+
+    public static void updateAllUnitPrice(String name, String customer, double price) {
+        try {
+            DatabaseUtil.UpdateAllProdUnitPrice(name, customer, price);
+        } catch (SQLException e) {
+            AlertBox.display("错误", "无法更新");
+            e.printStackTrace();
+            HandleError error = new HandleError(MatUnitPrice.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
         }

@@ -123,7 +123,7 @@ public class ProductOrder {
     }
 
     public double getUnitPrice() {
-        return Math.round(unitAmount * 100.0) / 100.0;
+        return Math.round(unitPrice * 100.0) / 100.0;
     }
 
     public void setUnitPrice(double unitPrice) {

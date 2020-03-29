@@ -51,23 +51,19 @@ public class ProdAddOrder {
 
         prodAddOrderGrid.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
-                if (ConfirmBox.display("确认", "确定关闭窗口？进度不会被保存", "是", "否"))
+                if (ConfirmBox.display(ConfirmMessage.CANCEL))
                     currentStage.close();
             }
         });
 
         prodAddOrderCancelButton.setOnAction(actionEvent -> {
-            if (ConfirmBox.display("确认", "确定取消？此订单不会被保存", "确认", "取消"))
+            if (ConfirmBox.display(ConfirmMessage.CANCEL))
                 currentStage.close();
         });
 
-        prodAddOrderCompleteButton.setOnAction(actionEvent -> {
-            addOrder(false);
-        });
+        prodAddOrderCompleteButton.setOnAction(actionEvent -> addOrder(false));
 
-        prodAddOrderContinueButton.setOnAction(actionEvent -> {
-            addOrder(true);
-        });
+        prodAddOrderContinueButton.setOnAction(actionEvent -> addOrder(true));
 
         prodAddOrderTitle.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
@@ -211,6 +207,19 @@ public class ProdAddOrder {
 
         newOrder.setKgAmount();
         newOrder.setTotalPrice();
+        if (DatabaseUtil.CheckIfNameExistsInNewestFormula(newOrder.getName())) {
+            try {
+                int newIndex = DatabaseUtil.GetNewestFormulaIndex(newOrder.getName());
+                Formula formula = DatabaseUtil.GetFormulaByIndex(newIndex);
+                newOrder.setFormulaIndex(newIndex);
+                newOrder.setBasePrice(calcUnitPrice(formula));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        }
 
         try {
             DatabaseUtil.AddProdOrder(newOrder);
@@ -233,6 +242,25 @@ public class ProdAddOrder {
         for (int i = 0; i < prodOrderInputArray.size(); i++) {
             if (prodOrderInputArray.get(i) instanceof TextField) ((TextField) prodOrderInputArray.get(i)).clear();
         }
+    }
+
+    /**
+     * Calculate the base price
+     * @return the base price
+     */
+    private double calcUnitPrice(Formula formula) {
+        double totalSum = 0.0;
+        double totalAmount = 0.0;
+        if (formula == null) return 0.0;
+        for (Formula f : formula.getFormulaList()) {
+            totalSum += f.getTotalPrice();
+            totalAmount += f.getAmount();
+        }
+        for (FormulaItem formulaItem : formula.getSimpleItemList()) {
+            totalSum += formulaItem.getTotalPrice();
+            totalAmount += formulaItem.getAmount();
+        }
+        return Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
     }
 
 

@@ -1,5 +1,7 @@
 package Product;
 
+import Main.DatabaseUtil;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 

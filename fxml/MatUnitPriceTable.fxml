@@ -14,13 +14,13 @@
     </Label>
     <HBox spacing="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="60">
         <ImageView fx:id="searchImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
-        <TextField fx:id="searchBarTextField" styleClass="search-text-field" stylesheets="@stylesheet.css" HBox.hgrow="ALWAYS">
+        <TextField fx:id="searchBarTextField" styleClass="search-text-field" HBox.hgrow="ALWAYS">
             <font>
                 <Font size="25.0" />
             </font>
         </TextField>
     </HBox>
-    <TableView fx:id="matTable" styleClass="table-row-cell" stylesheets="@stylesheet.css" AnchorPane.bottomAnchor="120" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="120">
+    <TableView fx:id="matTable" styleClass="table-row-cell" AnchorPane.bottomAnchor="120" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="120">
 
     </TableView>
     <HBox fx:id="matInfoHBox" alignment="CENTER" prefHeight="55.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">

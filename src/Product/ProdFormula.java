@@ -1,9 +1,6 @@
 package Product;
 
-import Main.AlertBox;
-import Main.ConfirmBox;
-import Main.DatabaseUtil;
-import Main.HandleError;
+import Main.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -16,6 +13,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,13 +27,20 @@ public class ProdFormula {
     private static String[] formulaInfoHeader = new String[]{"配方名称", "成本价"};
     private static String[] formulaInfoProperty = new String[]{"Name", "BasePrice"};
 
-    @FXML HBox formulaInfoHBox;
-    @FXML Button cancelButton;
-    @FXML Button saveButton;
-    @FXML Button saveNewButton;
-    @FXML TableView<Formula> formulaTable;
-    @FXML TableView<FormulaItem> formulaItemTable;
-    @FXML HBox infoHBox;
+    @FXML
+    HBox formulaInfoHBox;
+    @FXML
+    Button cancelButton;
+    @FXML
+    Button saveButton;
+    @FXML
+    Button saveNewButton;
+    @FXML
+    TableView<Formula> formulaTable;
+    @FXML
+    TableView<FormulaItem> formulaItemTable;
+    @FXML
+    HBox infoHBox;
 
     Button addItemButton;
 
@@ -131,7 +137,9 @@ public class ProdFormula {
             try {
                 getter = ProductOrder.class.getDeclaredMethod("get" + formulaInfoProperty[i]);
                 newTextField.setText(String.valueOf(getter.invoke(selectedOrder)));
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             formulaInfoHBox.getChildren().add(newTextField);
             formulaInfoInputArray.add(newTextField);
         }
@@ -144,13 +152,15 @@ public class ProdFormula {
                 try {
                     totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
                             Double.parseDouble(formulaInfoInputArray.get(2).getText())));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             });
             textField.setOnMouseClicked(event -> {
                 try {
                     totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
                             Double.parseDouble(formulaInfoInputArray.get(2).getText())));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             });
         }
     }
@@ -187,13 +197,15 @@ public class ProdFormula {
                 try {
                     totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
                             Double.parseDouble(inputArray.get(2).getText())));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             });
             textField.setOnMouseClicked(event -> {
                 try {
                     totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
                             Double.parseDouble(inputArray.get(2).getText())));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             });
         }
 
@@ -219,7 +231,7 @@ public class ProdFormula {
                 error.WriteToLog();
             }
         });
-        
+
     }
 
     /**
@@ -302,17 +314,20 @@ public class ProdFormula {
     private void convertItemToFormula(FormulaItem item) {
         Formula newFormula = FormulaItem.convertToFormula(item);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/ProdFormulaEdit.fxml"));
-            Parent newScene = loader.load();
+
+            FXMLLoader loader = new FXMLLoader();
+            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormulaEdit.fxml"));
+            Parent newScene = loader.load(fileInputStream);
             Stage stage = new Stage();
 
             ProdFormulaEdit prodFormulaEdit = loader.getController();
             prodFormulaEdit.initData(item, newFormula, stage, formulaItemTable, formulaTable);
 
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("编辑配方");
-            stage.setScene(new Scene(newScene));
+            Scene scene = new Scene(newScene);
+            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            stage.setScene(scene);
             stage.showAndWait();
+
             calcUnitPrice();
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
@@ -328,8 +343,10 @@ public class ProdFormula {
      */
     private void viewFormula(Formula formula) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/ProdFormulaEdit.fxml"));
-            Parent newScene = loader.load();
+
+            FXMLLoader loader = new FXMLLoader();
+            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormulaEdit.fxml"));
+            Parent newScene = loader.load(fileInputStream);
             Stage stage = new Stage();
 
             ProdFormulaEdit prodFormulaEdit = loader.getController();
@@ -337,8 +354,12 @@ public class ProdFormula {
 
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("编辑配方");
-            stage.setScene(new Scene(newScene));
+
+            Scene scene = new Scene(newScene);
+            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            stage.setScene(scene);
             stage.show();
+
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
             e.printStackTrace();
@@ -424,6 +445,7 @@ public class ProdFormula {
 
     /**
      * public function for other controller to call, to add to the list, and refresh table
+     *
      * @param item the item to be added to list
      */
     public void addItemToList(FormulaItem item) {
@@ -435,6 +457,7 @@ public class ProdFormula {
 
     /**
      * public function for other controller to call, to add to the list, and refresh table
+     *
      * @param formula the formula to be added to list
      */
     public void addFormulaToList(Formula formula) {
@@ -445,6 +468,7 @@ public class ProdFormula {
 
     /**
      * public function for other controller to call, to remove item from the list, and refresh table
+     *
      * @param item the item to be removed to list
      */
     public void removeItemFromList(FormulaItem item) {
@@ -456,6 +480,7 @@ public class ProdFormula {
 
     /**
      * public function for other controller to call, to remove item from the list, and refresh table
+     *
      * @param inputFormula the formula to be removed to list
      */
     public void removeFormulaFromList(Formula inputFormula) {
@@ -473,7 +498,7 @@ public class ProdFormula {
         Method setter;
         boolean empty = true;
 
-        for(int i = 0; i < header.length; i++) {
+        for (int i = 0; i < header.length; i++) {
             TextField currentTextField = inputArray.get(i);
             if (i == 0) {
                 if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
@@ -506,7 +531,7 @@ public class ProdFormula {
 
         formulaItem.setTotalPrice();
         if (!empty) addItemToList(formulaItem);
-        for(TextField textField : inputArray) textField.clear();
+        for (TextField textField : inputArray) textField.clear();
 
         calcUnitPrice();
     }
@@ -549,7 +574,7 @@ public class ProdFormula {
      */
     private void saveFormula() {
         if (isNewFormula) {
-            AlertBox.display("错误", "没有已存在的配方，选择另存为");
+            saveNewFormula();
             return;
         }
         if (!ConfirmBox.display("确认", "确定更新此配方？所有使用此配方的产品即将被更新", "是", "否"))
@@ -585,6 +610,7 @@ public class ProdFormula {
     private double calcUnitPrice() {
         double totalSum = 0.0;
         double totalAmount = 0.0;
+        if (formula == null) return 0.0;
         for (Formula formula : formula.getFormulaList()) {
             totalSum += formula.getTotalPrice();
             totalAmount += formula.getAmount();

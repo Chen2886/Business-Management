@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -219,16 +220,21 @@ public class MatUnitPriceTable {
 
     private void modifyPrice(MatUnitPrice matUnitPrice) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/MatEditUnitPrice.fxml"));
-            Parent newScene = loader.load();
+            FXMLLoader loader = new FXMLLoader();
+            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatEditUnitPrice.fxml"));
+            Parent newScene = loader.load(fileInputStream);
             Stage stage = new Stage();
 
             MatEditUnitPrice matEditUnitPrice = loader.getController();
             matEditUnitPrice.initData(stage, matUnitPrice);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("配方");
-            stage.setScene(new Scene(newScene));
+
+            Scene scene = new Scene(newScene);
+            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            stage.setScene(scene);
             stage.showAndWait();
+
             allUnitPrices = DatabaseUtil.GetAllMatUnitPrice();
             tempQuickSearchList = FXCollections.observableArrayList(allUnitPrices);
             searchBarTextField.setText("");

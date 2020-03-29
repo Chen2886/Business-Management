@@ -32,17 +32,6 @@
     -fx-text-fill: #050A05;
 }
 
-// for odd rows
-.table-row-cell:dtta_dep {
-    -fx-text-background-color: black;
-    -fx-background: grey;
-}
-
-// for even rows
-.table-row-cell:dtta_dest {
-    -fx-text-fill: black;
-}
-
 // change color for selected rows
 .table-row-cell:selected {
     -fx-background-color: #947eb0;
