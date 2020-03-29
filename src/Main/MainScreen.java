@@ -37,7 +37,6 @@ public class MainScreen implements Initializable {
 			"bank", "address", "note"};
 
 	// prod table headers
-	// TODO: Add Formula
 	private static final String[] prodHeaders = new String[] {"订单日期", "送货单号", "客户", "产品名称",
 			"规格", "数量", "公斤", "单价", "金额", "成本价", "备注"};
 
@@ -94,7 +93,6 @@ public class MainScreen implements Initializable {
 		}
 
 		// filling the mat table
-
 		try {
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
 			tempQuickSearchMatOrderList = FXCollections.observableArrayList();

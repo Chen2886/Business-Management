@@ -249,7 +249,6 @@ public class MatSearchOrder {
             }
             // orderDate end, skip
             else if (i == 4) {
-                continue;
             }
             // other dates
             else if (i == 5 || i == 6 || i == 7) {

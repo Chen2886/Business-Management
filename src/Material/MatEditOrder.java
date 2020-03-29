@@ -63,9 +63,7 @@ public class MatEditOrder {
 				currentStage.close();
 		});
 
-		completeButton.setOnAction(actionEvent -> {
-			UpdateOrder();
-		});
+		completeButton.setOnAction(actionEvent -> UpdateOrder());
 
 		int row = 1;
 		int col = 0;
@@ -132,10 +130,10 @@ public class MatEditOrder {
 				DatePicker datePicker = new DatePicker();
 				Method getters;
 
-				datePicker.setConverter(new StringConverter<LocalDate>() {
+				datePicker.setConverter(new StringConverter<>() {
 					@Override
 					public String toString(LocalDate localDate) {
-						if (localDate==null) {
+						if (localDate == null) {
 							return "0/0/0";
 						}
 						return dateTimeFormatter.format(localDate);
@@ -143,7 +141,7 @@ public class MatEditOrder {
 
 					@Override
 					public LocalDate fromString(String string) {
-						if (string==null || string.isEmpty()) {
+						if (string == null || string.isEmpty()) {
 							return null;
 						}
 						return LocalDate.from(dateTimeFormatter.parse(string));
