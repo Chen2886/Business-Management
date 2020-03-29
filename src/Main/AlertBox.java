@@ -1,9 +1,5 @@
 package Main;
 
-// from my other packages
-import Material.*;
-import Product.*;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
