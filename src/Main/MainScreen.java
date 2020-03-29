@@ -259,7 +259,6 @@ public class MainScreen implements Initializable {
 		});
 
 		matTableView.setOnKeyReleased(keyEvent -> {
-			System.out.println("here");
 			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
 				deleteMatOrder(matTableView.getSelectionModel().getSelectedItem());
 			}

@@ -4,6 +4,7 @@ import Main.AlertBox;
 import Main.DatabaseUtil;
 import Main.HandleError;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -112,11 +113,17 @@ public class MatGenerateExcel {
                 String[] orderObjArr = selectedData.get(i).toString().split(",");
                 for (int j = 0; j < orderObjArr.length; j++) {
                     Cell cell = row.createCell(cellNum++);
-                    if (j == 8 || j == 9 || j==10 || j==11 || j==12) {
-                        double value = Double.parseDouble(orderObjArr[j]);
+                    if (j == 8 || j == 9 || j == 10 || j==11 || j==12) {
+                        double value = 0.0;
+                        try {
+                            value = Double.parseDouble(orderObjArr[j]);
+                        } catch (Exception e) {
+                            AlertBox.display("错误", "数字错误，数字默认0。订单信息：" + orderObjArr[i]);
+                        }
                         cellStyle.setAlignment(HorizontalAlignment.RIGHT);
                         cell.setCellStyle(cellStyle);
                         cell.setCellValue(value);
+
                     } else {
                         cellStyle.setAlignment(HorizontalAlignment.CENTER);
                         cell.setCellStyle(cellStyle);

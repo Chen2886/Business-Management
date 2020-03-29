@@ -29,7 +29,7 @@ public class Main extends Application {
 
 		// Initialize Database
 		if (!DatabaseUtil.ConnectionInitAndCreate()) {
-			System.out.println("DATABASE ConnectionInitAndCreate FAILURE");
+			AlertBox.display("错误", "数据库不存在");
 			System.exit(1);
 		}
 

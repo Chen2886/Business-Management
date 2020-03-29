@@ -187,6 +187,7 @@ public class ProdAddOrder {
                         setter = ProductOrder.class.getDeclaredMethod("set" + prodProperty[i], double.class);
                         setter.invoke(newOrder, Double.parseDouble(currentTextField.getText()));
                     } catch (Exception e) {
+                        AlertBox.display("错误", prodHeaders[i] + "格式输入错误, 数字默认0");
                         e.printStackTrace();
                     }
                 }
