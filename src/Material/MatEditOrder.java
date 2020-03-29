@@ -59,7 +59,7 @@ public class MatEditOrder {
 		editOrderTitleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
 		cancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定取消？订单信息即将还原", "确认", "取消"))
+			if (ConfirmBox.display(ConfirmMessage.CANCEL))
 				currentStage.close();
 		});
 

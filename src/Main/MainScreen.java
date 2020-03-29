@@ -281,7 +281,6 @@ public class MainScreen implements Initializable {
 				TableColumn<ProductOrder, Double> newColumn = new TableColumn<>(prodHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(prodProperty[i]));
 				newColumn.setStyle( "-fx-alignment: CENTER;");
-				newColumn.setMinWidth(100);
 				productColumnArrayList.add(newColumn);
 			} else if (i == 0) {
 				// Main.Date
@@ -603,6 +602,9 @@ public class MainScreen implements Initializable {
 			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormula.fxml"));
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
+
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			stage.setHeight(screenSize.height);
 
 			ProdFormula prodFormula = loader.getController();
 			prodFormula.initData(order, stage);

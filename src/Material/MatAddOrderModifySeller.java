@@ -118,13 +118,13 @@ public class MatAddOrderModifySeller {
 		matAddSellerCompleteButton.setOnAction(actionEvent -> addSeller(false));
 		matAddSellerContinueButton.setOnAction(actionEvent -> addSeller(true));
 		matAddSellerCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定取消？供应商即将还原（不会被保存）。", "是", "否"))
+			if (ConfirmBox.display(ConfirmMessage.CANCEL))
 				currentStage.close();
 		});
 
 		// mat edit seller, the rest two is in startEditMatSeller
 		matEditSellerCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display("确认", "确定取消？供应商即将还原（不会被保存）。", "是", "否"))
+			if (ConfirmBox.display(ConfirmMessage.CANCEL))
 				currentStage.close();
 		});
 

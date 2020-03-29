@@ -1,9 +1,7 @@
 package Product;
 
-import Main.AlertBox;
-import Main.ConfirmBox;
-import Main.HandleError;
-import Main.Main;
+import Main.*;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -98,7 +96,7 @@ public class ProdFormulaEdit {
             formulaInfoHBox.getChildren().add(newLabel);
 
             TextField newTextField = new TextField();
-            newTextField.setPromptText("输入" + formulaInfoHeader[i]);
+            newTextField.setDisable(true);
             try {
                 getter = Formula.class.getDeclaredMethod("get" + propertyMethodName[i]);
                 newTextField.setText(String.valueOf(getter.invoke(formula)));
@@ -177,6 +175,29 @@ public class ProdFormulaEdit {
                 }
             }));
         }
+
+        // auto unit price
+        TextField unitPrice = inputArray.get(2);
+        unitPrice.setOnKeyTyped(keyEvent -> {
+            try {
+                unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        });
+        unitPrice.setOnMouseClicked(keyEvent -> {
+            try {
+                unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        });
 
     }
 

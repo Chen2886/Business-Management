@@ -72,7 +72,7 @@
                 </columns>
             </TableView>
         </Tab>
-        <Tab fx:id="prodTab" styleClass="main-screen-tab" text="订单管理">
+        <Tab fx:id="prodTab" styleClass="main-screen-tab" text="产品管理">
             <TableView fx:id="prodTableView" styleClass="table-row-cell" 
                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
