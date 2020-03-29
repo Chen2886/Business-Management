@@ -202,116 +202,6 @@ public class MainScreen implements Initializable {
 	}
 
 	/**
-	 * Load FXML for unit price table
-	 */
-	private void loadMatUnitPrice() {
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatUnitPriceTable.fxml"));
-			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
-
-			MatUnitPriceTable matUnitPriceTable = loader.getController();
-			matUnitPriceTable.initData(stage);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("原料单价系统");
-			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
-			stage.setScene(scene);
-			stage.showAndWait();
-			resetTable();
-		} catch (Exception e) {
-			AlertBox.display("错误", "窗口错误");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
-		}
-	}
-
-	/**
-	 * Load FXML for unit price table
-	 */
-	private void loadProdUnitPrice() {
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdUnitPriceTable.fxml"));
-			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
-
-			ProdUnitPriceTable prodUnitPriceTable = loader.getController();
-			prodUnitPriceTable.initData(stage);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("产品单价系统");
-			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
-			stage.setScene(scene);
-			stage.showAndWait();
-			resetTable();
-		} catch (Exception e) {
-			AlertBox.display("错误", "窗口错误");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
-		}
-	}
-
-	/**
-	 * Function to generate excel file with material
-	 */
-	private void generateMatExcel() {
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatGenerateExcel.fxml"));
-			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
-
-			MatGenerateExcel matGenerateExcel = loader.getController();
-			matGenerateExcel.initData(stage);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("生成表格");
-			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
-			stage.setScene(scene);
-			stage.show();
-		} catch (Exception e) {
-			AlertBox.display("错误", "窗口错误");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
-		}
-	}
-
-	/**
-	 * Function to generate excel file with product
-	 */
-	private void generateProdExcel() {
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdGenerateExcel.fxml"));
-			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
-
-			ProdGenerateExcel prodGenerateExcel = loader.getController();
-			prodGenerateExcel.initData(stage);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("生成表格");
-			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
-			stage.setScene(scene);
-			stage.show();
-		} catch (Exception e) {
-			AlertBox.display("错误", "窗口错误");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
-		}
-	}
-
-	/**
 	 * Filling of the material table
 	 * @param selectedMatOrders the orders specified
 	 */
@@ -405,7 +295,6 @@ public class MainScreen implements Initializable {
 				TableColumn<ProductOrder, String> newColumn = new TableColumn<>(prodHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(prodProperty[i]));
 				newColumn.setStyle( "-fx-alignment: CENTER;");
-				newColumn.setMinWidth(100);
 				productColumnArrayList.add(newColumn);
 			}
 		}
@@ -704,6 +593,10 @@ public class MainScreen implements Initializable {
 		prodTableView.getItems().setAll(searchList);
 	}
 
+	/**
+	 * Load the formula screen for a product
+	 * @param order the order selected
+	 */
 	public void prodFormula(ProductOrder order) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
@@ -720,6 +613,116 @@ public class MainScreen implements Initializable {
 			stage.setScene(scene);
 			stage.showAndWait();
 			resetTable();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	/**
+	 * Load FXML for unit price table
+	 */
+	private void loadMatUnitPrice() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatUnitPriceTable.fxml"));
+			Parent newScene = loader.load(fileInputStream);
+			Stage stage = new Stage();
+
+			MatUnitPriceTable matUnitPriceTable = loader.getController();
+			matUnitPriceTable.initData(stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("原料单价系统");
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
+			stage.showAndWait();
+			resetTable();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	/**
+	 * Load FXML for unit price table
+	 */
+	private void loadProdUnitPrice() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdUnitPriceTable.fxml"));
+			Parent newScene = loader.load(fileInputStream);
+			Stage stage = new Stage();
+
+			ProdUnitPriceTable prodUnitPriceTable = loader.getController();
+			prodUnitPriceTable.initData(stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("产品单价系统");
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
+			stage.showAndWait();
+			resetTable();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	/**
+	 * Function to generate excel file with material
+	 */
+	private void generateMatExcel() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatGenerateExcel.fxml"));
+			Parent newScene = loader.load(fileInputStream);
+			Stage stage = new Stage();
+
+			MatGenerateExcel matGenerateExcel = loader.getController();
+			matGenerateExcel.initData(stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("生成表格");
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
+			stage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "窗口错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	/**
+	 * Function to generate excel file with product
+	 */
+	private void generateProdExcel() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdGenerateExcel.fxml"));
+			Parent newScene = loader.load(fileInputStream);
+			Stage stage = new Stage();
+
+			ProdGenerateExcel prodGenerateExcel = loader.getController();
+			prodGenerateExcel.initData(stage);
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("生成表格");
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
+			stage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
 			e.printStackTrace();
