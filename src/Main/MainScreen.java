@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.sql.SQLException;
@@ -195,15 +196,18 @@ public class MainScreen implements Initializable {
 	 */
 	private void loadMatUnitPrice() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Material/MatUnitPriceTable.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatUnitPriceTable.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			MatUnitPriceTable matUnitPriceTable = loader.getController();
 			matUnitPriceTable.initData(stage);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("原料单价系统");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.showAndWait();
 			resetTable();
 		} catch (Exception e) {
@@ -220,15 +224,18 @@ public class MainScreen implements Initializable {
 	 */
 	private void loadProdUnitPrice() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdUnitPriceTable.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdUnitPriceTable.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			ProdUnitPriceTable prodUnitPriceTable = loader.getController();
 			prodUnitPriceTable.initData(stage);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("产品单价系统");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -244,15 +251,18 @@ public class MainScreen implements Initializable {
 	 */
 	private void generateMatExcel() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Material/MatGenerateExcel.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatGenerateExcel.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			MatGenerateExcel matGenerateExcel = loader.getController();
 			matGenerateExcel.initData(stage);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("生成表格");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -268,15 +278,18 @@ public class MainScreen implements Initializable {
 	 */
 	private void generateProdExcel() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdGenerateExcel.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdGenerateExcel.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			ProdGenerateExcel prodGenerateExcel = loader.getController();
 			prodGenerateExcel.initData(stage);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("生成表格");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -481,8 +494,9 @@ public class MainScreen implements Initializable {
 	 */
 	private void addMatOrder() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Material/MatAddOrderModifySeller.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatAddOrderModifySeller.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			MatAddOrderModifySeller matAddOrderModifySeller = loader.getController();
@@ -490,7 +504,9 @@ public class MainScreen implements Initializable {
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加订单");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.showAndWait();
 			matTableView.getItems().clear();
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
@@ -510,8 +526,9 @@ public class MainScreen implements Initializable {
 	 */
 	private void addProdOrder() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdAddOrder.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdAddOrder.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			ProdAddOrder prodAddOrder = loader.getController();
@@ -519,7 +536,9 @@ public class MainScreen implements Initializable {
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加产品");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.showAndWait();
 			prodTableView.getItems().clear();
 			allProdOrderList = DatabaseUtil.GetAllProdOrders();
@@ -540,8 +559,9 @@ public class MainScreen implements Initializable {
 	 */
 	private void modifyMatOrder(MatOrder selectedOrder) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Material/MatEditOrder.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatEditOrder.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			MatEditOrder editOrderController = loader.getController();
@@ -549,7 +569,9 @@ public class MainScreen implements Initializable {
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("编辑订单");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.showAndWait();
 			matTableView.getItems().clear();
 			allMatOrderList = DatabaseUtil.GetAllMatOrders();
@@ -570,8 +592,9 @@ public class MainScreen implements Initializable {
 	 */
 	private void modifyProdOrder(ProductOrder selectedOrder) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdEditOrder.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdEditOrder.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			ProdEditOrder prodEditOrder = loader.getController();
@@ -579,7 +602,9 @@ public class MainScreen implements Initializable {
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("编辑订单");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.showAndWait();
 			prodTableView.getItems().clear();
 			allProdOrderList = DatabaseUtil.GetAllProdOrders();
@@ -599,7 +624,7 @@ public class MainScreen implements Initializable {
 	 * @param selectedOrder the order to be deleted
 	 */
 	private void deleteMatOrder(MatOrder selectedOrder) {
-		if (ConfirmBox.display("确认", "确定删除？", "确定", "取消")) {
+		if (ConfirmBox.display("确认", "确定删除？", "是", "否")) {
 			try {
 				DatabaseUtil.DeleteMatOrder(selectedOrder.getSerialNum());
 				allMatOrderList = DatabaseUtil.GetAllMatOrders();
@@ -620,7 +645,7 @@ public class MainScreen implements Initializable {
 	 * @param selectedOrder the order to be deleted
 	 */
 	private void deleteProdOrder(ProductOrder selectedOrder) {
-		if (ConfirmBox.display("确认", "确定删除？", "确定", "取消")) {
+		if (ConfirmBox.display("确认", "确定删除？", "是", "否")) {
 			try {
 				DatabaseUtil.DeleteProdOrder(selectedOrder.getSerialNum());
 				allProdOrderList = DatabaseUtil.GetAllProdOrders();
@@ -641,15 +666,18 @@ public class MainScreen implements Initializable {
 	 */
 	private void searchMatOrder() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Material/MatSearchOrder.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatSearchOrder.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			MatSearchOrder matSearchOrder = loader.getController();
 			matSearchOrder.initData(stage, this);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("搜索订单");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -665,15 +693,18 @@ public class MainScreen implements Initializable {
 	 */
 	private void searchProdOrder() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdSearchOrder.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdSearchOrder.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			ProdSearchOrder prodSearchOrder = loader.getController();
 			prodSearchOrder.initData(stage, this);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("搜索产品");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -732,15 +763,18 @@ public class MainScreen implements Initializable {
 
 	public void prodFormula(ProductOrder order) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../Product/ProdFormula.fxml"));
-			Parent newScene = loader.load();
+			FXMLLoader loader = new FXMLLoader();
+			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormula.fxml"));
+			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
 			ProdFormula prodFormula = loader.getController();
 			prodFormula.initData(order, stage);
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("配方");
-			stage.setScene(new Scene(newScene));
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");

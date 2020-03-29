@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Material.MatAddOrderModifySeller">
    <children>
-      <TabPane fx:id="MatAddOrderModifySellerTabPane" prefHeight="475.0" prefWidth="1006.0" stylesheets="@../stylesheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="MatAddOrderModifySellerTabPane" prefHeight="475.0" prefWidth="1006.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <tabs>
             <Tab closable="false" styleClass="add-order-tab" text="添加原料订单">
                <content>
@@ -42,17 +42,17 @@
                      </GridPane>
                      <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="-Infinity" prefWidth="-Infinity" spacing="10.0">
                         <children>
-                           <Button fx:id="matAddOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="取消" textAlignment="CENTER">
+                           <Button fx:id="matAddOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="取消" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matAddOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="完成" textAlignment="CENTER">
+                           <Button fx:id="matAddOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="完成" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matAddOrderContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="保存并继续添加" textAlignment="CENTER">
+                           <Button fx:id="matAddOrderContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="保存并继续添加" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
@@ -95,17 +95,17 @@
                      </GridPane>
                      <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="-Infinity" prefWidth="-Infinity" spacing="10.0">
                         <children>
-                           <Button fx:id="matAddSellerCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="取消" textAlignment="CENTER">
+                           <Button fx:id="matAddSellerCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="取消" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matAddSellerCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="完成" textAlignment="CENTER">
+                           <Button fx:id="matAddSellerCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="完成" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matAddSellerContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="保存并继续添加" textAlignment="CENTER">
+                           <Button fx:id="matAddSellerContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="保存并继续添加" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
@@ -151,17 +151,17 @@
                      </GridPane>
                      <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="-Infinity" prefWidth="-Infinity" spacing="10.0">
                         <children>
-                           <Button fx:id="matEditSellerCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="取消" textAlignment="CENTER">
+                           <Button fx:id="matEditSellerCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="取消" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matEditSellerResetButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="重置页面" textAlignment="CENTER">
+                           <Button fx:id="matEditSellerResetButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="重置页面" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>
                            </Button>
-                           <Button fx:id="matEditSellerCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" stylesheets="../stylesheet.css" text="完成" textAlignment="CENTER">
+                           <Button fx:id="matEditSellerCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons" text="完成" textAlignment="CENTER">
                               <font>
                                  <Font size="18.0" />
                               </font>

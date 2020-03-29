@@ -28,13 +28,13 @@
     <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="300.0" spacing="10.0"
           AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0">
         <Button fx:id="prodSearchOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false"
-                styleClass="actionButtons" stylesheets="../stylesheet.css" text="取消" textAlignment="CENTER">
+                styleClass="actionButtons" text="取消" textAlignment="CENTER">
             <font>
                 <Font size="18.0"/>
             </font>
         </Button>
         <Button fx:id="prodSearchOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false"
-                styleClass="actionButtons" stylesheets="../stylesheet.css" text="完成" textAlignment="CENTER">
+                styleClass="actionButtons" text="完成" textAlignment="CENTER">
             <font>
                 <Font size="18.0"/>
             </font>
