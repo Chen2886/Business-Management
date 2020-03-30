@@ -413,6 +413,31 @@ public class DatabaseUtil {
     }
 
     /**
+     * Given a name, see if newest formula table contains the name
+     * @param name the name that needs to be true
+     * @return true if contains, false if does not contain
+     */
+    public static boolean CheckIfNameExistsInMatUnitPrice(String name) {
+        String SQLCommand = "SELECT name FROM materialUnitPrice WHERE name = ?";
+        try {
+            ConnectToDB();
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            CloseConnectionToDB();
+            return resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            return false;
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Get All the mat order from database
      * @return a list of all mat order ordered by sku
      * @throws SQLException if any error occurs while operating on database
@@ -1408,6 +1433,32 @@ public class DatabaseUtil {
             preparedStatement.setDouble(2, newMatUnitPrice.getUnitPrice());
             preparedStatement.setString(3, newMatUnitPrice.getNote());
             preparedStatement.setString(4, oldMatUnitPrice.getName());
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Update an unit price into the database
+     * @param name original unit price name
+     * @param unitPrice new unit price to replace the old one
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static void UpdateMatUnitPrice(String name, double unitPrice) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "UPDATE [materialUnitPrice] SET price = ? WHERE name = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setDouble(1, unitPrice);
+            preparedStatement.setString(2, name);
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {

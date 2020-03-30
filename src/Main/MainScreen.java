@@ -603,7 +603,7 @@ public class MainScreen implements Initializable {
 			Stage stage = new Stage();
 
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			stage.setHeight(screenSize.height);
+			stage.setHeight(screenSize.height * 0.9);
 
 			ProdFormula prodFormula = loader.getController();
 			prodFormula.initData(order, stage);
