@@ -241,6 +241,19 @@ public class MatAddOrderModifySeller {
 			}
 		}
 
+		TextField name = (TextField) matOrderInputArray.get(2);
+		TextField unitPrice = (TextField) matOrderInputArray.get(10);
+		name.textProperty().addListener((observableValue, oldValue, newValue) -> {
+			try {
+				if (DatabaseUtil.CheckIfNameExistsInMatUnitPrice(newValue))
+					unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(newValue)));
+				else
+					unitPrice.setText("0.0");
+			} catch (SQLException ignored) {
+				ignored.printStackTrace();
+			}
+		});
+
 		// * setting up grid properties
 		matAddOrderGrid.setVgap(10);
 		matAddOrderGrid.setHgap(10);
@@ -618,6 +631,13 @@ public class MatAddOrderModifySeller {
 
 		try {
 			DatabaseUtil.AddMatOrder(newOrder);
+			if (DatabaseUtil.CheckIfNameExistsInMatUnitPrice(newOrder.getName())) {
+				double oldPrice = DatabaseUtil.GetMatUnitPrice(newOrder.getName());
+				if (oldPrice != newOrder.getUnitPrice())
+					if (ConfirmBox.display("确认", "此原料已存在，需要更新原料单价表吗？之前价格：" +
+							oldPrice + " 新价格：" + newOrder.getUnitPrice(),"是", "否"))
+						DatabaseUtil.UpdateMatUnitPrice(newOrder.getName(), newOrder.getUnitPrice());
+			} else DatabaseUtil.AddMatUnitPrice(new MatUnitPrice(newOrder.getName(), newOrder.getUnitPrice()));
 			currentStage.close();
 		} catch (SQLException e) {
 			AlertBox.display("错误", "更新错误，联系管理员");
@@ -742,6 +762,13 @@ public class MatAddOrderModifySeller {
 
 		try {
 			DatabaseUtil.AddMatOrder(newOrder);
+			if (DatabaseUtil.CheckIfNameExistsInMatUnitPrice(newOrder.getName())) {
+				double oldPrice = DatabaseUtil.GetMatUnitPrice(newOrder.getName());
+				if (oldPrice != newOrder.getUnitPrice())
+					if (ConfirmBox.display("确认", "此原料已存在，需要更新原料单价表吗？之前价格：" +
+							oldPrice + " 新价格：" + newOrder.getUnitPrice(),"是", "否"))
+						DatabaseUtil.UpdateMatUnitPrice(newOrder.getName(), newOrder.getUnitPrice());
+			} else DatabaseUtil.AddMatUnitPrice(new MatUnitPrice(newOrder.getName(), newOrder.getUnitPrice()));
 			clearAddOrderFields();
 		} catch (SQLException e) {
 			AlertBox.display("错误", "更新错误，联系管理员");

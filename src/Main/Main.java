@@ -45,7 +45,7 @@ public class Main extends Application {
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		stage.setWidth(screenSize.width);
-		stage.setHeight(screenSize.height);
+		stage.setHeight(screenSize.height * 0.9);
 
 		stage.setScene(scene);
 		this.stage = stage;
