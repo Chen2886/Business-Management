@@ -122,12 +122,6 @@ public class MatAddOrderModifySeller {
 				currentStage.close();
 		});
 
-		// mat edit seller, the rest two is in startEditMatSeller
-		matEditSellerCancelButton.setOnAction(actionEvent -> {
-			if (ConfirmBox.display(ConfirmMessage.CANCEL))
-				currentStage.close();
-		});
-
 		// get all mat sellers, so other functions can use it
 		try {
 			allMatSeller = DatabaseUtil.GetAllMatSellers();
@@ -248,7 +242,7 @@ public class MatAddOrderModifySeller {
 				if (DatabaseUtil.CheckIfNameExistsInMatUnitPrice(newValue))
 					unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(newValue)));
 				else
-					unitPrice.setText("0.0");
+					unitPrice.setText("0.0w");
 			} catch (SQLException ignored) {
 				ignored.printStackTrace();
 			}
@@ -348,19 +342,38 @@ public class MatAddOrderModifySeller {
 				"-fx-font-color: black;\n" +
 				"-fx-font-size: 18px;");
 		startEdit.setAlignment(Pos.CENTER);
-		HBox uselessHBoxForButton = new HBox(startEdit);
-		uselessHBoxForButton.setMaxWidth(Double.MAX_VALUE);
-		uselessHBoxForButton.setAlignment(Pos.CENTER);
-		GridPane.setConstraints(uselessHBoxForButton, 1, 2, 2, 1);
+		Button deleteSeller = new Button("删除供应商");
+		deleteSeller.setStyle("-fx-background-color: #bbbdf6;\n" +
+				"-fx-font-color: black;\n" +
+				"-fx-font-size: 18px;");
+		deleteSeller.setAlignment(Pos.CENTER);
+		HBox buttonHBox = new HBox(startEdit, deleteSeller);
+		buttonHBox.setMaxWidth(Double.MAX_VALUE);
+		buttonHBox.setAlignment(Pos.CENTER);
+		buttonHBox.setSpacing(10);
 
-		// start edit button action
-		matEditSellerGrid.getChildren().addAll(selectInitSeller, uselessHBoxForButton);
+		GridPane.setConstraints(buttonHBox, 1, 2, 2, 1);
+		matEditSellerGrid.getChildren().addAll(selectInitSeller, buttonHBox);
+
+		// complete button
+		matEditSellerCompleteButton.setOnAction(actionEvent -> currentStage.close());
+
+		// cancel button
+		matEditSellerCancelButton.setOnAction(actionEvent -> currentStage.close());
 
 		// start to edit action button
 		startEdit.setOnAction(actionEvent -> {
 			if (sellerComboBox.getSelectionModel().getSelectedItem() != null) {
-				matEditSellerGrid.getChildren().removeAll(uselessHBoxForButton, selectInitSeller);
+				matEditSellerGrid.getChildren().removeAll(buttonHBox, selectInitSeller);
 				editMatSeller(allMatSeller.get(sellerComboBox.getSelectionModel().getSelectedIndex()));
+			} else
+				AlertBox.display("错误", "选择供应商");
+		});
+
+		// delete button
+		deleteSeller.setOnAction(actionEvent -> {
+			if (sellerComboBox.getSelectionModel().getSelectedItem() != null) {
+				deleteMatSeller(allMatSeller.get(sellerComboBox.getSelectionModel().getSelectedIndex()));
 			} else
 				AlertBox.display("错误", "选择供应商");
 		});
@@ -379,9 +392,11 @@ public class MatAddOrderModifySeller {
 		// initialize the input array
 		matEditSellerInputArray = new ArrayList<>();
 
-		// setting up all the labels
+		// grid pane constraints
 		int row = 1;
 		int col = 0;
+
+		// setting up all the labels
 		for(int i = 0; i < sellerTableHeaders.length; i++) {
 			Label newLabel = new Label(sellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
@@ -395,7 +410,7 @@ public class MatAddOrderModifySeller {
 			}
 		}
 
-		// resetting the grid constraint
+		// resetting constraint
 		row = 1;
 		col = 1;
 
@@ -437,15 +452,39 @@ public class MatAddOrderModifySeller {
 			initEditMatSeller();
 		});
 
+		// complete button
 		matEditSellerCompleteButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display("确认", "是否更新所有使用此供应商的订单？", "是", "否"))
 				updateSeller(matSeller);
+		});
+
+		// cancel button
+		matEditSellerCompleteButton.setOnAction(actionEvent -> {
+			if (ConfirmBox.display(ConfirmMessage.CANCEL)) currentStage.close();
 		});
 
 		// * setting up grid properties
 		matEditSellerGrid.setVgap(10);
 		matEditSellerGrid.setHgap(10);
 		matEditSellerGrid.getChildren().addAll(matEditSellerInputArray);
+	}
+
+	/**
+	 * Delete the seller selected
+	 * @param matSeller the seller to be deleted
+	 */
+	private void deleteMatSeller(MatSeller matSeller) {
+		if (!ConfirmBox.display("确认", "确认删除" + matSeller.getCompanyName() +
+				"？所有使用此供应商的订单也会被更新。", "是", "否")) return;
+		try {
+			DatabaseUtil.DeleteMatSeller(matSeller.getSellerId());
+		} catch (SQLException e) {
+			AlertBox.display("错误", "删除错误，联系管理员");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
 	}
 
 	/**

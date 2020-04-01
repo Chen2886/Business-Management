@@ -355,6 +355,33 @@ public class DatabaseUtil {
 
     /**
      * Check is sku provided exists
+     * @param sellerId sellerId of the seller
+     * @return weather serialNum exists or not
+     * @throws SQLException if any error occurs while operating on database
+     */
+    public static boolean CheckIfMatSellerExists(int sellerId) throws SQLException {
+        try {
+            ConnectToDB();
+
+            String SQLCommand = "SELECT * FROM seller WHERE sellerId = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, sellerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            CloseConnectionToDB();
+            return resultSet.next();
+        } catch (SQLException e) {
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            e.printStackTrace();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Check is sku provided exists
      * @param serialNum sku to be checked
      * @return weather serialNum exists or not
      * @throws SQLException if any error occurs while operating on database
@@ -810,6 +837,42 @@ public class DatabaseUtil {
             String SQLCommand = "DELETE FROM materialManagement WHERE serialNum = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setInt(1, serialNum);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            e.printStackTrace();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
+     * Given sellerid, delete from database
+     * @param sellerId seller identified to be deleted
+     */
+    public static void DeleteMatSeller(int sellerId) throws SQLException {
+        try {
+            ConnectToDB();
+
+            if (!CheckIfMatSellerExists(sellerId)) {
+                CloseConnectionToDB();
+                return;
+            }
+
+            ConnectToDB();
+            String SQLCommand = "DELETE FROM seller WHERE sellerId = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, sellerId);
+            preparedStatement.executeUpdate();
+
+            SQLCommand = "UPDATE materialManagement SET companyName = \"\", contactName = \"\", mobile = \"\", " +
+                "landLine = \"\", fax = \"\", accountNum = \"\", bankAddress = \"\", address = \"\" WHERE sellerId = ?";
+            preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setInt(1, sellerId);
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
