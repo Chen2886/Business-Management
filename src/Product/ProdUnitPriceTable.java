@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -74,7 +75,7 @@ public class ProdUnitPriceTable {
     private void init() {
         // setting up the image for search bar
         try {
-            FileInputStream input = new FileInputStream("iconmonstr-magnifier-4-240.png");
+            FileInputStream input = new FileInputStream("searchIcon.png");
             Image searchBarImage = new Image(input);
             searchImageView.setImage(searchBarImage);
         } catch (Exception e) {
@@ -111,11 +112,6 @@ public class ProdUnitPriceTable {
 
         // array of columns
         Collection<TableColumn<ProdUnitPrice, ?>> columnArrayList = new ArrayList<>();
-
-        // setting up first action column
-        TableColumn actionColumn = new TableColumn("动作");
-        actionColumn.setSortable(false);
-        columnArrayList.add(actionColumn);
 
         // loop to set up all regular columns
         for (int i = 0; i < headers.length; i++) {
@@ -205,38 +201,24 @@ public class ProdUnitPriceTable {
 
         addButton.setOnAction(event -> addProdUnitPrices());
 
-        // Setting a call back to handle the first column of action buttons
-        Callback<TableColumn<ProdUnitPrice, String>, TableCell<ProdUnitPrice, String>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<ProdUnitPrice, String> call(TableColumn<ProdUnitPrice, String> matOrderStringTableColumn) {
-                return new TableCell<>(){
-                    // define new buttons
-                    Button edit = new Button("编辑");
-                    Button delete = new Button("删除");
-                    HBox actionButtons = new HBox(edit, delete);
 
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            edit.setOnAction(event -> modifyPrice(getTableView().getItems().get(getIndex())));
-                            delete.setOnAction(event -> deletePrice(getTableView().getItems().get(getIndex())));
+        // if double clicked, enable edit
+        prodTable.setRowFactory( tv -> {
+            TableRow<ProdUnitPrice> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    ProdUnitPrice order = row.getItem();
+                    modifyPrice(order);
+                }
+            });
+            return row;
+        });
 
-                            edit.getStyleClass().add("actionButtons");
-                            delete.getStyleClass().add("actionButtons");
-                            actionButtons.setSpacing(5);
-                            actionButtons.setAlignment(Pos.CENTER);
-                            setGraphic(actionButtons);
-                        }
-                        setText(null);
-                    }
-                };
+        prodTable.setOnKeyReleased(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
+                deletePrice(prodTable.getSelectionModel().getSelectedItem());
             }
-        };
-
-        actionColumn.setCellFactory(cellFactory);
+        });
 
         prodTable.getColumns().setAll(columnArrayList);
         prodTable.getItems().setAll(allUnitPrices);
@@ -339,7 +321,7 @@ public class ProdUnitPriceTable {
             stage.setTitle("配方");
 
             Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
             stage.setScene(scene);
             stage.showAndWait();
 
