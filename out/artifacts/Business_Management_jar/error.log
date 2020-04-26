@@ -1,0 +1,28 @@
+=====================start of an error reported=====================
+Class Name:    Main.MainScreen
+Function Name: initialize
+
+==========================start of message==========================
+searchIcon.png (No such file or directory)
+===========================end of message===========================
+
+=========================start of stackTrace========================
+java.base/java.io.FileInputStream.open0(Native Method)
+java.base/java.io.FileInputStream.open(Unknown Source)
+java.base/java.io.FileInputStream.<init>(Unknown Source)
+java.base/java.io.FileInputStream.<init>(Unknown Source)
+Main.MainScreen.initialize(MainScreen.java:96)
+javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(Unknown Source)
+javafx.fxml/javafx.fxml.FXMLLoader.load(Unknown Source)
+Main.Main.loadFXML(Main.java:60)
+Main.Main.start(Main.java:45)
+javafx.graphics/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(Unknown Source)
+javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$11(Unknown Source)
+javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$9(Unknown Source)
+java.base/java.security.AccessController.doPrivileged(Native Method)
+javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(Unknown Source)
+javafx.graphics/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(Unknown Source)
+==========================end of stackTrace=========================
+
+=======================end of an error reported=====================
+

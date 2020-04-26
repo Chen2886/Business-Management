@@ -293,7 +293,7 @@ public class ProdFormulaEdit {
             stage.setTitle("编辑配方");
 
             Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
             stage.setScene(scene);
 
             stage.showAndWait();

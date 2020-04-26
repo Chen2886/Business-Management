@@ -332,7 +332,7 @@ public class ProdFormula {
             prodFormulaEdit.initData(item, newFormula, stage, formulaItemTable, formulaTable);
 
             Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
             stage.setScene(scene);
             stage.showAndWait();
 
@@ -364,7 +364,7 @@ public class ProdFormula {
             stage.setTitle("编辑配方");
 
             Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
             stage.setScene(scene);
             stage.show();
 

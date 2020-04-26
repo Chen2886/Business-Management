@@ -93,7 +93,7 @@ public class MainScreen implements Initializable {
 
 		// setting up the image for search bar
 		try {
-			FileInputStream input = new FileInputStream("iconmonstr-magnifier-4-240.png");
+			FileInputStream input = new FileInputStream("searchIcon.png");
 			Image searchBarImage = new Image(input);
 			searchImageView.setImage(searchBarImage);
 		} catch (Exception e) {
@@ -333,7 +333,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加订单");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.showAndWait();
 			matTableView.getItems().clear();
@@ -365,7 +365,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加产品");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.showAndWait();
 			prodTableView.getItems().clear();
@@ -399,7 +399,7 @@ public class MainScreen implements Initializable {
 			stage.setTitle("编辑订单");
 
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.showAndWait();
 
@@ -433,7 +433,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("编辑订单");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.showAndWait();
 			prodTableView.getItems().clear();
@@ -506,7 +506,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("搜索订单");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
@@ -533,7 +533,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("搜索产品");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
@@ -610,7 +610,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("配方");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.showAndWait();
 			resetTable();
@@ -638,7 +638,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("原料单价系统");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.showAndWait();
 			resetTable();
@@ -666,7 +666,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("产品单价系统");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.showAndWait();
 			resetTable();
@@ -694,7 +694,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("生成表格");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
@@ -721,7 +721,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("生成表格");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.fxmlPath + "stylesheet.css");
+			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
