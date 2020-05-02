@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 
 public class Main extends Application {
 
-	private Stage stage;
+	public static Stage mainStage;
 	public static String fxmlPath = "fxml/";
 	public static String styleSheetPath = System.getProperty("user.dir") + "/fxml/stylesheet.css";
 
@@ -37,8 +37,8 @@ public class Main extends Application {
 
 		Path source = Paths.get("BusinessCashFlow.db");
 		Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
-		
 		try {
+			if (Files.exists(target)) Files.delete(target);
 			Files.copy(source, target);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -57,9 +57,21 @@ public class Main extends Application {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		stage.setWidth(screenSize.width);
 		stage.setHeight(screenSize.height * 0.9);
-
 		stage.setScene(scene);
-		this.stage = stage;
+		mainStage = stage;
+
+		stage.setOnCloseRequest(event -> {
+			Path source = Paths.get("BusinessCashFlow.db");
+			Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
+			try {
+				if (Files.exists(target)) Files.delete(target);
+				Files.copy(source, target);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			stage.close();
+		});
+
 		stage.show();
 	}
 

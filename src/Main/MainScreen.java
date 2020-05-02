@@ -5,6 +5,7 @@ import Material.*;
 import Product.*;
 
 import javafx.collections.*;
+import javafx.event.EventHandler;
 import javafx.fxml.*;
 import javafx.geometry.Pos;
 import javafx.scene.*;
@@ -16,6 +17,7 @@ import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.Callback;
@@ -23,7 +25,11 @@ import javafx.util.Callback;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -138,7 +144,17 @@ public class MainScreen implements Initializable {
 		});
 
 		// quit the application
-		quitButton.setOnAction(actionEvent -> System.exit(1));
+		quitButton.setOnAction(actionEvent -> {
+			Path source = Paths.get("BusinessCashFlow.db");
+			Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
+			try {
+				if (Files.exists(target)) Files.delete(target);
+				Files.copy(source, target);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			Main.mainStage.close();
+		});
 
 		// reset both table
 		resetButton.setOnAction(actionEvent -> resetTable());
@@ -218,6 +234,7 @@ public class MainScreen implements Initializable {
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
 				newColumn.setStyle( "-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
+
 			} else if (i == 0 || i == 4 || i == 5 || i == 6) {
 				// Main.Date
 				TableColumn<MatOrder, Date> newColumn = new TableColumn<>(matHeaders[i]);
@@ -247,16 +264,16 @@ public class MainScreen implements Initializable {
 		matTableView.getColumns().setAll(orderColumnArrayList);
 
 		// if double clicked, enable edit
-		matTableView.setRowFactory( tv -> {
-			TableRow<MatOrder> row = new TableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-					MatOrder order = row.getItem();
-					modifyMatOrder(order);
-				}
-			});
-			return row;
-		});
+//		matTableView.setRowFactory( tv -> {
+//			TableRow<MatOrder> row = new TableRow<>();
+//			row.setOnMouseClicked(event -> {
+//				if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+//					MatOrder order = row.getItem();
+//					modifyMatOrder(order);
+//				}
+//			});
+//			return row;
+//		});
 
 		matTableView.setOnKeyReleased(keyEvent -> {
 			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {

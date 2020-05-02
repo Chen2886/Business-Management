@@ -7,6 +7,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -14,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
@@ -48,6 +52,7 @@ public class ProdFormula {
     ProductOrder selectedOrder;
     Formula formula;
     boolean isNewFormula;
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     /**
      * Called by main controller to give the selected order
@@ -58,7 +63,6 @@ public class ProdFormula {
     public void initData(ProductOrder selectedOrder, Stage currentStage) {
         this.selectedOrder = selectedOrder;
         this.currentStage = currentStage;
-
         // getting current formula
         try {
 
@@ -98,6 +102,8 @@ public class ProdFormula {
         initFormulaInfoHBox();
         calcUnitPrice();
 
+        currentStage.setMinHeight(screenSize.height * 0.9);
+        currentStage.setMinWidth(screenSize.width * 0.6);
         cancelButton.setOnAction(event -> {
             if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
                 currentStage.close();
