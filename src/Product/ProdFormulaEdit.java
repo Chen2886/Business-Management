@@ -8,15 +8,24 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class ProdFormulaEdit {
@@ -46,6 +55,7 @@ public class ProdFormulaEdit {
 
     Stage currentStage;
     Formula formula;
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     /**
      * Called by main controller to give the selected order
@@ -75,6 +85,13 @@ public class ProdFormulaEdit {
         initFormulaTable();
         initFormulaInfoHBox();
         initInfoHBox();
+
+        currentStage.setMinHeight(screenSize.height * 0.9);
+        currentStage.setMinWidth(screenSize.width * 0.6);
+        currentStage.setOnCloseRequest(event -> {
+            AlertBox.display("错误", "使用右下角按钮。");
+            event.consume();
+        });
 
         cancelButton.setOnAction(event -> {
             if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
