@@ -4,6 +4,8 @@ package Main;
 import Material.*;
 import Product.*;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.*;
 import javafx.event.EventHandler;
 import javafx.fxml.*;
@@ -11,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
@@ -31,9 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 public class MainScreen implements Initializable {
@@ -77,6 +78,7 @@ public class MainScreen implements Initializable {
 	@FXML Button prodUnitPriceButton;
 	@FXML TextField searchBarTextField;
 	@FXML ImageView searchImageView;
+	@FXML Label remoteInventoryTest;
 
 	/**
 	 * Call to fill the table with all orders, set up actions for all buttons, set up search bars, set up image view
@@ -85,11 +87,6 @@ public class MainScreen implements Initializable {
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
-
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		matTab.setStyle("-fx-pref-width: " + screenSize.width / 3 + ";");
-		prodTab.setStyle("-fx-pref-width: " + screenSize.width / 3 + ";");
-
 		resetButton.setText("重置\n表格");
 		searchButton.setText("精确\n搜索");
 		addButton.setText("添加\n编辑");
@@ -215,6 +212,63 @@ public class MainScreen implements Initializable {
 				prodTableView.setItems(tempQuickSearchProdOrderList);
 			}
 		});
+		mainTabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue.intValue() == 2) {
+				fillRemoteInventorypage();
+			}
+		});
+	}
+
+	public void fillRemoteInventorypage() {
+		try {
+			ArrayList<MatOrder> allMatOrders = new ArrayList<>(DatabaseUtil.GetAllMatOrders());
+			ArrayList<ProductOrder> allProdOrders = new ArrayList<>(DatabaseUtil.GetAllProdOrders());
+			Hashtable<String, Double> matOrdersDict = new Hashtable<>();
+
+			for (MatOrder order : allMatOrders) {
+				if (order.getSigned().equals("谢"))
+					if (!matOrdersDict.contains(order.getName()))
+						matOrdersDict.put(order.getName(), order.getKgAmount());
+					else {
+						double currentVal = matOrdersDict.get(order.getName());
+						matOrdersDict.put(order.getName(), order.getKgAmount() + currentVal);
+					}
+			}
+			System.out.println(matOrdersDict);
+
+			for (ProductOrder order : allProdOrders) {
+				int formulaIndex = order.getFormulaIndex();
+				Formula formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
+
+
+				for (FormulaItem item : formula.getSimpleItemList()) {
+					if (matOrdersDict.contains(item.getName())) {
+						double currentVal = matOrdersDict.get(order.getName());
+						double newVal = item.getAmount() / getFormulaTotalAmount(formula.getSimpleItemList()) * order.getAmount();
+						matOrdersDict.put(order.getName(), currentVal - newVal);
+					}
+				}
+
+			}
+
+			remoteInventoryTest.setText(matOrdersDict.toString());
+
+		} catch (SQLException e) {
+			AlertBox.display("错误", "张家港库存错误");
+			e.printStackTrace();
+			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+			error.WriteToLog();
+		}
+	}
+
+	private double getFormulaTotalAmount(ArrayList<FormulaItem> itemArrayList) {
+		double formulaTotalAmount = 0;
+
+		for (FormulaItem item : itemArrayList) {
+			formulaTotalAmount += item.getAmount();
+		}
+		return formulaTotalAmount;
 	}
 
 	/**
