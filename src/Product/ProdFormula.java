@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 
 import java.awt.*;
@@ -61,6 +62,7 @@ public class ProdFormula {
      * @param currentStage  the stage, so it can be closed later
      */
     public void initData(ProductOrder selectedOrder, Stage currentStage) {
+
         this.selectedOrder = selectedOrder;
         this.currentStage = currentStage;
         // getting current formula
@@ -104,6 +106,11 @@ public class ProdFormula {
 
         currentStage.setMinHeight(screenSize.height * 0.9);
         currentStage.setMinWidth(screenSize.width * 0.6);
+        currentStage.setOnCloseRequest(event -> {
+            AlertBox.display("错误", "使用右下角按钮。");
+            event.consume();
+        });
+
         cancelButton.setOnAction(event -> {
             if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
                 currentStage.close();
