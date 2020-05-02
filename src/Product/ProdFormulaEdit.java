@@ -96,7 +96,6 @@ public class ProdFormulaEdit {
             formulaInfoHBox.getChildren().add(newLabel);
 
             TextField newTextField = new TextField();
-            newTextField.setDisable(true);
             try {
                 getter = Formula.class.getDeclaredMethod("get" + propertyMethodName[i]);
                 newTextField.setText(String.valueOf(getter.invoke(formula)));
