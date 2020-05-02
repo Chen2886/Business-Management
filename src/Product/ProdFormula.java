@@ -606,6 +606,7 @@ public class ProdFormula {
             DatabaseUtil.UpdateFormula(formula, selectedOrder.getFormulaIndex());
             DatabaseUtil.UpdateProdOrder(selectedOrder);
             defaultButton.setVisible(true);
+            currentStage.close();
         } catch (SQLException e) {
             e.printStackTrace();
             HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
