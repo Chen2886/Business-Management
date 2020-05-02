@@ -226,7 +226,7 @@ public class MainScreen implements Initializable {
 			Hashtable<String, Double> matOrdersDict = new Hashtable<>();
 
 			for (MatOrder order : allMatOrders) {
-				if (order.getSigned().equals("谢"))
+				if (order.getSigned().equals("贾"))
 					if (!matOrdersDict.contains(order.getName()))
 						matOrdersDict.put(order.getName(), order.getKgAmount());
 					else {
@@ -234,7 +234,7 @@ public class MainScreen implements Initializable {
 						matOrdersDict.put(order.getName(), order.getKgAmount() + currentVal);
 					}
 			}
-			System.out.println(matOrdersDict);
+			System.out.println("Before: " + matOrdersDict);
 
 			for (ProductOrder order : allProdOrders) {
 				int formulaIndex = order.getFormulaIndex();
@@ -242,15 +242,15 @@ public class MainScreen implements Initializable {
 
 
 				for (FormulaItem item : formula.getSimpleItemList()) {
-					if (matOrdersDict.contains(item.getName())) {
-						double currentVal = matOrdersDict.get(order.getName());
-						double newVal = item.getAmount() / getFormulaTotalAmount(formula.getSimpleItemList()) * order.getAmount();
-						matOrdersDict.put(order.getName(), currentVal - newVal);
+					if (matOrdersDict.containsKey(item.getName())) {
+						double currentVal = matOrdersDict.get(item.getName());
+						double newVal = item.getAmount() / getFormulaTotalAmount(formula) * order.getKgAmount();
+						matOrdersDict.put(item.getName(), currentVal - newVal);
 					}
 				}
-
 			}
 
+			System.out.println("After : " + matOrdersDict.toString());
 			remoteInventoryTest.setText(matOrdersDict.toString());
 
 		} catch (SQLException e) {
@@ -262,10 +262,13 @@ public class MainScreen implements Initializable {
 		}
 	}
 
-	private double getFormulaTotalAmount(ArrayList<FormulaItem> itemArrayList) {
+	private double getFormulaTotalAmount(Formula formula) {
 		double formulaTotalAmount = 0;
 
-		for (FormulaItem item : itemArrayList) {
+		for (FormulaItem item : formula.getSimpleItemList()) {
+			formulaTotalAmount += item.getAmount();
+		}
+		for (Formula item : formula.getFormulaList()) {
 			formulaTotalAmount += item.getAmount();
 		}
 		return formulaTotalAmount;
