@@ -81,5 +81,12 @@
                 </columns>
             </TableView>
         </Tab>
+        <Tab fx:id="remoteInventoryTab" styleClass="main-screen-tab" text="张家港库存">
+            <Label fx:id="remoteInventoryTest" alignment="CENTER" prefHeight="100.0" prefWidth="Infinity" text="" textFill="black">
+                <padding>
+                    <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+                </padding>
+            </Label>
+        </Tab>
     </TabPane>
 </AnchorPane>
