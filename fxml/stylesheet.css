@@ -1,68 +1,68 @@
-// Main background
+/*Main background*/
 .parent{
     -fx-background-color: #fff;
 }
 
-// left sidebar
+/*left sidebar*/
 .sidebar{
     -fx-background-color: #947eb0;
 }
 
-// top left box
+/*top left box*/
 .topLeftBox {
     -fx-background-color: #bbbdf6;
     -fx-font-size:25px;
 }
 
-// For all the default buttons
+/*For all the default buttons*/
 .button {
     -fx-background-color: #bbbdf6;
-    -fx-font-size: 25px;
+    -fx-font-size: 22px;
 }
 
-// hover over button
+/*hover over button*/
 .button:hover {
     -fx-cursor: hand;
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
 }
 
-// For all the default labels
+/*For all the default labels*/
 .labels {
     -fx-alignment: center;
     -fx-text-fill: #050A05;
 }
 
-// change color for selected rows
+/*change color for selected rows*/
 .table-row-cell:selected {
     -fx-background-color: #947eb0;
 }
 
-// set table cell font size
+/*set table cell font size*/
 .table-view .table-cell{
     -fx-font-size: 18px;
 }
 
-// change size of table column header
+/*change size of table column header*/
 .table-view .column-header-background .label{
     -fx-background-color: transparent;
     -fx-font-weight:bold;
     -fx-font-size: 18px;
 }
 
-// buttons within the table view
+/*buttons within the table view*/
 .actionButtons {
     -fx-background-color: #bbbdf6;
     -fx-font-color: black;
     -fx-font-size: 18px;
 }
 
-// change appearance when hovered over buttons
+/*change appearance when hovered over buttons*/
 .actionButtons:hover {
     -fx-cursor: hand;
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
 }
 
-// change size of tabs
+/*change size of tabs*/
 .main-screen-tab {
     -fx-font-size: 20px;
     -fx-alignment: center;

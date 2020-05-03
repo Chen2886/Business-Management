@@ -21,7 +21,12 @@ public class Main extends Application {
 
 	public static Stage mainStage;
 	public static String fxmlPath = "fxml/";
-	public static String styleSheetPath = System.getProperty("user.dir") + "/fxml/stylesheet.css";
+//	public static String styleSheetPath = System.getProperty("os.name").startsWith("Windows") ?
+//			(System.getProperty("user.dir") + "/fxml/stylesheet.css").replace("/", "\\"):
+//			System.getProperty("user.dir") + "/fxml/stylesheet.css";
+	public static String styleSheetPath =
+		Paths.get("fxml/stylesheet.css").toUri().toString().replace("file:///", "");
+
 
 	// * main function to get everything started
 	public static void main(String[] args) {
@@ -37,6 +42,7 @@ public class Main extends Application {
 
 		Path source = Paths.get("BusinessCashFlow.db");
 		Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
+
 		try {
 			if (Files.exists(target)) Files.delete(target);
 			Files.copy(source, target);
