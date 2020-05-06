@@ -4,12 +4,8 @@ package Main;
 import Material.*;
 import Product.*;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.*;
-import javafx.event.EventHandler;
 import javafx.fxml.*;
-import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -20,10 +16,7 @@ import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.util.Callback;
 
 import java.awt.*;
 import java.io.File;
@@ -214,19 +207,19 @@ public class MainScreen implements Initializable {
 		});
 		mainTabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue.intValue() == 2) {
-				fillRemoteInventorypage();
+				fillRemoteInventoryPage();
 			}
 		});
 	}
 
-	public void fillRemoteInventorypage() {
+	public void fillRemoteInventoryPage() {
 		try {
 			ArrayList<MatOrder> allMatOrders = new ArrayList<>(DatabaseUtil.GetAllMatOrders());
 			ArrayList<ProductOrder> allProdOrders = new ArrayList<>(DatabaseUtil.GetAllProdOrders());
 			Hashtable<String, Double> matOrdersDict = new Hashtable<>();
 
 			for (MatOrder order : allMatOrders) {
-				if (order.getSigned().equals("贾"))
+				if (order.getSigned().contains("贾"))
 					if (!matOrdersDict.contains(order.getName()))
 						matOrdersDict.put(order.getName(), order.getKgAmount());
 					else {
@@ -239,15 +232,7 @@ public class MainScreen implements Initializable {
 			for (ProductOrder order : allProdOrders) {
 				int formulaIndex = order.getFormulaIndex();
 				Formula formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
-
-
-				for (Formula item : formula.getFormulaList()) {
-					if (matOrdersDict.containsKey(item.getName())) {
-						double currentVal = matOrdersDict.get(item.getName());
-						double newVal = item.getAmount() / getFormulaTotalAmount(formula) * order.getKgAmount();
-						matOrdersDict.put(item.getName(), currentVal - newVal);
-					}
-				}
+				remoteInventoryHelper(matOrdersDict, formula, order);
 			}
 
 			System.out.println("After : " + matOrdersDict.toString());
@@ -259,6 +244,20 @@ public class MainScreen implements Initializable {
 			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
+		}
+	}
+
+	private void remoteInventoryHelper(Hashtable<String, Double> dict, Formula formula, ProductOrder order) {
+		if (formula.getFormulaList().isEmpty()) return;
+		else {
+			for (Formula item: formula.getFormulaList()) {
+				remoteInventoryHelper(dict, item, order);
+			}
+			if (dict.containsKey(formula.getName())) {
+				double currentVal = dict.get(formula.getName());
+				double newVal = formula.getAmount() / getFormulaTotalAmount(formula) * order.getKgAmount();
+				dict.put(formula.getName(), currentVal - newVal);
+			}
 		}
 	}
 
