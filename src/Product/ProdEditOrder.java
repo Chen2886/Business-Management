@@ -173,6 +173,7 @@ public class ProdEditOrder {
      */
     private void updateOrder() {
         ProductOrder newOrder = new ProductOrder(selectedOrder.getSerialNum());
+        newOrder.setFormulaIndex(selectedOrder.getFormulaIndex());
         newOrder.setOrderDate(((DatePicker) prodOrderInputArray.get(0)).getValue() == null ? new Date(0, 0, 0) :
                 new Date(((DatePicker) prodOrderInputArray.get(0)).getValue().getYear(),
                         ((DatePicker) prodOrderInputArray.get(0)).getValue().getMonthValue(),

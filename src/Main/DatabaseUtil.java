@@ -1411,7 +1411,7 @@ public class DatabaseUtil {
             preparedStatementUpdateAll.setInt(1, index);
             preparedStatementUpdateAll.setString(2, name);
             preparedStatementUpdateAll.executeUpdate();
-            
+
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();
