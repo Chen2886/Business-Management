@@ -257,10 +257,6 @@ public class ProdAddOrder {
             totalSum += f.getTotalPrice();
             totalAmount += f.getAmount();
         }
-        for (FormulaItem formulaItem : formula.getSimpleItemList()) {
-            totalSum += formulaItem.getTotalPrice();
-            totalAmount += formulaItem.getAmount();
-        }
         return Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
     }
 

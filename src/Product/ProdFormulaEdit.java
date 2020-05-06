@@ -39,19 +39,16 @@ public class ProdFormulaEdit {
     @FXML Button cancelButton;
     @FXML Button saveButton;
     @FXML TableView<Formula> formulaTable;
-    @FXML TableView<FormulaItem> formulaItemTable;
     @FXML HBox infoHBox;
 
     Button addItemButton;
 
     ArrayList<TextField> inputArray;
     ArrayList<TextField> formulaInfoInputArray;
-    ArrayList<TableColumn<FormulaItem, ?>> itemColumnList;
     ArrayList<TableColumn<Formula, ?>> formulaColumnList;
 
-    TableView<FormulaItem> parentItemTableView;
     TableView<Formula> parentFormulaTableView;
-    FormulaItem parentItem;
+    Formula parentFormula;
 
     Stage currentStage;
     Formula formula;
@@ -63,16 +60,14 @@ public class ProdFormulaEdit {
      * @param formula the formula that needs to be edited, to fill the information
      * @param currentStage  the stage, so it can be closed later
      */
-    public void initData(FormulaItem parentItem, Formula formula, Stage currentStage, TableView<FormulaItem> parentItemTableView,
+    public void initData(Formula parentFormula, Formula formula, Stage currentStage,
                          TableView<Formula> parentFormulaTableView) {
-        this.parentItem = parentItem;
+        this.parentFormula = parentFormula;
         this.formula = formula;
         this.currentStage = currentStage;
-        itemColumnList = new ArrayList<>();
         formulaColumnList = new ArrayList<>();
 
         this.parentFormulaTableView = parentFormulaTableView;
-        this.parentItemTableView = parentItemTableView;
         init();
     }
 
@@ -81,7 +76,6 @@ public class ProdFormulaEdit {
      */
     private void init() {
 
-        initItemTable();
         initFormulaTable();
         initFormulaInfoHBox();
         initInfoHBox();
@@ -218,112 +212,6 @@ public class ProdFormulaEdit {
     }
 
     /**
-     * Initialize the item table
-     */
-    private void initItemTable() {
-
-        // init table
-        // setting up first action column
-        TableColumn<FormulaItem, String> actionColumn = new TableColumn<>("动作");
-        actionColumn.setSortable(false);
-        actionColumn.setMinWidth(180);
-        itemColumnList.add(actionColumn);
-
-        // loop to set up all regular columns
-        for (int i = 0; i < property.length; i++) {
-            if (i == 1 || i == 2 || i == 3) {
-                // Doubles
-                TableColumn<FormulaItem, Double> newColumn = new TableColumn<>(header[i]);
-                newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
-                newColumn.setStyle("-fx-alignment: CENTER;");
-                newColumn.setMinWidth(100);
-                itemColumnList.add(newColumn);
-            } else {
-                // String
-                TableColumn<FormulaItem, String> newColumn = new TableColumn<>(header[i]);
-                newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
-                newColumn.setStyle("-fx-alignment: CENTER;");
-                newColumn.setMinWidth(140);
-                itemColumnList.add(newColumn);
-            }
-        }
-
-        // Setting a call back to handle the first column of action buttons
-        Callback<TableColumn<FormulaItem, String>, TableCell<FormulaItem, String>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<FormulaItem, String> call(TableColumn<FormulaItem, String> formulaItem) {
-                TableCell<FormulaItem, String> cell = new TableCell<>() {
-                    // define new buttons
-                    Button edit = new Button("添加配方");
-                    Button delete = new Button("删除");
-                    HBox actionButtons = new HBox(edit, delete);
-
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            delete.setOnAction(event -> {
-                                if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
-                                    removeItemFromList(getTableView().getItems().get(getIndex()));
-                            });
-                            edit.setOnAction(event -> {
-                                convertItemToFormula(getTableView().getItems().get(getIndex()));
-                            });
-
-                            edit.getStyleClass().add("actionButtons");
-                            delete.getStyleClass().add("actionButtons");
-                            actionButtons.setSpacing(5);
-                            actionButtons.setAlignment(Pos.CENTER);
-                            setGraphic(actionButtons);
-                        }
-                        setText(null);
-                    }
-                };
-                return cell;
-            }
-        };
-
-        actionColumn.setCellFactory(cellFactory);
-
-        formulaItemTable.getColumns().setAll(itemColumnList);
-        if (formula != null) formulaItemTable.getItems().setAll(formula.getSimpleItemList());
-    }
-
-    /**
-     * Convert an item to Formula
-     */
-    private void convertItemToFormula(FormulaItem item) {
-        Formula newFormula = FormulaItem.convertToFormula(item);
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormulaEdit.fxml"));
-            Parent newScene = loader.load(fileInputStream);
-            Stage stage = new Stage();
-
-            ProdFormulaEdit prodFormulaEdit = loader.getController();
-            prodFormulaEdit.initData(item, newFormula, stage, formulaItemTable, formulaTable);
-
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("编辑配方");
-
-            Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
-            stage.setScene(scene);
-
-            stage.showAndWait();
-            calcUnitPrice();
-        } catch (Exception e) {
-            AlertBox.display("错误", "窗口错误");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-        }
-    }
-
-    /**
      * Initialize the formula table
      */
     private void initFormulaTable() {
@@ -396,34 +284,12 @@ public class ProdFormulaEdit {
 
     /**
      * public function for other controller to call, to add to the list, and refresh table
-     * @param item the item to be added to list
-     */
-    public void addItemToList(FormulaItem item) {
-        formula.addItem(item);
-        formulaItemTable.getItems().clear();
-        formulaItemTable.getItems().setAll(formula.getSimpleItemList());
-        calcUnitPrice();
-    }
-
-    /**
-     * public function for other controller to call, to add to the list, and refresh table
      * @param inputFormula the formula to be added to list
      */
     public void addFormulaToList(Formula inputFormula) {
         formula.addFormula(inputFormula);
         formulaTable.getItems().clear();
         formulaTable.getItems().setAll(inputFormula.getFormulaList());
-    }
-
-    /**
-     * public function for other controller to call, to remove item from the list, and refresh table
-     * @param item the item to be removed to list
-     */
-    public void removeItemFromList(FormulaItem item) {
-        formula.removeItem(item);
-        formulaItemTable.getItems().clear();
-        formulaItemTable.getItems().setAll(formula.getSimpleItemList());
-        calcUnitPrice();
     }
 
     /**
@@ -438,10 +304,21 @@ public class ProdFormulaEdit {
     }
 
     /**
+     *  Add formula to the tableView
+     * @param newFormula the formula to be added
+     */
+    public void addFormula(Formula newFormula) {
+        formula.addFormula(newFormula);
+        formulaTable.getItems().clear();
+        formulaTable.getItems().setAll(formula.getFormulaList());
+        calcUnitPrice();
+    }
+
+    /**
      * Add Simple item to the product
      */
     private void addItem() {
-        FormulaItem formulaItem = new FormulaItem();
+        Formula formula = new Formula();
         Method setter;
         boolean empty = true;
 
@@ -451,8 +328,8 @@ public class ProdFormulaEdit {
                 if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
                     empty = false;
                     try {
-                        setter = FormulaItem.class.getDeclaredMethod("set" + propertyMethodName[i], String.class);
-                        setter.invoke(formulaItem, currentTextField.getText());
+                        setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], String.class);
+                        setter.invoke(formula, currentTextField.getText());
                     } catch (Exception e) {
                         e.printStackTrace();
                         HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -464,8 +341,8 @@ public class ProdFormulaEdit {
                 if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
                     empty = false;
                     try {
-                        setter = FormulaItem.class.getDeclaredMethod("set" + propertyMethodName[i], double.class);
-                        setter.invoke(formulaItem, Double.parseDouble(currentTextField.getText()));
+                        setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], double.class);
+                        setter.invoke(formula, Double.parseDouble(currentTextField.getText()));
                     } catch (Exception e) {
                         e.printStackTrace();
                         HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -476,8 +353,8 @@ public class ProdFormulaEdit {
             }
         }
 
-        formulaItem.setTotalPrice();
-        if (!empty) addItemToList(formulaItem);
+        formula.setTotalPrice();
+        if (!empty) addFormula(formula);
         for(TextField textField : inputArray) textField.clear();
         calcUnitPrice();
     }
@@ -486,22 +363,12 @@ public class ProdFormulaEdit {
      * Save the formula to the selected order, and push formula to database
      */
     private void saveFormula() {
-
         formula.setName(formulaInfoInputArray.get(0).getText());
         formula.setAmount(Double.parseDouble(formulaInfoInputArray.get(1).getText()));
         formula.setUnitPrice(calcUnitPrice());
         formula.setTotalPrice();
-
-        if (parentItem == null) {
-            // edit
-            parentFormulaTableView.getItems().remove(formula);
-            parentFormulaTableView.getItems().add(formula);
-        } else {
-            // turn item into formula
-            parentItemTableView.getItems().remove(parentItem);
-            parentFormulaTableView.getItems().add(formula);
-        }
-
+        parentFormulaTableView.getItems().remove(formula);
+        parentFormulaTableView.getItems().add(formula);
         currentStage.close();
     }
 
@@ -511,10 +378,6 @@ public class ProdFormulaEdit {
         for (Formula formula : formula.getFormulaList()) {
             totalSum += formula.getTotalPrice();
             totalAmount += formula.getAmount();
-        }
-        for (FormulaItem formulaItem : formula.getSimpleItemList()) {
-            totalSum += formulaItem.getTotalPrice();
-            totalAmount += formulaItem.getAmount();
         }
         double returnVal = Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
         formulaInfoInputArray.get(3).setText(String.valueOf(returnVal));
