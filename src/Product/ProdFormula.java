@@ -103,7 +103,8 @@ public class ProdFormula {
         currentStage.setMinHeight(screenSize.height * 0.9);
         currentStage.setMinWidth(screenSize.width * 0.6);
         currentStage.setOnCloseRequest(event -> {
-            AlertBox.display("错误", "使用右下角按钮。");
+            if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
+                currentStage.close();
             event.consume();
         });
 
@@ -408,6 +409,7 @@ public class ProdFormula {
 
             DatabaseUtil.UpdateProdOrder(selectedOrder);
             defaultButton.setVisible(true);
+            currentStage.close();
         } catch (SQLException e) {
             e.printStackTrace();
             HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),

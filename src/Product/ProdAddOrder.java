@@ -157,8 +157,6 @@ public class ProdAddOrder {
             }
         });
 
-
-
         prodAddOrderGrid.setVgap(10);
         prodAddOrderGrid.setHgap(10);
         prodAddOrderGrid.getChildren().addAll(prodOrderLabelArray);

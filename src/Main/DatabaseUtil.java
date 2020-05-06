@@ -708,6 +708,7 @@ public class DatabaseUtil {
      */
     public static Formula GetFormulaByIndex(int index) throws SQLException {
         String SQLCommand = "SELECT formula FROM formula WHERE serialNum = ?";
+        System.out.println(index);
         try {
             ConnectToDB();
 

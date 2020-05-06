@@ -135,6 +135,32 @@ public class ProdEditOrder {
             }
         }
 
+        // auto unit price
+        TextField unitPrice = (TextField) prodOrderInputArray.get(6);
+        unitPrice.setOnKeyTyped(keyEvent -> {
+            try {
+                unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
+                        ((TextField) prodOrderInputArray.get(2)).getText())));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        });
+        unitPrice.setOnMouseClicked(keyEvent -> {
+            try {
+                System.out.println(((TextField) prodOrderInputArray.get(3)).getText());
+                unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
+                        ((TextField) prodOrderInputArray.get(2)).getText())));
+            } catch (Exception e) {
+                e.printStackTrace();
+                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+                error.WriteToLog();
+            }
+        });
+
         prodEditOrderGrid.setVgap(10);
         prodEditOrderGrid.setHgap(10);
         prodEditOrderGrid.getChildren().addAll(prodOrderLabelArray);

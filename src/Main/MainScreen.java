@@ -231,7 +231,9 @@ public class MainScreen implements Initializable {
 
 			for (ProductOrder order : allProdOrders) {
 				int formulaIndex = order.getFormulaIndex();
-				Formula formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
+				Formula formula = null;
+				if (formulaIndex != -1)
+					formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
 				remoteInventoryHelper(matOrdersDict, formula, order);
 			}
 
@@ -248,7 +250,7 @@ public class MainScreen implements Initializable {
 	}
 
 	private void remoteInventoryHelper(Hashtable<String, Double> dict, Formula formula, ProductOrder order) {
-		if (formula.getFormulaList().isEmpty()) return;
+		if (formula == null || formula.getFormulaList().isEmpty()) return;
 		else {
 			for (Formula item: formula.getFormulaList()) {
 				remoteInventoryHelper(dict, item, order);
