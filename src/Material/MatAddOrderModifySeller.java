@@ -242,7 +242,7 @@ public class MatAddOrderModifySeller {
 				if (DatabaseUtil.CheckIfNameExistsInMatUnitPrice(newValue))
 					unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(newValue)));
 				else
-					unitPrice.setText("0.0w");
+					unitPrice.setText("0.0");
 			} catch (SQLException ignored) {
 				ignored.printStackTrace();
 			}
