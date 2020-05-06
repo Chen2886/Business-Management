@@ -3,6 +3,8 @@ package Product;
 // from my other packages
 import Main.*;
 
+import java.sql.SQLException;
+
 public class ProductOrder {
 
     private int serialNum;
