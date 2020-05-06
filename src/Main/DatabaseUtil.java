@@ -708,7 +708,6 @@ public class DatabaseUtil {
      */
     public static Formula GetFormulaByIndex(int index) throws SQLException {
         String SQLCommand = "SELECT formula FROM formula WHERE serialNum = ?";
-        System.out.println(index);
         try {
             ConnectToDB();
 
@@ -1399,12 +1398,20 @@ public class DatabaseUtil {
         String SQLCommand;
         if (exists) SQLCommand = "UPDATE newestFormula SET formulaIndex = ? WHERE name = ?";
         else SQLCommand = "INSERT INTO newestFormula (formulaIndex, name) VALUES(?,?)";
+
+        String SQLCommandUpdateAll = "UPDATE productManagement SET formulaIndex = ? WHERE formulaIndex = -1 AND name = ?";
         try {
             ConnectToDB();
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setInt(1, index);
             preparedStatement.setString(2, name);
             preparedStatement.executeUpdate();
+
+            PreparedStatement preparedStatementUpdateAll = connection.prepareStatement(SQLCommandUpdateAll);
+            preparedStatementUpdateAll.setInt(1, index);
+            preparedStatementUpdateAll.setString(2, name);
+            preparedStatementUpdateAll.executeUpdate();
+            
             CloseConnectionToDB();
         } catch (SQLException e) {
             e.printStackTrace();

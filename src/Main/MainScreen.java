@@ -250,12 +250,13 @@ public class MainScreen implements Initializable {
 	}
 
 	private void remoteInventoryHelper(Hashtable<String, Double> dict, Formula formula, ProductOrder order) {
-		if (formula == null || formula.getFormulaList().isEmpty()) return;
+		if (formula == null) return;
 		else {
 			for (Formula item: formula.getFormulaList()) {
 				remoteInventoryHelper(dict, item, order);
 			}
 			if (dict.containsKey(formula.getName())) {
+				System.out.println(formula.toString());
 				double currentVal = dict.get(formula.getName());
 				double newVal = formula.getAmount() / getFormulaTotalAmount(formula) * order.getKgAmount();
 				dict.put(formula.getName(), currentVal - newVal);
