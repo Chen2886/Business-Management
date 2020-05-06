@@ -241,7 +241,7 @@ public class MainScreen implements Initializable {
 				Formula formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
 
 
-				for (FormulaItem item : formula.getSimpleItemList()) {
+				for (Formula item : formula.getFormulaList()) {
 					if (matOrdersDict.containsKey(item.getName())) {
 						double currentVal = matOrdersDict.get(item.getName());
 						double newVal = item.getAmount() / getFormulaTotalAmount(formula) * order.getKgAmount();
@@ -264,10 +264,6 @@ public class MainScreen implements Initializable {
 
 	private double getFormulaTotalAmount(Formula formula) {
 		double formulaTotalAmount = 0;
-
-		for (FormulaItem item : formula.getSimpleItemList()) {
-			formulaTotalAmount += item.getAmount();
-		}
 		for (Formula item : formula.getFormulaList()) {
 			formulaTotalAmount += item.getAmount();
 		}
@@ -321,16 +317,16 @@ public class MainScreen implements Initializable {
 		matTableView.getColumns().setAll(orderColumnArrayList);
 
 		// if double clicked, enable edit
-//		matTableView.setRowFactory( tv -> {
-//			TableRow<MatOrder> row = new TableRow<>();
-//			row.setOnMouseClicked(event -> {
-//				if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-//					MatOrder order = row.getItem();
-//					modifyMatOrder(order);
-//				}
-//			});
-//			return row;
-//		});
+		matTableView.setRowFactory( tv -> {
+			TableRow<MatOrder> row = new TableRow<>();
+			row.setOnMouseClicked(event -> {
+				if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+					MatOrder order = row.getItem();
+					modifyMatOrder(order);
+				}
+			});
+			return row;
+		});
 
 		matTableView.setOnKeyReleased(keyEvent -> {
 			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
@@ -379,7 +375,9 @@ public class MainScreen implements Initializable {
 		prodTableView.setRowFactory( tv -> {
 			TableRow<ProductOrder> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
-				if (event.getButton() == MouseButton.SECONDARY) prodFormula(row.getItem());
+				if (event.getButton() == MouseButton.SECONDARY) {
+					if (row.getItem() != null) prodFormula(row.getItem());
+				}
 				else if (event.getClickCount() == 2 && (!row.isEmpty())) modifyProdOrder(row.getItem());
 			});
 			return row;

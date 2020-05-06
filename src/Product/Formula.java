@@ -6,14 +6,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Formula implements Serializable {
-    private String name;
 
+    private Formula parent;
+    private String name;
     private double amount;
     private double unitPrice;
     private double totalPrice;
 
     private ArrayList<Formula> formulaList;
-    private ArrayList<FormulaItem> simpleItemList;
 
     // constructor chain
     public Formula() {
@@ -29,20 +29,12 @@ public class Formula implements Serializable {
     }
 
     public Formula(String name, double amount, double unitPrice) {
+        this.parent = null;
         this.name = name;
         this.amount = amount;
         this.unitPrice = unitPrice;
         setTotalPrice();
         formulaList = new ArrayList<>();
-        simpleItemList = new ArrayList<>();
-    }
-
-    public void addItem(FormulaItem item) {
-        simpleItemList.add(item);
-    }
-
-    public void removeItem(FormulaItem item) {
-        simpleItemList.remove(item);
     }
 
     public void addFormula(Formula formula) {
@@ -57,16 +49,16 @@ public class Formula implements Serializable {
         return formulaList;
     }
 
-    public ArrayList<FormulaItem> getSimpleItemList() {
-        return simpleItemList;
-    }
-
     public void setFormulaList(ArrayList<Formula> formulaList) {
         this.formulaList = formulaList;
     }
 
-    public void setSimpleItemList(ArrayList<FormulaItem> simpleItemList) {
-        this.simpleItemList = simpleItemList;
+    public Formula getParent() {
+        return parent;
+    }
+
+    public void setParent(Formula parent) {
+        this.parent = parent;
     }
 
     public String getName() {

@@ -12,19 +12,12 @@
     </Label>
     <HBox fx:id="formulaInfoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
     </HBox>
-    <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="无配方原料" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="115.0">
+    <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="配方原料" textAlignment="CENTER" AnchorPane.topAnchor="115" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
         <font>
             <Font size="26.0" />
         </font>
     </Label>
-    <TableView fx:id="formulaItemTable" layoutX="192.0" layoutY="54.0" prefHeight="300.0" prefWidth="980.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="160.0">
-    </TableView>
-    <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="配方原料" textAlignment="CENTER" AnchorPane.bottomAnchor="425" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
-        <font>
-            <Font size="26.0" />
-        </font>
-    </Label>
-    <TableView fx:id="formulaTable" layoutX="192.0" layoutY="208.0" prefHeight="300.0" prefWidth="980.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+    <TableView fx:id="formulaTable" layoutX="192.0" layoutY="208.0" prefHeight="300.0" prefWidth="980.0" AnchorPane.topAnchor="160" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
     </TableView>
     <HBox fx:id="infoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" >
     </HBox>
