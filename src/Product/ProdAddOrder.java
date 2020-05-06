@@ -136,7 +136,7 @@ public class ProdAddOrder {
         unitPrice.setOnKeyTyped(keyEvent -> {
             try {
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
-                        ((TextField) prodOrderInputArray.get(2)).getText())));
+                        ((TextField) prodOrderInputArray.get(3)).getText())));
             } catch (Exception e) {
                 e.printStackTrace();
                 HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -146,8 +146,9 @@ public class ProdAddOrder {
         });
         unitPrice.setOnMouseClicked(keyEvent -> {
             try {
+                System.out.println(((TextField) prodOrderInputArray.get(3)).getText());
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
-                        ((TextField) prodOrderInputArray.get(2)).getText())));
+                        ((TextField) prodOrderInputArray.get(3)).getText())));
             } catch (Exception e) {
                 e.printStackTrace();
                 HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
