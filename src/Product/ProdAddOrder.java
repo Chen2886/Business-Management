@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.lang.reflect.Method;
 import java.time.LocalDate;
@@ -119,6 +120,14 @@ public class ProdAddOrder {
             } else {
                 // regular text field
                 TextField newTextField = new TextField();
+                if (i == 2) {
+                    FinalConstants.updateAutoCompleteProdCustomerName();
+                    TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdCustomerName);
+                }
+                if (i == 3) {
+                    FinalConstants.updateAutoCompleteProdName();
+                    TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdName);
+                }
                 newTextField.setPromptText("输入" + prodHeaders[i].replace("\u3000", ""));
                 GridPane.setConstraints(newTextField, col, row++);
                 prodOrderInputArray.add(newTextField);

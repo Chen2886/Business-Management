@@ -40,6 +40,8 @@ public class Main extends Application {
 			System.exit(0);
 		}
 
+		FinalConstants.init();
+
 		Path source = Paths.get("BusinessCashFlow.db");
 		Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
 

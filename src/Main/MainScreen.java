@@ -231,10 +231,10 @@ public class MainScreen implements Initializable {
 
 			for (ProductOrder order : allProdOrders) {
 				int formulaIndex = order.getFormulaIndex();
-				Formula formula = null;
-				if (formulaIndex != -1)
-					formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
-				remoteInventoryHelper(matOrdersDict, formula, order);
+				if (formulaIndex != -1) {
+					Formula formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
+					remoteInventoryHelper(matOrdersDict, formula, order, 1.0);
+				}
 			}
 
 			System.out.println("After : " + matOrdersDict.toString());
@@ -249,11 +249,15 @@ public class MainScreen implements Initializable {
 		}
 	}
 
-	private void remoteInventoryHelper(Hashtable<String, Double> dict, Formula formula, ProductOrder order) {
-		if (formula == null) return;
+	private void remoteInventoryHelper(Hashtable<String, Double> dict, Formula formula, ProductOrder order, double percentage) {
 		for (Formula item : formula.getFormulaList()) {
-			System.out.println(order);
-			System.out.println(getPercentageOfFormula(item, formula) * order.getKgAmount());
+			System.out.println(item);
+			remoteInventoryHelper(dict, item, order, getPercentageOfFormula(item, formula));
+			if (dict.containsKey(item.getName()) && item.getFormulaList().isEmpty()) {
+				double currentVal = dict.get(item.getName());
+				double newVal = getPercentageOfFormula(item, formula) * percentage * order.getKgAmount();
+				dict.put(item.getName(), currentVal - newVal);
+			}
 		}
 	}
 

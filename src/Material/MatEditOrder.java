@@ -1,10 +1,8 @@
 package Material;
 
 // from my other packages
-import Main.*;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import Main.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -21,16 +19,6 @@ import java.util.ArrayList;
 
 public class MatEditOrder {
 
-	// table headers
-	private static final String[] tableHeaders = new String[] {"订单日期", "订单号", "原料名称", "类别", "付款日期",
-			"到达日期", "发票日期", "发票编号", "规格", "数量", "单价", "签收人", "供应商订单编号", "备注", "供应商"};
-
-	// all property listed
-	private static final String[] propertyHeaders = new String[]{"orderDate", "sku", "name", "type", "paymentDate",
-			"arrivalDate", "invoiceDate", "invoice", "unitAmount", "amount", "unitPrice", "signed", "skuSeller", "note", "seller"};
-	// all types
-	private static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
-
 	@FXML GridPane MatEditOrderGrid;
 	@FXML Label editOrderTitleLabel;
 	@FXML Button cancelButton;
@@ -38,7 +26,6 @@ public class MatEditOrder {
 
 	Stage currentStage;
 	MatOrder selectedOrder;
-	ObservableList<MatSeller> allSeller;
 	ArrayList<Node> inputArrayList;
 
 	/**
@@ -70,8 +57,8 @@ public class MatEditOrder {
 
 		// setting up all the labels
 		ArrayList<Label> labelArrayList = new ArrayList<>();
-		for(int i = 0; i < tableHeaders.length; i++) {
-			Label newLabel = new Label(tableHeaders[i]);
+		for(int i = 0; i < FinalConstants.matTableHeaders.length; i++) {
+			Label newLabel = new Label(FinalConstants.matTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;" +
 								"-fx-alignment: center-right;");
 
@@ -88,12 +75,12 @@ public class MatEditOrder {
 		col = 1;
 		// setting up all the text field
 		inputArrayList = new ArrayList<>();
-		for(int i = 0; i < propertyHeaders.length; i++) {
+		for(int i = 0; i < FinalConstants.matPropertyHeaders.length; i++) {
 
 			// type of mat, combo box
 			if (i == 3) {
 				ComboBox<String> newComboBox = new ComboBox<>();
-				newComboBox.getItems().setAll(matOfType);
+				newComboBox.getItems().setAll(FinalConstants.matOfType);
 				newComboBox.getSelectionModel().select(GetIndexOfMatType(selectedOrder.getType()));
 				newComboBox.setMaxWidth(Double.MAX_VALUE);
 				GridPane.setConstraints(newComboBox, col, row++);
@@ -101,21 +88,14 @@ public class MatEditOrder {
 			}
 
 			// seller, combo box
-			else if (i == propertyHeaders.length - 1) {
+			else if (i == FinalConstants.matPropertyHeaders.length - 1) {
 				ComboBox<String> sellerComboBox = new ComboBox<>();
-				try {
-					allSeller = DatabaseUtil.GetAllMatSellers();
-				} catch (SQLException e) {
-					sellerComboBox.setMaxWidth(Double.MAX_VALUE);
-					inputArrayList.add(sellerComboBox);
-					allSeller = FXCollections.observableArrayList();
-				}
 
 				int currentSellerIndex = -1;
-				String[] allSellerCompany = new String[allSeller.size()];
-				for (int j = 0; j < allSeller.size(); j++) {
-					if (allSeller.get(j).equals(selectedOrder.getSeller())) currentSellerIndex = j;
-					allSellerCompany[j] = allSeller.get(j).getCompanyName();
+				String[] allSellerCompany = new String[FinalConstants.allMatSellers.size()];
+				for (int j = 0; j < FinalConstants.allMatSellers.size(); j++) {
+					if (FinalConstants.allMatSellers.get(j).equals(selectedOrder.getSeller())) currentSellerIndex = j;
+					allSellerCompany[j] = FinalConstants.allMatSellers.get(j).getCompanyName();
 				}
 				sellerComboBox.getItems().setAll(allSellerCompany);
 				sellerComboBox.getSelectionModel().select(currentSellerIndex);
@@ -153,7 +133,7 @@ public class MatEditOrder {
 				inputArrayList.add(datePicker);
 
 				try {
-					getters = MatOrder.class.getDeclaredMethod("get" + Character.toUpperCase(propertyHeaders[i].charAt(0)) + propertyHeaders[i].substring(1));
+					getters = MatOrder.class.getDeclaredMethod("get" + Character.toUpperCase(FinalConstants.matPropertyHeaders[i].charAt(0)) + FinalConstants.matPropertyHeaders[i].substring(1));
 					Date dateVal = (Date) getters.invoke(selectedOrder);
 					if (dateVal != null && !dateVal.equals(new Date(0, 0, 0))) {
 						datePicker.setValue(LocalDate.of(dateVal.getY(), dateVal.getM(), dateVal.getD()));
@@ -173,7 +153,7 @@ public class MatEditOrder {
 				TextField newTextField = new TextField();
 				Method getters;
 				try {
-					getters = MatOrder.class.getDeclaredMethod("get" + Character.toUpperCase(propertyHeaders[i].charAt(0)) + propertyHeaders[i].substring(1));
+					getters = MatOrder.class.getDeclaredMethod("get" + Character.toUpperCase(FinalConstants.matPropertyHeaders[i].charAt(0)) + FinalConstants.matPropertyHeaders[i].substring(1));
 					newTextField.setText(String.valueOf(getters.invoke(selectedOrder) == null ? "" : getters.invoke(selectedOrder)));
 				} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 					AlertBox.display("错误", "摘取信息错误");
@@ -207,8 +187,8 @@ public class MatEditOrder {
 	 * @return the index of type given
 	 */
 	private int GetIndexOfMatType(String type) {
-		for (int i = 0; i < matOfType.length; i++) {
-			if (matOfType[i].equals(type.toUpperCase())) {
+		for (int i = 0; i < FinalConstants.matOfType.length; i++) {
+			if (FinalConstants.matOfType[i].equals(type.toUpperCase())) {
 				return i;
 			}
 		}
@@ -341,7 +321,7 @@ public class MatEditOrder {
 	 * @return the specified seller
 	 */
 	private MatSeller FindSeller (String CompanyName) {
-		for (MatSeller seller : allSeller) {
+		for (MatSeller seller : FinalConstants.allMatSellers) {
 			if (seller.getCompanyName().equals(CompanyName)) return seller;
 		}
 		return new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "NOT FOUND");

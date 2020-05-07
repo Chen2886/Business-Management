@@ -204,6 +204,10 @@ public class MatUnitPriceTable {
             matTable.getItems().setAll(allUnitPrices);
             if (ConfirmBox.display("确认", "是否更新所有此原料没有单价的订单？", "是", "否"))
                 updateAllUnitPrice(matUnitPrice.getName(), matUnitPrice.getUnitPrice());
+            AlertBox.display("成功", "添加成功");
+            matNameTextField.clear();
+            matPriceTextField.clear();
+            matNoteTextField.clear();
         } catch (SQLException e) {
             AlertBox.display("错误", "无法添加");
             e.printStackTrace();

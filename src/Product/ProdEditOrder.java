@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -118,6 +119,14 @@ public class ProdEditOrder {
             // regular text field
             else {
                 TextField newTextField = new TextField();
+                if (i == 2) {
+                    FinalConstants.updateAutoCompleteProdCustomerName();
+                    TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdCustomerName);
+                }
+                if (i == 3) {
+                    FinalConstants.updateAutoCompleteProdName();
+                    TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdName);
+                }
                 newTextField.setPromptText("输入" + prodHeaders[i].replace("\u3000", ""));
                 try {
                     getter = ProductOrder.class.getDeclaredMethod("get" + prodProperty[i]);
