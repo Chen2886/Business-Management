@@ -12,6 +12,7 @@ import javafx.util.StringConverter;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -85,8 +86,12 @@ public class ProdEditUnitPriceTable {
                     }
                 });
 
-                datePicker.setValue(LocalDate.of(prodUnitPrice.getDate().getY(), prodUnitPrice.getDate().getM(),
-                        prodUnitPrice.getDate().getD()));
+                try {
+                    datePicker.setValue(LocalDate.of(prodUnitPrice.getDate().getY(), prodUnitPrice.getDate().getM(),
+                            prodUnitPrice.getDate().getD()));
+                } catch (DateTimeException e) {
+                    System.out.println("IGNORED, date error");
+                }
 
                 inputArrayList.add(datePicker);
                 matInfoHBoxTop.getChildren().add(datePicker);
