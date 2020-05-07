@@ -1,5 +1,6 @@
 package Main;
 
+import Material.MatOrder;
 import Material.MatSeller;
 import Material.MatUnitPrice;
 import Product.ProdUnitPrice;
@@ -8,9 +9,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class FinalConstants {
 
@@ -25,6 +26,12 @@ public class FinalConstants {
 
     // all material sellers
     public static ObservableList<MatSeller> allMatSellers;
+
+    // all material orders
+    public static ObservableList<MatOrder> allMatOrders;
+
+    // all product orders
+    public static ObservableList<ProductOrder> allProdOrders;
 
     // material table headers
     public static final String[] matTableHeaders = new String[] {"订单日期", "订单号", "原料名称", "类别", "付款日期",
@@ -43,17 +50,59 @@ public class FinalConstants {
     public static final String[] matSellerPropertyHeaders = new String[]{"CompanyName", "ContactName", "Mobile",
             "LandLine", "Fax", "AccountNum", "BankAddress", "Address"};
 
+    // product table headers
+    public static final String[] prodTableHeaders = new String[] {"订单日期", "送货单号", "客户", "产品名称",
+            "规格", "数量", "公斤", "单价", "金额", "成本价", "备注"};
+
+    // product property listed
+    public static final String[] prodPropertyHeaders = new String[]{"orderDate", "sku", "customer", "name",
+            "unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice", "basePrice", "note"};
+
     // all material types
     public static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
     public static void init() {
-        updateAllMatSellers();
         updateAutoCompleteMatName();
         updateAutoCompleteProdName();
+        updateAllMatSellers();
+        updateAllMatOrders();
+        updateAllProdOrders();
+    }
+
+    public static ObservableList<MatOrder> updateAllMatOrders() {
+        try {
+            allMatOrders = DatabaseUtil.GetAllMatOrders();
+        } catch (SQLException e) {
+            allMatOrders = FXCollections.observableArrayList();
+            e.printStackTrace();
+            HandleError error = new HandleError(FinalConstants.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
+        Comparator<MatOrder> comparator = Comparator.comparing(o ->
+                LocalDate.of(o.getOrderDate().getY(), o.getOrderDate().getM(), o.getOrderDate().getD()));
+        comparator = comparator.reversed();
+        return allMatOrders.sorted(comparator);
+    }
+
+    public static ObservableList<ProductOrder> updateAllProdOrders() {
+        try {
+            allProdOrders = DatabaseUtil.GetAllProdOrders();
+        } catch (SQLException e) {
+            allProdOrders = FXCollections.observableArrayList();
+            e.printStackTrace();
+            HandleError error = new HandleError(FinalConstants.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
+        Comparator<ProductOrder> comparator = Comparator.comparing(o ->
+                LocalDate.of(o.getOrderDate().getY(), o.getOrderDate().getM(), o.getOrderDate().getD()));
+        comparator = comparator.reversed();
+        return allProdOrders.sorted(comparator);
     }
 
 
-    public static void updateAllMatSellers() {
+    public static ObservableList<MatSeller> updateAllMatSellers() {
         try {
             allMatSellers = DatabaseUtil.GetAllMatSellers();
         } catch (SQLException e) {
@@ -63,6 +112,7 @@ public class FinalConstants {
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
         }
+        return allMatSellers;
     }
 
     public static void updateAutoCompleteProdCustomerName() {

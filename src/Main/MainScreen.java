@@ -4,6 +4,9 @@ package Main;
 import Material.*;
 import Product.*;
 
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.*;
@@ -17,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.*;
+import javafx.util.Callback;
 
 import java.awt.*;
 import java.io.File;
@@ -51,10 +55,8 @@ public class MainScreen implements Initializable {
 	private static final String[] prodProperty = new String[]{"orderDate", "sku", "customer", "name",
 			"unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice", "basePrice", "note"};
 
-	private ObservableList<MatOrder> allMatOrderList;
 	private ObservableList<MatOrder> tempQuickSearchMatOrderList;
 
-	private ObservableList<ProductOrder> allProdOrderList;
 	private ObservableList<ProductOrder> tempQuickSearchProdOrderList;
 
 	@FXML TabPane mainTabPane;
@@ -62,6 +64,7 @@ public class MainScreen implements Initializable {
 	@FXML Tab prodTab;
 	@FXML TableView<ProductOrder> prodTableView;
 	@FXML TableView<MatOrder> matTableView;
+	@FXML TableView inventoryTableView;
 	@FXML Button searchButton;
 	@FXML Button addButton;
 	@FXML Button quitButton;
@@ -71,7 +74,6 @@ public class MainScreen implements Initializable {
 	@FXML Button prodUnitPriceButton;
 	@FXML TextField searchBarTextField;
 	@FXML ImageView searchImageView;
-	@FXML Label remoteInventoryTest;
 
 	/**
 	 * Call to fill the table with all orders, set up actions for all buttons, set up search bars, set up image view
@@ -99,23 +101,16 @@ public class MainScreen implements Initializable {
 			error.WriteToLog();
 		}
 
+		FinalConstants.updateAllMatOrders();
+		FinalConstants.updateAllProdOrders();
+
 		// filling the mat table
-		try {
-			allMatOrderList = DatabaseUtil.GetAllMatOrders();
-			tempQuickSearchMatOrderList = FXCollections.observableArrayList();
-			tempQuickSearchMatOrderList.addAll(allMatOrderList);
-			fillMatTable(allMatOrderList);
-			allProdOrderList = DatabaseUtil.GetAllProdOrders();
-			tempQuickSearchProdOrderList = FXCollections.observableArrayList();
-			tempQuickSearchProdOrderList.addAll(allProdOrderList);
-			fillProdTable(allProdOrderList);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
-			AlertBox.display("错误", "无法读取数据！");
-		}
+		tempQuickSearchMatOrderList = FXCollections.observableArrayList();
+		tempQuickSearchMatOrderList.addAll(FinalConstants.allMatOrders);
+		fillMatTable(FinalConstants.allMatOrders);
+		tempQuickSearchProdOrderList = FXCollections.observableArrayList();
+		tempQuickSearchProdOrderList.addAll(FinalConstants.allProdOrders);
+		fillProdTable(FinalConstants.allProdOrders);
 
 		// precision search mat/prod orders
 		searchButton.setOnAction(event -> {
@@ -171,14 +166,13 @@ public class MainScreen implements Initializable {
 				// if the text field is updated to be empty
 				if (newValue == null || newValue.equals("")) {
 					matTableView.getItems().clear();
-					tempQuickSearchMatOrderList = FXCollections.observableArrayList(allMatOrderList);
+					tempQuickSearchMatOrderList = FXCollections.observableArrayList(FinalConstants.allMatOrders);
 				} else {
 					// if user deleted char, copying original array
 					if (newValue.length() < oldValue.length()) {
 						matTableView.getItems().clear();
-						tempQuickSearchMatOrderList = FXCollections.observableArrayList(allMatOrderList);
+						tempQuickSearchMatOrderList = FXCollections.observableArrayList(FinalConstants.allMatOrders);
 					}
-
 					// removing orders that doesn't contain key word
 					tempQuickSearchMatOrderList.removeIf(matOrder -> !matOrder.toString().contains(newValue));
 				}
@@ -186,33 +180,36 @@ public class MainScreen implements Initializable {
 			}
 
 			// if selected tab is order
-			else {
+			else if (mainTabPane.getSelectionModel().getSelectedItem().equals(prodTab)) {
 
 				// if the text field is updated to be empty
 				if (newValue == null || newValue.equals("")) {
 					prodTableView.getItems().clear();
-					tempQuickSearchProdOrderList = FXCollections.observableArrayList(allProdOrderList);
+					tempQuickSearchProdOrderList = FXCollections.observableArrayList(FinalConstants.allProdOrders);
 				} else {
 					// if user deleted char, copying original array
 					if (newValue.length() < oldValue.length()) {
 						prodTableView.getItems().clear();
-						tempQuickSearchProdOrderList = FXCollections.observableArrayList(allProdOrderList);
+						tempQuickSearchProdOrderList = FXCollections.observableArrayList(FinalConstants.allProdOrders);
 					}
-
 					// removing orders that doesn't contain key word
 					tempQuickSearchProdOrderList.removeIf(productOrder -> !productOrder.toString().contains(newValue));
 				}
 				prodTableView.setItems(tempQuickSearchProdOrderList);
 			}
 		});
+
 		mainTabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue.intValue() == 2) {
-				fillRemoteInventoryPage();
+				initInventory();
 			}
 		});
 	}
 
-	public void fillRemoteInventoryPage() {
+	/**
+	 * Fill the inventory page
+	 */
+	public void initInventory() {
 		try {
 			ArrayList<MatOrder> allMatOrders = new ArrayList<>(DatabaseUtil.GetAllMatOrders());
 			ArrayList<ProductOrder> allProdOrders = new ArrayList<>(DatabaseUtil.GetAllProdOrders());
@@ -227,18 +224,30 @@ public class MainScreen implements Initializable {
 						matOrdersDict.put(order.getName(), order.getKgAmount() + currentVal);
 					}
 			}
-			System.out.println("Before: " + matOrdersDict);
 
 			for (ProductOrder order : allProdOrders) {
 				int formulaIndex = order.getFormulaIndex();
 				if (formulaIndex != -1) {
 					Formula formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
-					remoteInventoryHelper(matOrdersDict, formula, order, 1.0);
+					inventoryHelper(matOrdersDict, formula, order, 1.0);
 				}
 			}
 
-			System.out.println("After : " + matOrdersDict.toString());
-			remoteInventoryTest.setText(matOrdersDict.toString());
+			// populating the tableview
+			TableColumn<Map.Entry<String, Double>, String> matNameCol = new TableColumn<>("原料名称");
+			matNameCol.setStyle("-fx-alignment: CENTER;");
+			matNameCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getKey()));
+
+			TableColumn<Map.Entry<String, Double>, Double> amountLeft = new TableColumn<>("剩余总量");
+			amountLeft.setStyle("-fx-alignment: CENTER;");
+			amountLeft.setMinWidth(100);
+			amountLeft.setCellValueFactory(param -> new SimpleDoubleProperty(
+					Math.round(param.getValue().getValue() * 100.0) / 100.0).asObject());
+
+			ObservableList<Map.Entry<String, Double>> items = FXCollections.observableArrayList(matOrdersDict.entrySet());
+			inventoryTableView.setItems(items);
+			inventoryTableView.getColumns().setAll(matNameCol, amountLeft);
+
 
 		} catch (SQLException e) {
 			AlertBox.display("错误", "张家港库存错误");
@@ -249,28 +258,22 @@ public class MainScreen implements Initializable {
 		}
 	}
 
-	private void remoteInventoryHelper(Hashtable<String, Double> dict, Formula formula, ProductOrder order, double percentage) {
+	/**
+	 * Recursive inventory helper function
+	 * @param dict the hashtable where changes are made
+	 * @param formula the current formula
+	 * @param order the original order
+	 * @param percentage the current percentage from the top
+	 */
+	private void inventoryHelper(Hashtable<String, Double> dict, Formula formula, ProductOrder order, double percentage) {
 		for (Formula item : formula.getFormulaList()) {
-			System.out.println(item);
-			remoteInventoryHelper(dict, item, order, getPercentageOfFormula(item, formula));
+			inventoryHelper(dict, item, order, getPercentageOfFormula(item, formula));
 			if (dict.containsKey(item.getName()) && item.getFormulaList().isEmpty()) {
 				double currentVal = dict.get(item.getName());
 				double newVal = getPercentageOfFormula(item, formula) * percentage * order.getKgAmount();
 				dict.put(item.getName(), currentVal - newVal);
 			}
 		}
-	}
-
-	private double getPercentageOfFormula(Formula item, Formula entireFormula) {
-		return item.getAmount() / getFormulaTotalAmount(entireFormula);
-	}
-
-	private double getFormulaTotalAmount(Formula formula) {
-		double formulaTotalAmount = 0;
-		for (Formula item : formula.getFormulaList()) {
-			formulaTotalAmount += item.getAmount();
-		}
-		return formulaTotalAmount;
 	}
 
 	/**
@@ -412,8 +415,7 @@ public class MainScreen implements Initializable {
 			stage.setScene(scene);
 			stage.showAndWait();
 			matTableView.getItems().clear();
-			allMatOrderList = DatabaseUtil.GetAllMatOrders();
-			matTableView.getItems().setAll(allMatOrderList);
+			matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
 			matTableView.refresh();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -444,8 +446,7 @@ public class MainScreen implements Initializable {
 			stage.setScene(scene);
 			stage.showAndWait();
 			prodTableView.getItems().clear();
-			allProdOrderList = DatabaseUtil.GetAllProdOrders();
-			prodTableView.getItems().setAll(allProdOrderList);
+			prodTableView.getItems().setAll(FinalConstants.updateAllProdOrders());
 			prodTableView.refresh();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -479,8 +480,7 @@ public class MainScreen implements Initializable {
 			stage.showAndWait();
 
 			matTableView.getItems().clear();
-			allMatOrderList = DatabaseUtil.GetAllMatOrders();
-			matTableView.getItems().setAll(allMatOrderList);
+			matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
 			matTableView.refresh();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -512,8 +512,7 @@ public class MainScreen implements Initializable {
 			stage.setScene(scene);
 			stage.showAndWait();
 			prodTableView.getItems().clear();
-			allProdOrderList = DatabaseUtil.GetAllProdOrders();
-			prodTableView.getItems().setAll(allProdOrderList);
+			prodTableView.getItems().setAll(FinalConstants.updateAllProdOrders());
 			prodTableView.refresh();
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误");
@@ -532,9 +531,7 @@ public class MainScreen implements Initializable {
 		if (ConfirmBox.display("确认", "确定删除？", "是", "否")) {
 			try {
 				DatabaseUtil.DeleteMatOrder(selectedOrder.getSerialNum());
-				allMatOrderList = DatabaseUtil.GetAllMatOrders();
-				matTableView.getItems().clear();
-				matTableView.getItems().setAll(allMatOrderList);
+				matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
 			} catch (SQLException e) {
 				AlertBox.display("错误", "无法删除");
 				e.printStackTrace();
@@ -553,9 +550,8 @@ public class MainScreen implements Initializable {
 		if (ConfirmBox.display("确认", "确定删除？", "是", "否")) {
 			try {
 				DatabaseUtil.DeleteProdOrder(selectedOrder.getSerialNum());
-				allProdOrderList = DatabaseUtil.GetAllProdOrders();
 				prodTableView.getItems().clear();
-				prodTableView.getItems().setAll(allProdOrderList);
+				prodTableView.getItems().setAll(FinalConstants.updateAllProdOrders());
 			} catch (SQLException e) {
 				AlertBox.display("错误", "无法删除");
 				e.printStackTrace();
@@ -624,18 +620,15 @@ public class MainScreen implements Initializable {
 	 * Helper function to reset the table to all orders
 	 */
 	private void resetTable() {
-		// TODO: reset order table
 		try {
 			searchBarTextField.setText("");
 
 			matTableView.getItems().clear();
-			allMatOrderList = DatabaseUtil.GetAllMatOrders();
-			matTableView.getItems().setAll(allMatOrderList);
+			matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
 			matTableView.refresh();
 
 			prodTableView.getItems().clear();
-			allProdOrderList = DatabaseUtil.GetAllProdOrders();
-			prodTableView.getItems().setAll(allProdOrderList);
+			prodTableView.getItems().setAll(FinalConstants.updateAllProdOrders());
 			prodTableView.refresh();
 		} catch (Exception e) {
 			AlertBox.display("错误", "无法摘取信息");
@@ -806,6 +799,29 @@ public class MainScreen implements Initializable {
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
 		}
+	}
+
+	/**
+	 * Get percentage of current formula
+	 * @param item the current item
+	 * @param entireFormula the current formula
+	 * @return the percentage
+	 */
+	private double getPercentageOfFormula(Formula item, Formula entireFormula) {
+		return item.getAmount() / getFormulaTotalAmount(entireFormula);
+	}
+
+	/**
+	 * Adds all the amount
+	 * @param formula the formula
+	 * @return the total amount within the formula given
+	 */
+	private double getFormulaTotalAmount(Formula formula) {
+		double formulaTotalAmount = 0;
+		for (Formula item : formula.getFormulaList()) {
+			formulaTotalAmount += item.getAmount();
+		}
+		return formulaTotalAmount;
 	}
 
 }
