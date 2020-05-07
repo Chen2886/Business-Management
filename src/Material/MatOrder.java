@@ -159,7 +159,7 @@ public class MatOrder {
 	}
 
 	public double getUnitAmount() {
-		return Double.parseDouble(integerFormat.format(unitAmount));
+		return Double.parseDouble(twoDecimalFormat.format(unitAmount));
 	}
 
 	public void setUnitAmount(double unitAmount) {
@@ -167,7 +167,7 @@ public class MatOrder {
 	}
 
 	public double getAmount() {
-		return Double.parseDouble(integerFormat.format(amount));
+		return Double.parseDouble(twoDecimalFormat.format(amount));
 	}
 
 	public void setAmount(double amount) {
@@ -175,7 +175,7 @@ public class MatOrder {
 	}
 
 	public double getKgAmount() {
-		return Double.parseDouble(integerFormat.format(kgAmount));
+		return Double.parseDouble(twoDecimalFormat.format(kgAmount));
 	}
 
 	public void setKgAmount() {

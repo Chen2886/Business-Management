@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -24,25 +25,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class MatAddOrderModifySeller {
-
-	// table headers
-	private static final String[] tableHeaders = new String[] {"订单日期", "订单号", "原料名称", "类别", "付款日期",
-			"到达日期", "发票日期", "发票编号", "规格", "数量", "单价", "签收人", "供应商订单编号", "备注", "供应商"};
-
-	// all property listed
-	private static final String[] propertyHeaders = new String[]{"orderDate", "sku", "name", "type", "paymentDate",
-			"arrivalDate", "invoiceDate", "invoice", "unitAmount", "amount", "unitPrice", "signed", "skuSeller", "note", "seller"};
-
-	// all seller property listed
-	private static final String[] sellerPropertyHeaders = new String[]{"CompanyName", "ContactName", "Mobile", "LandLine", "Fax",
-			"AccountNum", "BankAddress", "Address"};
-
-	// seller table headers
-	private static final String[] sellerTableHeaders = new String[]{"供应商",
-			"联系人", "手机", "座机", "传真", "供应商账号", "供应商银行地址", "供应商地址"};
-
-	// all types
-	private static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
 	// main tab pane
 	@FXML TabPane MatAddOrderModifySellerTabPane;
@@ -133,6 +115,8 @@ public class MatAddOrderModifySeller {
 			error.WriteToLog();
 		}
 
+
+
 		// init all three tabs
 		initAddMatOrder();
 		initAddMatSeller();
@@ -149,8 +133,8 @@ public class MatAddOrderModifySeller {
 		int col = 0;
 
 		// setting up all the labels
-		for(int i = 0; i < tableHeaders.length; i++) {
-			Label newLabel = new Label(tableHeaders[i]);
+		for(int i = 0; i <FinalConstants.matTableHeaders.length; i++) {
+			Label newLabel = new Label(FinalConstants.matTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;" +
 					"-fx-alignment: center-right;");
 
@@ -168,19 +152,19 @@ public class MatAddOrderModifySeller {
 
 		// setting up all the text field
 		matOrderInputArray = new ArrayList<>();
-		for(int i = 0; i < propertyHeaders.length; i++) {
+		for(int i = 0; i <FinalConstants.matPropertyHeaders.length; i++) {
 
 			// type of mat, combo box
 			if (i == 3) {
 				ComboBox<String> newComboBox = new ComboBox<>();
-				newComboBox.getItems().setAll(matOfType);
+				newComboBox.getItems().setAll(FinalConstants.matOfType);
 				newComboBox.setMaxWidth(Double.MAX_VALUE);
 				GridPane.setConstraints(newComboBox, col, row++);
 				matOrderInputArray.add(newComboBox);
 			}
 
 			// seller, combo box
-			else if (i == propertyHeaders.length - 1) {
+			else if (i ==FinalConstants.matPropertyHeaders.length - 1) {
 				ComboBox<String> sellerComboBox = new ComboBox<>();
 
 				// getting all the company names
@@ -222,8 +206,13 @@ public class MatAddOrderModifySeller {
 			// regular text field
 			else {
 				TextField newTextField = new TextField();
+				// auto complete for name
+				if (i == 2) {
+					FinalConstants.updateAutoCompleteMatName();
+					TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
+				}
 				newTextField.setMaxWidth(Double.MAX_VALUE);
-				newTextField.setPromptText("输入" + tableHeaders[i]);
+				newTextField.setPromptText("输入" +FinalConstants.matTableHeaders[i]);
 				GridPane.setConstraints(newTextField, col, row++);
 				matOrderInputArray.add(newTextField);
 			}
@@ -267,8 +256,8 @@ public class MatAddOrderModifySeller {
 		int col = 0;
 
 		// setting up all the labels
-		for(int i = 0; i < sellerTableHeaders.length; i++) {
-			Label newLabel = new Label(sellerTableHeaders[i]);
+		for(int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
+			Label newLabel = new Label(FinalConstants.matSellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
 			GridPane.setConstraints(newLabel, col, row++);
 			matAddSellerGrid.getChildren().add(newLabel);
@@ -285,11 +274,11 @@ public class MatAddOrderModifySeller {
 		col = 1;
 
 		// setting up seller text field
-		for (int i = 0; i <sellerTableHeaders.length; i++) {
+		for (int i = 0; i <FinalConstants.matSellerTableHeaders.length; i++) {
 			TextField newTextField = new TextField();
 			newTextField.setMaxWidth(Double.MAX_VALUE);
 			newTextField.setAlignment(Pos.CENTER_LEFT);
-			newTextField.setPromptText("输入" + sellerTableHeaders[i]);
+			newTextField.setPromptText("输入" + FinalConstants.matSellerTableHeaders[i]);
 			GridPane.setConstraints(newTextField, col, row++);
 			matAddSellerInputArray.add(newTextField);
 
@@ -397,8 +386,8 @@ public class MatAddOrderModifySeller {
 		int col = 0;
 
 		// setting up all the labels
-		for(int i = 0; i < sellerTableHeaders.length; i++) {
-			Label newLabel = new Label(sellerTableHeaders[i]);
+		for(int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
+			Label newLabel = new Label(FinalConstants.matSellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
 			GridPane.setConstraints(newLabel, col, row++);
 			matEditSellerGrid.getChildren().add(newLabel);
@@ -415,16 +404,16 @@ public class MatAddOrderModifySeller {
 		col = 1;
 
 		// setting up seller text field
-		for (int i = 0; i <sellerTableHeaders.length; i++) {
+		for (int i = 0; i <FinalConstants.matSellerTableHeaders.length; i++) {
 			TextField newTextField = new TextField();
 			newTextField.setMaxWidth(Double.MAX_VALUE);
 			newTextField.setAlignment(Pos.CENTER_LEFT);
-			newTextField.setPromptText("输入" + sellerTableHeaders[i]);
+			newTextField.setPromptText("输入" + FinalConstants.matSellerTableHeaders[i]);
 
 			// getting the existing information of the selected seller
 			Method getters;
 			try {
-				getters = MatSeller.class.getDeclaredMethod("get" + sellerPropertyHeaders[i]);
+				getters = MatSeller.class.getDeclaredMethod("get" + FinalConstants.matSellerPropertyHeaders[i]);
 				String value = (String) getters.invoke(matSeller);
 				newTextField.setText(value);
 			} catch (Exception e) {
@@ -498,7 +487,7 @@ public class MatAddOrderModifySeller {
 		for (TextField textField : matEditSellerInputArray) {
 			if (textField.getText() != null && !textField.getText().equals("")) {
 				try {
-					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matEditSellerInputArray.indexOf(textField)], String.class);
+					setter = MatSeller.class.getDeclaredMethod("set" + FinalConstants.matSellerPropertyHeaders[matEditSellerInputArray.indexOf(textField)], String.class);
 					setter.invoke(newSeller, textField.getText());
 				} catch (Exception e) {
 					AlertBox.display("错误", "更新错误，联系管理员");
@@ -831,7 +820,7 @@ public class MatAddOrderModifySeller {
 		for (TextField textField : matAddSellerInputArray) {
 			if (!textField.getText().equals("")) {
 				try {
-					setter = MatSeller.class.getDeclaredMethod("set" + sellerPropertyHeaders[matAddSellerInputArray.indexOf(textField)], String.class);
+					setter = MatSeller.class.getDeclaredMethod("set" + FinalConstants.matSellerPropertyHeaders[matAddSellerInputArray.indexOf(textField)], String.class);
 					setter.invoke(newSeller, textField.getText());
 				} catch (Exception e) {
 					AlertBox.display("错误", "添加错误，联系管理员");
