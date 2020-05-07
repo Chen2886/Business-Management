@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.awt.*;
 import java.io.File;
@@ -185,6 +186,7 @@ public class ProdFormula {
             infoHBox.getChildren().add(newLabel);
 
             TextField newTextField = new TextField();
+            if (s.equals("原料名称")) TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
             newTextField.setPromptText("输入" + s);
             infoHBox.getChildren().add(newTextField);
             inputArray.add(newTextField);

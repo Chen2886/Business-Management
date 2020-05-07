@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -152,6 +153,7 @@ public class MatEditOrder {
 			else {
 				TextField newTextField = new TextField();
 				Method getters;
+				if (i == 2) TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
 				try {
 					getters = MatOrder.class.getDeclaredMethod("get" + Character.toUpperCase(FinalConstants.matPropertyHeaders[i].charAt(0)) + FinalConstants.matPropertyHeaders[i].substring(1));
 					newTextField.setText(String.valueOf(getters.invoke(selectedOrder) == null ? "" : getters.invoke(selectedOrder)));

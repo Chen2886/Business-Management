@@ -199,7 +199,10 @@ public class ProdUnitPriceTable {
         addButton.setStyle("-fx-font-size: 18px;");
         matInfoHBoxBottom.getChildren().add(addButton);
 
-        addButton.setOnAction(event -> addProdUnitPrices());
+        addButton.setOnAction(event -> {
+            addProdUnitPrices();
+            FinalConstants.updateAutoCompleteProdName();
+        });
 
 
         // if double clicked, enable edit

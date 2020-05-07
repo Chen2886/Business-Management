@@ -108,7 +108,10 @@ public class MatUnitPriceTable {
         });
 
         cancelButton.setOnAction(event -> stage.close());
-        addMatButton.setOnAction(event -> addMatUnitPrices());
+        addMatButton.setOnAction(event -> {
+            addMatUnitPrices();
+            FinalConstants.updateAutoCompleteMatName();
+        });
 
         // array of columns
         Collection<TableColumn<Material.MatUnitPrice, ?>> columnArrayList = new ArrayList<>();
