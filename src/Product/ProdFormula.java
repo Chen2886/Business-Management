@@ -15,7 +15,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.controlsfx.control.textfield.TextFields;
 
@@ -37,7 +36,7 @@ public class ProdFormula {
     public Button defaultButton;
     @FXML HBox formulaInfoHBox;
     @FXML Button cancelButton;
-    @FXML Button saveButton;
+    @FXML Button overrideButton;
     @FXML Button saveNewButton;
     @FXML TableView<Formula> formulaTable;
     @FXML HBox infoHBox;
@@ -66,15 +65,20 @@ public class ProdFormula {
         this.currentStage = currentStage;
         // getting current formula
         try {
-
             // if this is a product that doesn't have existing formula
-            if (selectedOrder.getFormulaIndex() != -1)
+            if (selectedOrder.getFormulaIndex() != -1) {
                 formula = DatabaseUtil.GetFormulaByIndex(selectedOrder.getFormulaIndex());
+                if (selectedOrder.getBasePrice() == 0.0) {
+                    selectedOrder.setBasePrice(calcBasePrice());
+                    DatabaseUtil.UpdateProdOrder(selectedOrder);
+                }
+            }
             else {
                 if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName())) {
                     int newIndex = DatabaseUtil.GetNewestFormulaIndex(selectedOrder.getName());
                     formula = DatabaseUtil.GetFormulaByIndex(newIndex);
                     selectedOrder.setFormulaIndex(newIndex);
+                    selectedOrder.setBasePrice(calcBasePrice());
                     DatabaseUtil.UpdateProdOrder(selectedOrder);
                 } else formula = null;
             }
@@ -99,7 +103,7 @@ public class ProdFormula {
         initFormulaTable();
         initInfoHBox();
         initFormulaInfoHBox();
-        calcUnitPrice();
+        calcBasePrice();
 
         currentStage.setMinHeight(screenSize.height * 0.9);
         currentStage.setMinWidth(screenSize.width * 0.6);
@@ -114,7 +118,7 @@ public class ProdFormula {
                 currentStage.close();
         });
         saveNewButton.setOnAction(event -> saveNewFormula());
-        saveButton.setOnAction(event -> saveFormula());
+        overrideButton.setOnAction(event -> overrideCurrentFormula());
         defaultButton.setOnAction(event -> saveDefaultFormula());
 
         if (formula == null) {
@@ -273,9 +277,8 @@ public class ProdFormula {
             scene.getStylesheets().add("file:///" + Main.styleSheetPath);
             stage.setScene(scene);
             stage.showAndWait();
-
             formulaTable.refresh();
-
+            calcBasePrice();
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
             e.printStackTrace();
@@ -379,7 +382,7 @@ public class ProdFormula {
         formula.removeFormula(inputFormula);
         formulaTable.getItems().clear();
         formulaTable.getItems().setAll(formula.getFormulaList());
-        calcUnitPrice();
+        calcBasePrice();
     }
 
     /**
@@ -390,7 +393,7 @@ public class ProdFormula {
         formula.addFormula(newFormula);
         formulaTable.getItems().clear();
         formulaTable.getItems().setAll(formula.getFormulaList());
-        calcUnitPrice();
+        calcBasePrice();
     }
 
     /**
@@ -403,7 +406,7 @@ public class ProdFormula {
 
             ArrayList<Formula> newFormulaList = new ArrayList<>(formulaTable.getItems());
             formula.setFormulaList(newFormulaList);
-            selectedOrder.setBasePrice(calcUnitPrice());
+            selectedOrder.setBasePrice(calcBasePrice());
 
             int index = DatabaseUtil.AddFormula(formula);
             selectedOrder.setFormulaIndex(index);
@@ -423,21 +426,24 @@ public class ProdFormula {
     /**
      * Save the formula to the selected order, and push formula to database
      */
-    private void saveFormula() {
+    private void overrideCurrentFormula() {
         if (isNewFormula) {
             saveNewFormula();
             return;
         }
         if (!ConfirmBox.display("确认", "确定更新此配方？所有使用此配方的产品即将被更新。", "是", "否"))
             return;
+        if (ConfirmBox.display("确认", "是否设为以后次产品的默认订单？", "是", "否"))
+            saveDefaultFormula();
         try {
+            double newBasePrice = calcBasePrice();
             ArrayList<Formula> newFormulaList = new ArrayList<>(formulaTable.getItems());
             formula.setFormulaList(newFormulaList);
-
-            selectedOrder.setBasePrice(calcUnitPrice());
+            selectedOrder.setBasePrice(newBasePrice);
 
             DatabaseUtil.UpdateFormula(formula, selectedOrder.getFormulaIndex());
             DatabaseUtil.UpdateProdOrder(selectedOrder);
+            DatabaseUtil.UpdateAllProdOrderNewBasePrice(selectedOrder.getFormulaIndex(), newBasePrice);
             defaultButton.setVisible(true);
             currentStage.close();
         } catch (SQLException e) {
@@ -491,7 +497,7 @@ public class ProdFormula {
         if (!empty) addFormula(formula);
         for (TextField textField : inputArray) textField.clear();
 
-        calcUnitPrice();
+        calcBasePrice();
     }
 
     /**
@@ -517,7 +523,7 @@ public class ProdFormula {
      * Calculate the base price
      * @return the base price
      */
-    private double calcUnitPrice() {
+    private double calcBasePrice() {
         double totalSum = 0.0;
         double totalAmount = 0.0;
         if (formula == null) return 0.0;
@@ -526,7 +532,9 @@ public class ProdFormula {
             totalAmount += formula.getAmount();
         }
         double returnVal = Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
-        formulaInfoInputArray.get(1).setText(String.valueOf(returnVal));
+        try {
+            if (returnVal != 0) formulaInfoInputArray.get(1).setText(String.valueOf(returnVal));
+        } catch (Exception ignored){}
         return returnVal;
     }
 

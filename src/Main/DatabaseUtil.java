@@ -1597,6 +1597,29 @@ public class DatabaseUtil {
     }
 
     /**
+     * Update all product order with new base price given the formula index.
+     */
+    public static void UpdateAllProdOrderNewBasePrice(int formulaIndex, double basePrice) throws SQLException {
+        try {
+            ConnectToDB();
+            String SQLCommand = "UPDATE [productManagement] SET basePrice = ? WHERE formulaIndex = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
+            preparedStatement.setDouble(1, basePrice);
+            preparedStatement.setInt(2, formulaIndex);
+            preparedStatement.executeUpdate();
+            CloseConnectionToDB();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            throw new SQLException();
+        } finally {
+            CloseConnectionToDB();
+        }
+    }
+
+    /**
      * Execute a given command related to mat order
      * @return command result
      * @throws SQLException if any error occurs while operating on database
