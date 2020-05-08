@@ -1,32 +1,20 @@
 package Product;
 
 import Main.*;
-
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class ProdFormulaEdit {
@@ -88,16 +76,16 @@ public class ProdFormulaEdit {
                 currentStage.close();
             event.consume();
         });
-
         cancelButton.setOnAction(event -> {
             if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
                 currentStage.close();
         });
-
         saveButton.setOnAction(event -> saveFormula());
-
     }
 
+    /**
+     * Initialize the top hbox
+     */
     private void initFormulaInfoHBox() {
         // populating the info hbox
         formulaInfoInputArray = new ArrayList<>();
@@ -109,10 +97,12 @@ public class ProdFormulaEdit {
             formulaInfoHBox.getChildren().add(newLabel);
 
             TextField newTextField = new TextField();
+            if (i == 0) TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
             try {
                 getter = Formula.class.getDeclaredMethod("get" + propertyMethodName[i]);
                 newTextField.setText(String.valueOf(getter.invoke(formula)));
             } catch (Exception e) {e.printStackTrace();}
+
             formulaInfoHBox.getChildren().add(newTextField);
             formulaInfoInputArray.add(newTextField);
         }
@@ -121,18 +111,41 @@ public class ProdFormulaEdit {
         TextField totalPrice = formulaInfoInputArray.get(formulaInfoInputArray.size() - 1);
         for (int i = 1; i < formulaInfoInputArray.size(); i++) {
             TextField textField = formulaInfoInputArray.get(i);
-            textField.setOnKeyTyped(event -> {
-                try {
-                    totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
-                            Double.parseDouble(formulaInfoInputArray.get(2).getText())));
-                } catch (Exception ignored) {}
-            });
-            textField.setOnMouseClicked(event -> {
-                try {
-                    totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
-                            Double.parseDouble(formulaInfoInputArray.get(2).getText())));
-                } catch (Exception ignored) {}
-            });
+            if (i == 2) {
+                // auto unit price
+                textField.setOnKeyTyped(event -> {
+                    try {
+                        totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
+                                Double.parseDouble(formulaInfoInputArray.get(2).getText())));
+                        textField.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(formulaInfoInputArray.get(0).getText())));
+                    } catch (Exception ignored) {
+                    }
+                });
+                textField.setOnMouseClicked(event -> {
+                    try {
+                        totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
+                                Double.parseDouble(formulaInfoInputArray.get(2).getText())));
+                        textField.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(formulaInfoInputArray.get(0).getText())));
+                    } catch (Exception ignored) {
+                    }
+                });
+            } else {
+                // auto total price
+                textField.setOnKeyTyped(event -> {
+                    try {
+                        totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
+                                Double.parseDouble(formulaInfoInputArray.get(2).getText())));
+                    } catch (Exception ignored) {
+                    }
+                });
+                textField.setOnMouseClicked(event -> {
+                    try {
+                        totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
+                                Double.parseDouble(formulaInfoInputArray.get(2).getText())));
+                    } catch (Exception ignored) {
+                    }
+                });
+            }
         }
     }
 
@@ -366,9 +379,19 @@ public class ProdFormulaEdit {
      * Save the formula to the selected order, and push formula to database
      */
     private void saveFormula() {
+        double unitPrice = calcUnitPrice();
+
         formula.setName(formulaInfoInputArray.get(0).getText());
-        formula.setAmount(Double.parseDouble(formulaInfoInputArray.get(1).getText()));
-        formula.setUnitPrice(calcUnitPrice());
+        try {
+            formula.setAmount(Double.parseDouble(formulaInfoInputArray.get(1).getText()));
+            formula.setUnitPrice(unitPrice == 0 ? Double.parseDouble(formulaInfoInputArray.get(2).getText()) : unitPrice);
+        } catch (Exception e) {
+            e.printStackTrace();
+            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+            AlertBox.display("错误", "数字输入错误");
+        }
         formula.setTotalPrice();
         parentFormulaTableView.getItems().remove(formula);
         parentFormulaTableView.getItems().add(formula);
