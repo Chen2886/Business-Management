@@ -10,7 +10,7 @@
             <Font size="30.0" />
         </font>
     </Label>
-    <HBox fx:id="formulaInfoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+    <HBox fx:id="formulaTopHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" style="-fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
     </HBox>
     <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="配方原料" textAlignment="CENTER" AnchorPane.topAnchor="115" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
         <font>
@@ -19,7 +19,7 @@
     </Label>
     <TableView fx:id="formulaTable" layoutX="192.0" layoutY="208.0" prefHeight="300.0" prefWidth="980.0" AnchorPane.topAnchor="160" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
     </TableView>
-    <HBox fx:id="infoHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" >
+    <HBox fx:id="formulaInfoInputBottomHBox" alignment="CENTER" prefHeight="55.0" prefWidth="980.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" >
     </HBox>
     <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="421.0" spacing="10.0"
           AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
