@@ -82,7 +82,8 @@ public class FinalConstants {
         Comparator<MatOrder> comparator = Comparator.comparing(o ->
                 LocalDate.of(o.getOrderDate().getY(), o.getOrderDate().getM(), o.getOrderDate().getD()));
         comparator = comparator.reversed();
-        return allMatOrders.sorted(comparator);
+        allMatOrders.sort(comparator);
+        return allMatOrders;
     }
 
     public static ObservableList<ProductOrder> updateAllProdOrders() {
@@ -98,7 +99,8 @@ public class FinalConstants {
         Comparator<ProductOrder> comparator = Comparator.comparing(o ->
                 LocalDate.of(o.getOrderDate().getY(), o.getOrderDate().getM(), o.getOrderDate().getD()));
         comparator = comparator.reversed();
-        return allProdOrders.sorted(comparator);
+        allProdOrders.sort(comparator);
+        return allProdOrders;
     }
 
 

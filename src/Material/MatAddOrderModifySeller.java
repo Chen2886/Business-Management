@@ -92,6 +92,12 @@ public class MatAddOrderModifySeller {
 		// mat add order buttons
 		matAddOrderCompleteButton.setOnAction(actionEvent -> addOrder());
 		matAddOrderContinueButton.setOnAction(actionEvent -> continueOrder());
+		matAddOrderCompleteButton.setOnKeyReleased(actionEvent -> {
+			if (actionEvent.getCode() == KeyCode.ENTER) addOrder();
+		});
+		matAddOrderContinueButton.setOnKeyReleased(actionEvent -> {
+			if (actionEvent.getCode() == KeyCode.ENTER) continueOrder();
+		});
 		matAddOrderCancelButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display(ConfirmMessage.CANCEL)) currentStage.close();
 		});
@@ -99,6 +105,12 @@ public class MatAddOrderModifySeller {
 		// mat add seller buttons
 		matAddSellerCompleteButton.setOnAction(actionEvent -> addSeller(false));
 		matAddSellerContinueButton.setOnAction(actionEvent -> addSeller(true));
+		matAddSellerCompleteButton.setOnKeyReleased(actionEvent -> {
+			if (actionEvent.getCode() == KeyCode.ENTER) addSeller(false);
+		});
+		matAddSellerContinueButton.setOnKeyReleased(actionEvent -> {
+			if (actionEvent.getCode() == KeyCode.ENTER) addSeller(true);
+		});
 		matAddSellerCancelButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display(ConfirmMessage.CANCEL))
 				currentStage.close();
@@ -114,8 +126,6 @@ public class MatAddOrderModifySeller {
 					e.getMessage(), e.getStackTrace(), false);
 			error.WriteToLog();
 		}
-
-
 
 		// init all three tabs
 		initAddMatOrder();
@@ -446,10 +456,20 @@ public class MatAddOrderModifySeller {
 			if (ConfirmBox.display("确认", "是否更新所有使用此供应商的订单？", "是", "否"))
 				updateSeller(matSeller);
 		});
+		matEditSellerCompleteButton.setOnKeyReleased(keyEvent -> {
+			if (keyEvent.getCode() == KeyCode.ENTER &&
+					ConfirmBox.display("确认", "是否更新所有使用此供应商的订单？", "是", "否"))
+				updateSeller(matSeller);
+		});
+
 
 		// cancel button
-		matEditSellerCompleteButton.setOnAction(actionEvent -> {
+		matEditSellerCancelButton.setOnAction(actionEvent -> {
 			if (ConfirmBox.display(ConfirmMessage.CANCEL)) currentStage.close();
+		});
+		matEditSellerCancelButton.setOnKeyReleased(actionEvent -> {
+			if (actionEvent.getCode() == KeyCode.ENTER &&
+					ConfirmBox.display(ConfirmMessage.CANCEL)) currentStage.close();
 		});
 
 		// * setting up grid properties

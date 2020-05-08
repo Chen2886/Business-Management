@@ -101,16 +101,14 @@ public class MainScreen implements Initializable {
 			error.WriteToLog();
 		}
 
-		FinalConstants.updateAllMatOrders();
-		FinalConstants.updateAllProdOrders();
+		fillMatTable(FinalConstants.updateAllMatOrders());
+		fillProdTable(FinalConstants.updateAllProdOrders());
 
 		// filling the mat table
 		tempQuickSearchMatOrderList = FXCollections.observableArrayList();
 		tempQuickSearchMatOrderList.addAll(FinalConstants.allMatOrders);
-		fillMatTable(FinalConstants.allMatOrders);
 		tempQuickSearchProdOrderList = FXCollections.observableArrayList();
 		tempQuickSearchProdOrderList.addAll(FinalConstants.allProdOrders);
-		fillProdTable(FinalConstants.allProdOrders);
 
 		// precision search mat/prod orders
 		searchButton.setOnAction(event -> {
@@ -318,10 +316,6 @@ public class MainScreen implements Initializable {
 			}
 		}
 
-		// filling the table
-		matTableView.setItems(selectedMatOrders);
-		matTableView.getColumns().setAll(orderColumnArrayList);
-
 		// if double clicked, enable edit
 		matTableView.setRowFactory( tv -> {
 			TableRow<MatOrder> row = new TableRow<>();
@@ -334,11 +328,18 @@ public class MainScreen implements Initializable {
 			return row;
 		});
 
+		// if backspace or delete, delete the order
 		matTableView.setOnKeyReleased(keyEvent -> {
 			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
 				deleteMatOrder(matTableView.getSelectionModel().getSelectedItem());
 			}
 		});
+
+		// filling the table
+		matTableView.getColumns().setAll(orderColumnArrayList);
+		matTableView.getItems().clear();
+		matTableView.getItems().setAll(selectedMatOrders);
+		matTableView.refresh();
 	}
 
 	/**
@@ -373,10 +374,6 @@ public class MainScreen implements Initializable {
 			}
 		}
 
-		// filling the table
-		prodTableView.setItems(selectedProdOrders);
-		prodTableView.getColumns().setAll(productColumnArrayList);
-
 		// if double clicked, enable edit
 		prodTableView.setRowFactory( tv -> {
 			TableRow<ProductOrder> row = new TableRow<>();
@@ -389,10 +386,17 @@ public class MainScreen implements Initializable {
 			return row;
 		});
 
+		// if delete or backspace, delete order
 		prodTableView.setOnKeyReleased(keyEvent -> {
 			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE)
 				deleteProdOrder(prodTableView.getSelectionModel().getSelectedItem());
 		});
+
+		// filling the table
+		prodTableView.getColumns().setAll(productColumnArrayList);
+		prodTableView.getItems().clear();
+		prodTableView.getItems().setAll(selectedProdOrders);
+		prodTableView.refresh();
 	}
 
 	/**
