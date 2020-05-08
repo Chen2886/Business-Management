@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -170,9 +171,12 @@ public class ProdFormulaEdit {
 
         // info hbox add button
         addItemButton = new Button("添加");
-        addItemButton.setStyle("-fx-font-size: 18px;");
+        addItemButton.getStyleClass().add("actionButtons");
         infoHBox.getChildren().add(addItemButton);
         addItemButton.setOnAction(event -> addItem());
+        addItemButton.setOnKeyReleased(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) addItem();
+        });
 
         // auto price
         TextField totalPrice = inputArray.get(inputArray.size() - 1);

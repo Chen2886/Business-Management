@@ -1,6 +1,8 @@
 package Product;
 
 import Main.*;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -34,12 +36,12 @@ public class ProdFormula {
     private static String[] formulaInfoProperty = new String[]{"Name", "BasePrice"};
 
     public Button defaultButton;
-    @FXML HBox formulaInfoHBox;
+    @FXML HBox formulaTopHBox;
     @FXML Button cancelButton;
     @FXML Button overrideButton;
     @FXML Button saveNewButton;
     @FXML TableView<Formula> formulaTable;
-    @FXML HBox infoHBox;
+    @FXML HBox formulaInfoInputBottomHBox;
 
     Button addItemButton;
 
@@ -60,9 +62,9 @@ public class ProdFormula {
      * @param currentStage  the stage, so it can be closed later
      */
     public void initData(ProductOrder selectedOrder, Stage currentStage) {
-
         this.selectedOrder = selectedOrder;
         this.currentStage = currentStage;
+        formulaColumnList = new ArrayList<>();
         // getting current formula
         try {
             // if this is a product that doesn't have existing formula
@@ -72,8 +74,7 @@ public class ProdFormula {
                     selectedOrder.setBasePrice(calcBasePrice());
                     DatabaseUtil.UpdateProdOrder(selectedOrder);
                 }
-            }
-            else {
+            } else {
                 if (DatabaseUtil.CheckIfNameExistsInNewestFormula(selectedOrder.getName())) {
                     int newIndex = DatabaseUtil.GetNewestFormulaIndex(selectedOrder.getName());
                     formula = DatabaseUtil.GetFormulaByIndex(newIndex);
@@ -90,8 +91,6 @@ public class ProdFormula {
             selectedOrder.setFormulaIndex(-1);
             formula = null;
         }
-
-        formulaColumnList = new ArrayList<>();
         init();
     }
 
@@ -99,10 +98,9 @@ public class ProdFormula {
      * Initialize everything on the screen
      */
     private void init() {
-
         initFormulaTable();
-        initInfoHBox();
-        initFormulaInfoHBox();
+        initInputBottomHBox();
+        initTopHBox();
         calcBasePrice();
 
         currentStage.setMinHeight(screenSize.height * 0.9);
@@ -120,7 +118,6 @@ public class ProdFormula {
         saveNewButton.setOnAction(event -> saveNewFormula());
         overrideButton.setOnAction(event -> overrideCurrentFormula());
         defaultButton.setOnAction(event -> saveDefaultFormula());
-
         if (formula == null) {
             formula = new Formula(selectedOrder.getName());
             isNewFormula = true;
@@ -128,22 +125,24 @@ public class ProdFormula {
         } else {
             isNewFormula = false;
         }
-
     }
 
     /**
      * Init top formula into hbox
      */
-    private void initFormulaInfoHBox() {
+    private void initTopHBox() {
         // populating the info hbox
         formulaInfoInputArray = new ArrayList<>();
         Method getter;
-        for (int i = 0; i < formulaInfoHeader.length; i++) {
-            Label newLabel = new Label(formulaInfoHeader[i]);
-            newLabel.setStyle("-fx-font-size: 20px;" +
-                    "-fx-alignment: center-right;");
-            formulaInfoHBox.getChildren().add(newLabel);
 
+        // adding the text fields and labels
+        for (int i = 0; i < formulaInfoHeader.length; i++) {
+
+            // new label
+            Label newLabel = new Label(formulaInfoHeader[i]);
+            newLabel.setStyle("-fx-font-size: 20px; -fx-alignment: center-right;");
+
+            // new text field
             TextField newTextField = new TextField();
             newTextField.setDisable(true);
             try {
@@ -152,54 +151,46 @@ public class ProdFormula {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            formulaInfoHBox.getChildren().add(newTextField);
-            formulaInfoInputArray.add(newTextField);
-        }
 
-        // auto price
-        TextField totalPrice = formulaInfoInputArray.get(1);
-        for (int i = 1; i < formulaInfoInputArray.size(); i++) {
-            TextField textField = formulaInfoInputArray.get(i);
-            textField.setOnKeyTyped(event -> {
-                try {
-                    totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
-                            Double.parseDouble(formulaInfoInputArray.get(2).getText())));
-                } catch (Exception ignored) {
-                }
-            });
-            textField.setOnMouseClicked(event -> {
-                try {
-                    totalPrice.setText(String.valueOf(Double.parseDouble(formulaInfoInputArray.get(1).getText()) *
-                            Double.parseDouble(formulaInfoInputArray.get(2).getText())));
-                } catch (Exception ignored) {
-                }
-            });
+            // add to Hbox
+            formulaTopHBox.getChildren().add(newLabel);
+            formulaTopHBox.getChildren().add(newTextField);
+
+            // add text fields to array
+            formulaInfoInputArray.add(newTextField);
         }
     }
 
     /**
      * Initialize info hbox
      */
-    private void initInfoHBox() {
+    private void initInputBottomHBox() {
         // populating the info hbox
         inputArray = new ArrayList<>();
         for (String s : header) {
-            Label newLabel = new Label(s);
-            newLabel.setStyle("-fx-font-size: 20px;" +
-                    "-fx-alignment: center-right;");
-            infoHBox.getChildren().add(newLabel);
 
+            // new label
+            Label newLabel = new Label(s);
+            newLabel.setStyle("-fx-font-size: 20px; -fx-alignment: center-right;");
+
+            // new text field
             TextField newTextField = new TextField();
             if (s.equals("原料名称")) TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
             newTextField.setPromptText("输入" + s);
-            infoHBox.getChildren().add(newTextField);
+
+            // add to the HBox
+            formulaInfoInputBottomHBox.getChildren().add(newLabel);
+            formulaInfoInputBottomHBox.getChildren().add(newTextField);
+
+            // add to array
             inputArray.add(newTextField);
         }
 
         // info hbox add button
         addItemButton = new Button("添加");
-        addItemButton.setStyle("-fx-font-size: 18px;");
-        infoHBox.getChildren().add(addItemButton);
+        addItemButton.getStyleClass().add("actionButtons");
+        formulaInfoInputBottomHBox.getChildren().add(addItemButton);
+
         addItemButton.setOnAction(event -> {
             addItem();
             defaultButton.setVisible(false);
@@ -211,29 +202,25 @@ public class ProdFormula {
             }
         });
 
+
         // auto price
         TextField totalPrice = inputArray.get(3);
+        EventHandler autoTotalPriceEventHandler = event -> {
+            try {
+                totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
+                        Double.parseDouble(inputArray.get(2).getText())));
+            } catch (Exception ignored) {
+            }
+        };
         for (int i = 1; i < inputArray.size(); i++) {
             TextField textField = inputArray.get(i);
-            textField.setOnKeyTyped(event -> {
-                try {
-                    totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
-                            Double.parseDouble(inputArray.get(2).getText())));
-                } catch (Exception ignored) {
-                }
-            });
-            textField.setOnMouseClicked(event -> {
-                try {
-                    totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
-                            Double.parseDouble(inputArray.get(2).getText())));
-                } catch (Exception ignored) {
-                }
-            });
+            textField.setOnKeyTyped(autoTotalPriceEventHandler);
+            textField.setOnMouseClicked(autoTotalPriceEventHandler);
         }
 
         // auto unit price
         TextField unitPrice = inputArray.get(2);
-        unitPrice.setOnKeyTyped(keyEvent -> {
+        EventHandler autoUnitPriceEventHandler = event -> {
             try {
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
             } catch (Exception e) {
@@ -242,50 +229,9 @@ public class ProdFormula {
                         e.getMessage(), e.getStackTrace(), false);
                 error.WriteToLog();
             }
-        });
-        unitPrice.setOnMouseClicked(keyEvent -> {
-            try {
-                unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
-            } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                        e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
-            }
-        });
-
-    }
-
-    /**
-     * Convert an item to Formula
-     */
-    private void viewFormula(Formula formula) {
-        try {
-
-            FXMLLoader loader = new FXMLLoader();
-            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormulaEdit.fxml"));
-            Parent newScene = loader.load(fileInputStream);
-            Stage stage = new Stage();
-
-            ProdFormulaEdit prodFormulaEdit = loader.getController();
-            prodFormulaEdit.initData(null, formula, stage, formulaTable);
-
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("编辑配方");
-
-            Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
-            stage.setScene(scene);
-            stage.showAndWait();
-            formulaTable.refresh();
-            calcBasePrice();
-        } catch (Exception e) {
-            AlertBox.display("错误", "窗口错误");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-        }
+        };
+        unitPrice.setOnKeyTyped(autoUnitPriceEventHandler);
+        unitPrice.setOnMouseClicked(autoUnitPriceEventHandler);
     }
 
     /**
@@ -363,6 +309,95 @@ public class ProdFormula {
     }
 
     /**
+     * Pop up window to edit/add formula within formula
+     */
+    private void viewFormula(Formula formula) {
+        try {
+
+            FXMLLoader loader = new FXMLLoader();
+            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormulaEdit.fxml"));
+            Parent newScene = loader.load(fileInputStream);
+            Stage stage = new Stage();
+
+            ProdFormulaEdit prodFormulaEdit = loader.getController();
+            prodFormulaEdit.initData(null, formula, stage, formulaTable);
+
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("编辑配方");
+
+            Scene scene = new Scene(newScene);
+            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+            stage.setScene(scene);
+            stage.showAndWait();
+            formulaTable.refresh();
+            calcBasePrice();
+        } catch (Exception e) {
+            AlertBox.display("错误", "窗口错误");
+            e.printStackTrace();
+            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+            error.WriteToLog();
+        }
+    }
+
+    /**
+     * Add Simple item to the product
+     */
+    private void addItem() {
+        Formula formula = new Formula();
+        Method setter;
+        boolean empty = true;
+
+        for (int i = 0; i < header.length; i++) {
+            TextField currentTextField = inputArray.get(i);
+            if (i == 0) {
+                if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
+                    empty = false;
+                    try {
+                        setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], String.class);
+                        setter.invoke(formula, currentTextField.getText());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                                e.getMessage(), e.getStackTrace(), false);
+                        error.WriteToLog();
+                    }
+                }
+            } else if (i == 1 || i == 2) {
+                if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
+                    empty = false;
+                    try {
+                        setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], double.class);
+                        setter.invoke(formula, Double.parseDouble(currentTextField.getText()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                                e.getMessage(), e.getStackTrace(), false);
+                        error.WriteToLog();
+                    }
+                }
+            }
+        }
+
+        formula.setTotalPrice();
+        if (!empty) addFormula(formula);
+        for (TextField textField : inputArray) textField.clear();
+
+        calcBasePrice();
+    }
+
+    /**
+     * Add formula to the tableView
+     * @param newFormula the formula to be added
+     */
+    public void addFormula(Formula newFormula) {
+        formula.addFormula(newFormula);
+        formulaTable.getItems().clear();
+        formulaTable.getItems().setAll(formula.getFormulaList());
+        calcBasePrice();
+    }
+
+    /**
      * public function for other controller to call, to add to the list, and refresh table
      *
      * @param formula the formula to be added to list
@@ -380,17 +415,6 @@ public class ProdFormula {
      */
     public void removeFormulaFromList(Formula inputFormula) {
         formula.removeFormula(inputFormula);
-        formulaTable.getItems().clear();
-        formulaTable.getItems().setAll(formula.getFormulaList());
-        calcBasePrice();
-    }
-
-    /**
-     * Add formula to the tableView
-     * @param newFormula the formula to be added
-     */
-    public void addFormula(Formula newFormula) {
-        formula.addFormula(newFormula);
         formulaTable.getItems().clear();
         formulaTable.getItems().setAll(formula.getFormulaList());
         calcBasePrice();
@@ -452,52 +476,6 @@ public class ProdFormula {
                     e.getMessage(), e.getStackTrace(), false);
             error.WriteToLog();
         }
-    }
-
-    /**
-     * Add Simple item to the product
-     */
-    private void addItem() {
-        Formula formula = new Formula();
-        Method setter;
-        boolean empty = true;
-
-        for (int i = 0; i < header.length; i++) {
-            TextField currentTextField = inputArray.get(i);
-            if (i == 0) {
-                if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
-                    empty = false;
-                    try {
-                        setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], String.class);
-                        setter.invoke(formula, currentTextField.getText());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                                e.getMessage(), e.getStackTrace(), false);
-                        error.WriteToLog();
-                    }
-                }
-            } else if (i == 1 || i == 2) {
-                if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
-                    empty = false;
-                    try {
-                        setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], double.class);
-                        setter.invoke(formula, Double.parseDouble(currentTextField.getText()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                                e.getMessage(), e.getStackTrace(), false);
-                        error.WriteToLog();
-                    }
-                }
-            }
-        }
-
-        formula.setTotalPrice();
-        if (!empty) addFormula(formula);
-        for (TextField textField : inputArray) textField.clear();
-
-        calcBasePrice();
     }
 
     /**
