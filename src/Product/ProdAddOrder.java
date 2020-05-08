@@ -63,8 +63,13 @@ public class ProdAddOrder {
         });
 
         prodAddOrderCompleteButton.setOnAction(actionEvent -> addOrder(false));
-
         prodAddOrderContinueButton.setOnAction(actionEvent -> addOrder(true));
+        prodAddOrderCompleteButton.setOnKeyReleased(actionEvent -> {
+            if (actionEvent.getCode() == KeyCode.ENTER) addOrder(false);
+        });
+        prodAddOrderContinueButton.setOnKeyReleased(actionEvent -> {
+            if (actionEvent.getCode() == KeyCode.ENTER) addOrder(true);
+        });
 
         prodAddOrderTitle.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
