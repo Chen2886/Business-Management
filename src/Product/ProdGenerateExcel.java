@@ -135,21 +135,18 @@ public class ProdGenerateExcel {
             workbook.write(fileOutputStream);
             fileOutputStream.close();
         } catch (SQLException e) {
-            AlertBox.display("失败", "没有数据");
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            AlertBox.display("错误", "数据库读取失败！");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-        }
+            }
         catch (IOException e) {
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            AlertBox.display("错误", "写入文件失败！");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-        } catch (Exception e) {
-            AlertBox.display("失败", "删除表格后重试");
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            } catch (Exception e) {
+            AlertBox.display("错误", "删除表格后重试");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-
         }
     }
 

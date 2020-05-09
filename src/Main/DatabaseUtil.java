@@ -39,9 +39,8 @@ public class DatabaseUtil {
                 return resultSet.getInt("max(serialNum)");
             }
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -62,9 +61,8 @@ public class DatabaseUtil {
                 CreateNewDB();
             }
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -79,13 +77,9 @@ public class DatabaseUtil {
         ConnectToDB();
         try {
             connection = DriverManager.getConnection(dataBaseLocationFile);
-            if (connection != null) {
-                DatabaseMetaData meta = connection.getMetaData();
-            }
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -102,10 +96,8 @@ public class DatabaseUtil {
         try {
             connection = DriverManager.getConnection(dataBaseLocationFile);
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         }
     }
@@ -120,10 +112,8 @@ public class DatabaseUtil {
             connection.close();
             connection = null;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             connection = null;
         }
     }
@@ -161,11 +151,8 @@ public class DatabaseUtil {
                 CreateNewTable("materialUnitPrice");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            e.getMessage();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -289,9 +276,8 @@ public class DatabaseUtil {
             statement.execute(SQLCommand);
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -309,10 +295,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             return false;
         } finally {
             CloseConnectionToDB();
@@ -343,10 +327,8 @@ public class DatabaseUtil {
             }
 
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -370,10 +352,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return resultSet.next();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -404,10 +384,8 @@ public class DatabaseUtil {
             }
 
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -429,10 +407,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return resultSet.next();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             return false;
         } finally {
             CloseConnectionToDB();
@@ -454,10 +430,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return resultSet.next();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             return false;
         } finally {
             CloseConnectionToDB();
@@ -525,10 +499,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderObservableList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -574,10 +546,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderObservableList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -586,7 +556,7 @@ public class DatabaseUtil {
 
     /**
      * Return a list of all mat sellers available
-     * @return all smat ellers in the database
+     * @return all mat sellers in the database
      * @throws SQLException if any error occurs while operating on database
      */
     public static ObservableList<MatSeller> GetAllMatSellers() throws SQLException {
@@ -611,9 +581,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return sellerObservableList;
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -646,10 +615,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return matUnitPriceTableObservableList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -690,10 +657,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return prodUnitPriceObservableList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -724,10 +689,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return formula;
         } catch (SQLException | IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -752,10 +715,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return returnVal;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -780,10 +741,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return returnVal;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -810,10 +769,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return returnVal;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -840,10 +797,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -876,10 +831,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -900,10 +853,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -926,10 +877,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -956,10 +905,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1034,10 +981,9 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
+            
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1073,10 +1019,9 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
+            
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1100,10 +1045,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1134,10 +1077,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1167,9 +1108,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1199,10 +1139,8 @@ public class DatabaseUtil {
 
             return serialNum;
         } catch (SQLException | IOException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1280,10 +1218,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-            e.printStackTrace();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1318,10 +1254,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1351,9 +1285,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         }
     }
@@ -1381,9 +1314,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         }
     }
@@ -1414,10 +1346,8 @@ public class DatabaseUtil {
 
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1445,10 +1375,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException | IOException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1478,10 +1406,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1507,10 +1433,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1533,10 +1457,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1559,10 +1481,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1586,10 +1506,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1609,10 +1527,8 @@ public class DatabaseUtil {
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1677,9 +1593,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderObservableList;
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1722,9 +1637,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderObservableList;
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();
@@ -1794,9 +1708,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderArrayList;
         } catch (SQLException e) {
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         }
     }
@@ -1845,10 +1758,8 @@ public class DatabaseUtil {
             CloseConnectionToDB();
             return orderArrayList;
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(DatabaseUtil.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             throw new SQLException();
         } finally {
             CloseConnectionToDB();

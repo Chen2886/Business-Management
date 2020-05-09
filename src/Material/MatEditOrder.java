@@ -20,10 +20,14 @@ import java.util.ArrayList;
 
 public class MatEditOrder {
 
-	@FXML GridPane MatEditOrderGrid;
-	@FXML Label editOrderTitleLabel;
-	@FXML Button cancelButton;
-	@FXML Button completeButton;
+	@FXML
+	GridPane MatEditOrderGrid;
+	@FXML
+	Label editOrderTitleLabel;
+	@FXML
+	Button cancelButton;
+	@FXML
+	Button completeButton;
 
 	Stage currentStage;
 	MatOrder selectedOrder;
@@ -31,8 +35,9 @@ public class MatEditOrder {
 
 	/**
 	 * Called by main controller to give the selected order
+	 *
 	 * @param selectedOrder the order that was selected, to fill the information
-	 * @param currentStage the stage, so it can be closed later
+	 * @param currentStage  the stage, so it can be closed later
 	 */
 	public void initData(MatOrder selectedOrder, Stage currentStage) {
 		this.selectedOrder = selectedOrder;
@@ -58,10 +63,10 @@ public class MatEditOrder {
 
 		// setting up all the labels
 		ArrayList<Label> labelArrayList = new ArrayList<>();
-		for(int i = 0; i < FinalConstants.matTableHeaders.length; i++) {
+		for (int i = 0; i < FinalConstants.matTableHeaders.length; i++) {
 			Label newLabel = new Label(FinalConstants.matTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;" +
-								"-fx-alignment: center-right;");
+					"-fx-alignment: center-right;");
 
 			newLabel.setMaxWidth(Double.MAX_VALUE);
 			GridPane.setConstraints(newLabel, col, row++);
@@ -76,7 +81,7 @@ public class MatEditOrder {
 		col = 1;
 		// setting up all the text field
 		inputArrayList = new ArrayList<>();
-		for(int i = 0; i < FinalConstants.matPropertyHeaders.length; i++) {
+		for (int i = 0; i < FinalConstants.matPropertyHeaders.length; i++) {
 
 			// type of mat, combo box
 			if (i == 3) {
@@ -140,11 +145,9 @@ public class MatEditOrder {
 						datePicker.setValue(LocalDate.of(dateVal.getY(), dateVal.getM(), dateVal.getD()));
 					}
 				} catch (Exception e) {
-					AlertBox.display("错误", "摘取信息错误");
-					e.printStackTrace();
-					HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					AlertBox.display("错误", "读取信息错误！");
+					new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 							e.getMessage(), e.getStackTrace(), false);
-					error.WriteToLog();
 				}
 
 			}
@@ -158,16 +161,13 @@ public class MatEditOrder {
 					getters = MatOrder.class.getDeclaredMethod("get" + Character.toUpperCase(FinalConstants.matPropertyHeaders[i].charAt(0)) + FinalConstants.matPropertyHeaders[i].substring(1));
 					newTextField.setText(String.valueOf(getters.invoke(selectedOrder) == null ? "" : getters.invoke(selectedOrder)));
 				} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-					AlertBox.display("错误", "摘取信息错误");
-					e.printStackTrace();
-					HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					AlertBox.display("错误", "读取信息错误！");
+					new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 							e.getMessage(), e.getStackTrace(), false);
-					error.WriteToLog();
 				}
 				newTextField.setMaxWidth(Double.MAX_VALUE);
 				GridPane.setConstraints(newTextField, col, row++);
 				inputArrayList.add(newTextField);
-
 			}
 
 			if ((i + 7) % 6 == 0) {
@@ -185,6 +185,7 @@ public class MatEditOrder {
 
 	/**
 	 * get the index value given the type
+	 *
 	 * @param type given type
 	 * @return the index of type given
 	 */
@@ -209,7 +210,8 @@ public class MatEditOrder {
 					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
 							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
 							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		String sku = ((TextField) inputArrayList.get(i++)).getText();
@@ -232,35 +234,40 @@ public class MatEditOrder {
 		// mat type
 		try {
 			newOrder.setType(((ComboBox) inputArrayList.get(i++)).getValue().toString());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setPaymentDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
 					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
 							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
 							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
-		newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
-				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+			newOrder.setArrivalDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
-		newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
-				new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
-						((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
-						((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+			newOrder.setInvoiceDate(((DatePicker) inputArrayList.get(i)).getValue() == null ? new Date(0, 0, 0) :
+					new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
+							((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
+							((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
-		newOrder.setInvoice(((TextField) inputArrayList.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+			newOrder.setInvoice(((TextField) inputArrayList.get(i++)).getText());
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setUnitAmount(Double.parseDouble(((TextField) inputArrayList.get(i)).getText().equals("") ? "0.0" : ((TextField) inputArrayList.get(i)).getText()));
@@ -294,19 +301,23 @@ public class MatEditOrder {
 
 		try {
 			newOrder.setSigned(((TextField) inputArrayList.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setSkuSeller(((TextField) inputArrayList.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setNote(((TextField) inputArrayList.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setSeller(FindSeller(((ComboBox) inputArrayList.get(i)).getValue().toString()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			DatabaseUtil.UpdateMatOrder(newOrder);
@@ -319,10 +330,11 @@ public class MatEditOrder {
 
 	/**
 	 * Given a company name, find the seller within the all seller array list
+	 *
 	 * @param CompanyName company that needs to be found
 	 * @return the specified seller
 	 */
-	private MatSeller FindSeller (String CompanyName) {
+	private MatSeller FindSeller(String CompanyName) {
 		for (MatSeller seller : FinalConstants.allMatSellers) {
 			if (seller.getCompanyName().equals(CompanyName)) return seller;
 		}

@@ -27,30 +27,48 @@ import java.util.ArrayList;
 public class MatAddOrderModifySeller {
 
 	// main tab pane
-	@FXML TabPane MatAddOrderModifySellerTabPane;
+	@FXML
+	TabPane MatAddOrderModifySellerTabPane;
 
 	// add mat order
-	@FXML GridPane matAddOrderGrid;
-	@FXML Label matAddOrderTitleLabel;
-	@FXML Button matAddOrderCancelButton;
-	@FXML Button matAddOrderCompleteButton;
-	@FXML Button matAddOrderContinueButton;
+	@FXML
+	GridPane matAddOrderGrid;
+	@FXML
+	Label matAddOrderTitleLabel;
+	@FXML
+	Button matAddOrderCancelButton;
+	@FXML
+	Button matAddOrderCompleteButton;
+	@FXML
+	Button matAddOrderContinueButton;
 
 	// add mat seller
-	@FXML GridPane matAddSellerGrid;
-	@FXML Label matAddSellerTitleLabel;
-	@FXML Button matAddSellerCancelButton;
-	@FXML Button matAddSellerCompleteButton;
-	@FXML Button matAddSellerContinueButton;
+	@FXML
+	GridPane matAddSellerGrid;
+	@FXML
+	Label matAddSellerTitleLabel;
+	@FXML
+	Button matAddSellerCancelButton;
+	@FXML
+	Button matAddSellerCompleteButton;
+	@FXML
+	Button matAddSellerContinueButton;
 
 	// edit mat seller
-	@FXML GridPane matEditSellerGrid;
-	@FXML Label matEditSellerTitleLabel;
-	@FXML Button matEditSellerCancelButton;
-	@FXML Button matEditSellerCompleteButton;
-	@FXML Button matEditSellerResetButton;
-	@FXML ColumnConstraints problematicColumnOne;
-	@FXML ColumnConstraints problematicColumnTwo;
+	@FXML
+	GridPane matEditSellerGrid;
+	@FXML
+	Label matEditSellerTitleLabel;
+	@FXML
+	Button matEditSellerCancelButton;
+	@FXML
+	Button matEditSellerCompleteButton;
+	@FXML
+	Button matEditSellerResetButton;
+	@FXML
+	ColumnConstraints problematicColumnOne;
+	@FXML
+	ColumnConstraints problematicColumnTwo;
 
 	Stage currentStage;
 	ObservableList<MatSeller> allMatSeller;
@@ -60,6 +78,7 @@ public class MatAddOrderModifySeller {
 
 	/**
 	 * Called by main controller, pass in the stage for later closing, and init the screen
+	 *
 	 * @param currentStage the current stage so it can be closed
 	 */
 	public void initData(Stage currentStage) {
@@ -121,10 +140,8 @@ public class MatAddOrderModifySeller {
 			allMatSeller = DatabaseUtil.GetAllMatSellers();
 		} catch (SQLException e) {
 			allMatSeller = FXCollections.observableArrayList();
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
 		}
 
 		// init all three tabs
@@ -143,7 +160,7 @@ public class MatAddOrderModifySeller {
 		int col = 0;
 
 		// setting up all the labels
-		for(int i = 0; i <FinalConstants.matTableHeaders.length; i++) {
+		for (int i = 0; i < FinalConstants.matTableHeaders.length; i++) {
 			Label newLabel = new Label(FinalConstants.matTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;" +
 					"-fx-alignment: center-right;");
@@ -162,7 +179,7 @@ public class MatAddOrderModifySeller {
 
 		// setting up all the text field
 		matOrderInputArray = new ArrayList<>();
-		for(int i = 0; i <FinalConstants.matPropertyHeaders.length; i++) {
+		for (int i = 0; i < FinalConstants.matPropertyHeaders.length; i++) {
 
 			// type of mat, combo box
 			if (i == 3) {
@@ -174,7 +191,7 @@ public class MatAddOrderModifySeller {
 			}
 
 			// seller, combo box
-			else if (i ==FinalConstants.matPropertyHeaders.length - 1) {
+			else if (i == FinalConstants.matPropertyHeaders.length - 1) {
 				ComboBox<String> sellerComboBox = new ComboBox<>();
 
 				// getting all the company names
@@ -222,7 +239,7 @@ public class MatAddOrderModifySeller {
 					TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
 				}
 				newTextField.setMaxWidth(Double.MAX_VALUE);
-				newTextField.setPromptText("输入" +FinalConstants.matTableHeaders[i]);
+				newTextField.setPromptText("输入" + FinalConstants.matTableHeaders[i]);
 				GridPane.setConstraints(newTextField, col, row++);
 				matOrderInputArray.add(newTextField);
 			}
@@ -240,10 +257,8 @@ public class MatAddOrderModifySeller {
 			try {
 				if (DatabaseUtil.CheckIfNameExistsInMatUnitPrice(newValue))
 					unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(newValue)));
-				else
-					unitPrice.setText("0.0");
+				else unitPrice.setText("0.0");
 			} catch (SQLException ignored) {
-				ignored.printStackTrace();
 			}
 		});
 
@@ -266,7 +281,7 @@ public class MatAddOrderModifySeller {
 		int col = 0;
 
 		// setting up all the labels
-		for(int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
+		for (int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
 			Label newLabel = new Label(FinalConstants.matSellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
 			GridPane.setConstraints(newLabel, col, row++);
@@ -284,7 +299,7 @@ public class MatAddOrderModifySeller {
 		col = 1;
 
 		// setting up seller text field
-		for (int i = 0; i <FinalConstants.matSellerTableHeaders.length; i++) {
+		for (int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
 			TextField newTextField = new TextField();
 			newTextField.setMaxWidth(Double.MAX_VALUE);
 			newTextField.setAlignment(Pos.CENTER_LEFT);
@@ -380,6 +395,7 @@ public class MatAddOrderModifySeller {
 
 	/**
 	 * Called when user selected a mat seller to update, sets up the actual edit screen
+	 *
 	 * @param matSeller the mat seller user selected
 	 */
 	private void editMatSeller(MatSeller matSeller) {
@@ -396,7 +412,7 @@ public class MatAddOrderModifySeller {
 		int col = 0;
 
 		// setting up all the labels
-		for(int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
+		for (int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
 			Label newLabel = new Label(FinalConstants.matSellerTableHeaders[i]);
 			newLabel.setStyle("-fx-font-size: 20px;");
 			GridPane.setConstraints(newLabel, col, row++);
@@ -414,7 +430,7 @@ public class MatAddOrderModifySeller {
 		col = 1;
 
 		// setting up seller text field
-		for (int i = 0; i <FinalConstants.matSellerTableHeaders.length; i++) {
+		for (int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
 			TextField newTextField = new TextField();
 			newTextField.setMaxWidth(Double.MAX_VALUE);
 			newTextField.setAlignment(Pos.CENTER_LEFT);
@@ -428,10 +444,8 @@ public class MatAddOrderModifySeller {
 				newTextField.setText(value);
 			} catch (Exception e) {
 				AlertBox.display("错误", "读取所选供应商错误，联系管理员。");
-				e.printStackTrace();
-				HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+				new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 						e.getMessage(), e.getStackTrace(), false);
-				error.WriteToLog();
 			}
 
 			GridPane.setConstraints(newTextField, col, row++);
@@ -480,6 +494,7 @@ public class MatAddOrderModifySeller {
 
 	/**
 	 * Delete the seller selected
+	 *
 	 * @param matSeller the seller to be deleted
 	 */
 	private void deleteMatSeller(MatSeller matSeller) {
@@ -489,15 +504,14 @@ public class MatAddOrderModifySeller {
 			DatabaseUtil.DeleteMatSeller(matSeller.getSellerId());
 		} catch (SQLException e) {
 			AlertBox.display("错误", "删除错误，联系管理员");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
 		}
 	}
 
 	/**
 	 * Updates seller in database, both mat management and seller
+	 *
 	 * @param newSeller the new seller that needs to be updated
 	 */
 	private void updateSeller(MatSeller newSeller) {
@@ -511,10 +525,8 @@ public class MatAddOrderModifySeller {
 					setter.invoke(newSeller, textField.getText());
 				} catch (Exception e) {
 					AlertBox.display("错误", "更新错误，联系管理员");
-					e.printStackTrace();
-					HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 							e.getMessage(), e.getStackTrace(), false);
-					error.WriteToLog();
 				}
 			}
 		}
@@ -527,10 +539,8 @@ public class MatAddOrderModifySeller {
 			currentStage.close();
 		} catch (Exception e) {
 			AlertBox.display("错误", "更新错误，管理员");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
 		}
 	}
 
@@ -541,8 +551,10 @@ public class MatAddOrderModifySeller {
 		for (int i = 0; i < matOrderInputArray.size(); i++) {
 			if (i != 0 && i != 1) {
 				if (matOrderInputArray.get(i) instanceof TextField) ((TextField) matOrderInputArray.get(i)).clear();
-				if (matOrderInputArray.get(i) instanceof DatePicker) ((DatePicker) matOrderInputArray.get(i)).setValue(null);
-				if (matOrderInputArray.get(i) instanceof ComboBox) ((ComboBox) matOrderInputArray.get(i)).getSelectionModel().select(null);
+				if (matOrderInputArray.get(i) instanceof DatePicker)
+					((DatePicker) matOrderInputArray.get(i)).setValue(null);
+				if (matOrderInputArray.get(i) instanceof ComboBox)
+					((ComboBox) matOrderInputArray.get(i)).getSelectionModel().select(null);
 			}
 		}
 	}
@@ -556,6 +568,7 @@ public class MatAddOrderModifySeller {
 
 	/**
 	 * Given a company name, find the seller within the all seller array list
+	 *
 	 * @param CompanyName company that needs to be found
 	 * @return the specified seller
 	 */
@@ -581,7 +594,8 @@ public class MatAddOrderModifySeller {
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		String sku = ((TextField) matOrderInputArray.get(i++)).getText();
@@ -592,7 +606,7 @@ public class MatAddOrderModifySeller {
 		newOrder.setName(nameOfMat);
 
 		if (sku.equals("") && nameOfMat.equals("")) {
-			if (ConfirmBox.display("错误","没有输入数据，结束输入？", "是", "否" ))
+			if (ConfirmBox.display("错误", "没有输入数据，结束输入？", "是", "否"))
 				currentStage.close();
 			return;
 		}
@@ -600,35 +614,40 @@ public class MatAddOrderModifySeller {
 		// mat type
 		try {
 			newOrder.setType(((ComboBox) matOrderInputArray.get(i++)).getValue().toString());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
-			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
-			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
-			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
 			newOrder.setInvoice(((TextField) matOrderInputArray.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setUnitAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
@@ -643,8 +662,7 @@ public class MatAddOrderModifySeller {
 			newOrder.setAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
 		} catch (NullPointerException ignored) {
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			AlertBox.display("错误", "数量格式输入错误, 数字默认0");
 		}
 		i++;
@@ -663,19 +681,23 @@ public class MatAddOrderModifySeller {
 
 		try {
 			newOrder.setSigned(((TextField) matOrderInputArray.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setSkuSeller(((TextField) matOrderInputArray.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setNote(((TextField) matOrderInputArray.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setSeller(findSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			DatabaseUtil.AddMatOrder(newOrder);
@@ -683,16 +705,14 @@ public class MatAddOrderModifySeller {
 				double oldPrice = DatabaseUtil.GetMatUnitPrice(newOrder.getName());
 				if (oldPrice != newOrder.getUnitPrice())
 					if (ConfirmBox.display("确认", "此原料已存在，需要更新原料单价表吗？之前价格：" +
-							oldPrice + " 新价格：" + newOrder.getUnitPrice(),"是", "否"))
+							oldPrice + " 新价格：" + newOrder.getUnitPrice(), "是", "否"))
 						DatabaseUtil.UpdateMatUnitPrice(newOrder.getName(), newOrder.getUnitPrice());
 			} else DatabaseUtil.AddMatUnitPrice(new MatUnitPrice(newOrder.getName(), newOrder.getUnitPrice()));
 			currentStage.close();
 		} catch (SQLException e) {
 			AlertBox.display("错误", "更新错误，联系管理员");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
 		}
 	}
 
@@ -712,7 +732,8 @@ public class MatAddOrderModifySeller {
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		String sku = ((TextField) matOrderInputArray.get(i++)).getText();
@@ -723,7 +744,7 @@ public class MatAddOrderModifySeller {
 		newOrder.setName(nameOfMat);
 
 		if (sku.equals("") && nameOfMat.equals("")) {
-			if (ConfirmBox.display("错误","没有输入数据，结束输入？", "是", "否" ))
+			if (ConfirmBox.display("错误", "没有输入数据，结束输入？", "是", "否"))
 				currentStage.close();
 			return;
 		}
@@ -731,35 +752,40 @@ public class MatAddOrderModifySeller {
 		// mat type
 		try {
 			newOrder.setType(((ComboBox) matOrderInputArray.get(i++)).getValue().toString());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
-			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+			newOrder.setPaymentDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
-			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+			newOrder.setArrivalDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
-			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0)  :
+			newOrder.setInvoiceDate(((DatePicker) matOrderInputArray.get(i)).getValue() == null ? new Date(0, 0, 0) :
 					new Date(((DatePicker) matOrderInputArray.get(i)).getValue().getYear(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getMonthValue(),
 							((DatePicker) matOrderInputArray.get(i)).getValue().getDayOfMonth()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 		i++;
 
 		try {
 			newOrder.setInvoice(((TextField) matOrderInputArray.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setUnitAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
@@ -774,8 +800,7 @@ public class MatAddOrderModifySeller {
 			newOrder.setAmount(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
 		} catch (NullPointerException ignored) {
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			AlertBox.display("错误", "数量格式输入错误, 数字默认0");
 		}
 		i++;
@@ -794,19 +819,23 @@ public class MatAddOrderModifySeller {
 
 		try {
 			newOrder.setSigned(((TextField) matOrderInputArray.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setSkuSeller(((TextField) matOrderInputArray.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setNote(((TextField) matOrderInputArray.get(i++)).getText());
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			newOrder.setSeller(findSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
-		} catch (NullPointerException ignored) {}
+		} catch (NullPointerException ignored) {
+		}
 
 		try {
 			DatabaseUtil.AddMatOrder(newOrder);
@@ -814,16 +843,14 @@ public class MatAddOrderModifySeller {
 				double oldPrice = DatabaseUtil.GetMatUnitPrice(newOrder.getName());
 				if (oldPrice != newOrder.getUnitPrice())
 					if (ConfirmBox.display("确认", "此原料已存在，需要更新原料单价表吗？之前价格：" +
-							oldPrice + " 新价格：" + newOrder.getUnitPrice(),"是", "否"))
+							oldPrice + " 新价格：" + newOrder.getUnitPrice(), "是", "否"))
 						DatabaseUtil.UpdateMatUnitPrice(newOrder.getName(), newOrder.getUnitPrice());
 			} else DatabaseUtil.AddMatUnitPrice(new MatUnitPrice(newOrder.getName(), newOrder.getUnitPrice()));
 			clearAddOrderFields();
 		} catch (SQLException e) {
 			AlertBox.display("错误", "更新错误，联系管理员");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
 		}
 	}
 
@@ -844,10 +871,8 @@ public class MatAddOrderModifySeller {
 					setter.invoke(newSeller, textField.getText());
 				} catch (Exception e) {
 					AlertBox.display("错误", "添加错误，联系管理员");
-					e.printStackTrace();
-					HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 							e.getMessage(), e.getStackTrace(), false);
-					error.WriteToLog();
 				}
 			}
 		}
@@ -859,10 +884,8 @@ public class MatAddOrderModifySeller {
 			else currentStage.close();
 		} catch (Exception e) {
 			AlertBox.display("错误", "添加错误");
-			e.printStackTrace();
-			HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
 		}
 	}
 

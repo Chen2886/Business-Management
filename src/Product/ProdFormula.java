@@ -36,12 +36,18 @@ public class ProdFormula {
     private static String[] formulaInfoProperty = new String[]{"Name", "BasePrice"};
 
     public Button defaultButton;
-    @FXML HBox formulaTopHBox;
-    @FXML Button cancelButton;
-    @FXML Button overrideButton;
-    @FXML Button saveNewButton;
-    @FXML TableView<Formula> formulaTable;
-    @FXML HBox formulaInfoInputBottomHBox;
+    @FXML
+    HBox formulaTopHBox;
+    @FXML
+    Button cancelButton;
+    @FXML
+    Button overrideButton;
+    @FXML
+    Button saveNewButton;
+    @FXML
+    TableView<Formula> formulaTable;
+    @FXML
+    HBox formulaInfoInputBottomHBox;
 
     Button addItemButton;
 
@@ -84,10 +90,8 @@ public class ProdFormula {
                 } else formula = null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             selectedOrder.setFormulaIndex(-1);
             formula = null;
         }
@@ -149,7 +153,9 @@ public class ProdFormula {
                 getter = ProductOrder.class.getDeclaredMethod("get" + formulaInfoProperty[i]);
                 newTextField.setText(String.valueOf(getter.invoke(selectedOrder)));
             } catch (Exception e) {
-                e.printStackTrace();
+                AlertBox.display("错误", "读取信息错误！");
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
             }
 
             // add to Hbox
@@ -224,10 +230,8 @@ public class ProdFormula {
             try {
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
             } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         };
         unitPrice.setOnKeyTyped(autoUnitPriceEventHandler);
@@ -333,10 +337,8 @@ public class ProdFormula {
             calcBasePrice();
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
@@ -357,10 +359,8 @@ public class ProdFormula {
                         setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], String.class);
                         setter.invoke(formula, currentTextField.getText());
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                                 e.getMessage(), e.getStackTrace(), false);
-                        error.WriteToLog();
                     }
                 }
             } else if (i == 1 || i == 2) {
@@ -370,10 +370,8 @@ public class ProdFormula {
                         setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], double.class);
                         setter.invoke(formula, Double.parseDouble(currentTextField.getText()));
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                                 e.getMessage(), e.getStackTrace(), false);
-                        error.WriteToLog();
                     }
                 }
             }
@@ -388,6 +386,7 @@ public class ProdFormula {
 
     /**
      * Add formula to the tableView
+     *
      * @param newFormula the formula to be added
      */
     public void addFormula(Formula newFormula) {
@@ -440,10 +439,8 @@ public class ProdFormula {
             defaultButton.setVisible(true);
             currentStage.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
@@ -471,10 +468,8 @@ public class ProdFormula {
             defaultButton.setVisible(true);
             currentStage.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
@@ -490,15 +485,14 @@ public class ProdFormula {
             currentStage.close();
         } catch (SQLException e) {
             AlertBox.display("错误", "设置默认错误");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
     /**
      * Calculate the base price
+     *
      * @return the base price
      */
     private double calcBasePrice() {
@@ -512,7 +506,8 @@ public class ProdFormula {
         double returnVal = Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
         try {
             if (returnVal != 0) formulaInfoInputArray.get(1).setText(String.valueOf(returnVal));
-        } catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
         return returnVal;
     }
 

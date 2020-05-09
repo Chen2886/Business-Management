@@ -65,10 +65,8 @@ public class ProdSearchOrder {
                 mainScreen.setProdSearchList(newList == null ? FXCollections.observableArrayList() : newList);
                 currentStage.close();
             } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
                 currentStage.close();
             }
         });

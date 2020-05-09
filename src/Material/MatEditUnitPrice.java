@@ -1,10 +1,6 @@
 package Material;
 
-import Main.AlertBox;
-import Main.ConfirmBox;
-import Main.DatabaseUtil;
-import Main.HandleError;
-import javafx.scene.control.Alert;
+import Main.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -60,10 +56,8 @@ public class MatEditUnitPrice {
             stage.close();
         } catch (SQLException e) {
             AlertBox.display("错误", "无法更新，确保新的名称唯一");
-            e.printStackTrace();
             HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
 
     }

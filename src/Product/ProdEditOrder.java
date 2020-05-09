@@ -20,17 +20,21 @@ import java.util.ArrayList;
 public class ProdEditOrder {
 
     // prod table headers
-    private static final String[] prodHeaders = new String[] {"订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
+    private static final String[] prodHeaders = new String[]{"订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
             "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注"};
 
     // all prod property listed
     private static final String[] prodProperty = new String[]{"OrderDate", "Sku", "Customer", "Name",
             "UnitAmount", "Amount", "UnitPrice", "Note"};
 
-    @FXML GridPane prodEditOrderGrid;
-    @FXML Label prodEditOrderTitleLabel;
-    @FXML Button cancelButton;
-    @FXML Button completeButton;
+    @FXML
+    GridPane prodEditOrderGrid;
+    @FXML
+    Label prodEditOrderTitleLabel;
+    @FXML
+    Button cancelButton;
+    @FXML
+    Button completeButton;
 
     Stage currentStage;
     ProductOrder selectedOrder;
@@ -38,8 +42,9 @@ public class ProdEditOrder {
 
     /**
      * Called by main controller to give the selected order
+     *
      * @param selectedOrder the order that was selected, to fill the information
-     * @param currentStage the stage, so it can be closed later
+     * @param currentStage  the stage, so it can be closed later
      */
     public void initData(ProductOrder selectedOrder, Stage currentStage) {
         this.selectedOrder = selectedOrder;
@@ -65,7 +70,7 @@ public class ProdEditOrder {
 
         // setting up all the labels
         ArrayList<Label> prodOrderLabelArray = new ArrayList<>();
-        for(int i = 0; i < prodHeaders.length; i++) {
+        for (int i = 0; i < prodHeaders.length; i++) {
             Label newLabel = new Label(prodHeaders[i]);
             newLabel.setStyle("-fx-font-size: 20px;" +
                     "-fx-alignment: center-right;");
@@ -82,7 +87,7 @@ public class ProdEditOrder {
 
         // setting up all the text field
         prodOrderInputArray = new ArrayList<>();
-        for(int i = 0; i < prodProperty.length; i++) {
+        for (int i = 0; i < prodProperty.length; i++) {
 
             Method getter;
 
@@ -132,7 +137,9 @@ public class ProdEditOrder {
                     getter = ProductOrder.class.getDeclaredMethod("get" + prodProperty[i]);
                     newTextField.setText(String.valueOf(getter.invoke(selectedOrder)));
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
+                    AlertBox.display("错误", "摘取信息错误！");
+                    new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                            e.getMessage(), e.getStackTrace(), false);
                 }
                 GridPane.setConstraints(newTextField, col, row++);
                 prodOrderInputArray.add(newTextField);
@@ -151,10 +158,8 @@ public class ProdEditOrder {
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
                         ((TextField) prodOrderInputArray.get(2)).getText())));
             } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         });
         unitPrice.setOnMouseClicked(keyEvent -> {
@@ -163,10 +168,8 @@ public class ProdEditOrder {
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
                         ((TextField) prodOrderInputArray.get(2)).getText())));
             } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         });
 
@@ -202,10 +205,8 @@ public class ProdEditOrder {
                 }
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 AlertBox.display("错误", "无法更新");
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         }
 
@@ -214,12 +215,9 @@ public class ProdEditOrder {
             currentStage.close();
         } catch (Exception e) {
             AlertBox.display("错误", "无法更新");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
-
     }
 
 }

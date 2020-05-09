@@ -13,6 +13,7 @@ import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,24 +21,30 @@ import java.util.ArrayList;
 public class ProdAddOrder {
 
     // prod table headers
-    private static final String[] prodHeaders = new String[] {"订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
+    private static final String[] prodHeaders = new String[]{"订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
             "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注"};
 
     // all prod property listed
     private static final String[] prodProperty = new String[]{"OrderDate", "Sku", "Customer", "Name",
             "UnitAmount", "Amount", "UnitPrice", "Note"};
 
-    @FXML Button prodAddOrderCancelButton;
-    @FXML Button prodAddOrderCompleteButton;
-    @FXML Button prodAddOrderContinueButton;
-    @FXML GridPane prodAddOrderGrid;
-    @FXML Label prodAddOrderTitle;
+    @FXML
+    Button prodAddOrderCancelButton;
+    @FXML
+    Button prodAddOrderCompleteButton;
+    @FXML
+    Button prodAddOrderContinueButton;
+    @FXML
+    GridPane prodAddOrderGrid;
+    @FXML
+    Label prodAddOrderTitle;
 
     Stage currentStage;
     private ArrayList<Node> prodOrderInputArray;
 
     /**
      * Called by main controller, pass in the stage for later closing, and init the screen
+     *
      * @param currentStage the current stage so it can be closed
      */
     public void initData(Stage currentStage) {
@@ -78,7 +85,7 @@ public class ProdAddOrder {
 
         // setting up all the labels
         ArrayList<Label> prodOrderLabelArray = new ArrayList<>();
-        for(int i = 0; i < prodHeaders.length; i++) {
+        for (int i = 0; i < prodHeaders.length; i++) {
             Label newLabel = new Label(prodHeaders[i]);
             newLabel.setStyle("-fx-font-size: 20px;" +
                     "-fx-alignment: center-right;");
@@ -95,7 +102,7 @@ public class ProdAddOrder {
 
         // setting up all the text field
         prodOrderInputArray = new ArrayList<>();
-        for(int i = 0; i < prodProperty.length; i++) {
+        for (int i = 0; i < prodProperty.length; i++) {
 
             // dates, date picker
             if (i == 0) {
@@ -151,11 +158,9 @@ public class ProdAddOrder {
             try {
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
                         ((TextField) prodOrderInputArray.get(2)).getText())));
-            } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            } catch (SQLException e) {
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         });
         unitPrice.setOnMouseClicked(keyEvent -> {
@@ -163,11 +168,9 @@ public class ProdAddOrder {
                 System.out.println(((TextField) prodOrderInputArray.get(3)).getText());
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetProdUnitPrice(((TextField) prodOrderInputArray.get(3)).getText(),
                         ((TextField) prodOrderInputArray.get(2)).getText())));
-            } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            } catch (SQLException e) {
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         });
 
@@ -190,9 +193,9 @@ public class ProdAddOrder {
                             new Date(((DatePicker) prodOrderInputArray.get(i)).getValue().getYear(),
                                     ((DatePicker) prodOrderInputArray.get(i)).getValue().getMonthValue(),
                                     ((DatePicker) prodOrderInputArray.get(i)).getValue().getDayOfMonth()));
-                } catch (NullPointerException ignored) {}
-            }
-            else if (i == 4 || i == 5 || i == 6) {
+                } catch (NullPointerException ignored) {
+                }
+            } else if (i == 4 || i == 5 || i == 6) {
                 // double
                 TextField currentTextField = (TextField) prodOrderInputArray.get(i);
                 if (!currentTextField.getText().equals("")) {
@@ -201,11 +204,9 @@ public class ProdAddOrder {
                         setter.invoke(newOrder, Double.parseDouble(currentTextField.getText()));
                     } catch (Exception e) {
                         AlertBox.display("错误", prodHeaders[i] + "格式输入错误, 数字默认0");
-                        e.printStackTrace();
                     }
                 }
-            }
-            else {
+            } else {
                 // string
                 TextField currentTextField = (TextField) prodOrderInputArray.get(i);
                 if (!currentTextField.getText().equals("")) {
@@ -213,7 +214,9 @@ public class ProdAddOrder {
                         setter = ProductOrder.class.getDeclaredMethod("set" + prodProperty[i], String.class);
                         setter.invoke(newOrder, currentTextField.getText());
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        AlertBox.display("错误", "读取信息错误！");
+                        new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                                e.getMessage(), e.getStackTrace(), false);
                     }
                 }
             }
@@ -227,11 +230,10 @@ public class ProdAddOrder {
                 Formula formula = DatabaseUtil.GetFormulaByIndex(newIndex);
                 newOrder.setFormulaIndex(newIndex);
                 newOrder.setBasePrice(calcUnitPrice(formula));
-            } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            } catch (SQLException e) {
+                AlertBox.display("错误", "读取配方错误！");
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         }
 
@@ -239,12 +241,10 @@ public class ProdAddOrder {
             DatabaseUtil.AddProdOrder(newOrder);
             if (cont) clearProdOrderFields();
             else currentStage.close();
-        } catch (Exception e) {
-            AlertBox.display("错误", "添加错误");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+        } catch (SQLException e) {
+            AlertBox.display("错误", "添加产品订单错误！");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             currentStage.close();
         }
     }
@@ -253,13 +253,14 @@ public class ProdAddOrder {
      * Clear all input area for add order
      */
     private void clearProdOrderFields() {
-        for (int i = 0; i < prodOrderInputArray.size(); i++) {
-            if (prodOrderInputArray.get(i) instanceof TextField) ((TextField) prodOrderInputArray.get(i)).clear();
+        for (Node node : prodOrderInputArray) {
+            if (node instanceof TextField) ((TextField) node).clear();
         }
     }
 
     /**
      * Calculate the base price
+     *
      * @return the base price
      */
     private double calcUnitPrice(Formula formula) {

@@ -18,10 +18,8 @@ public class SerialNum {
                 serialNum[i] = DatabaseUtil.GetNewestSerialNum(tableNames[i]);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(SerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(SerialNum.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 

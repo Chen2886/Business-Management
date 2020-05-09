@@ -1,8 +1,6 @@
 package Material;
 
-import Main.AlertBox;
-import Main.DatabaseUtil;
-import Main.HandleError;
+import Main.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -20,19 +18,24 @@ import java.util.ArrayList;
 public class MatGenerateExcel {
 
     // mat table headers
-    private static final String[] matHeaders = new String[] {"订单日期", "订单号", "原料名称", "类别",  "付款日期",
+    private static final String[] matHeaders = new String[]{"订单日期", "订单号", "原料名称", "类别", "付款日期",
             "到达日期", "发票日期", "发票编号", "规格", "数量", "公斤", "单价", "总价", "签收人", "供应商订单编号", "供应商",
             "联系人", "手机", "座机", "传真", "供应商账号", "供应商银行地址", "供应商地址", "备注"};
 
     Stage stage;
 
-    @FXML Button generateButton;
-    @FXML Button cancelButton;
-    @FXML DatePicker startDate;
-    @FXML DatePicker endDate;
+    @FXML
+    Button generateButton;
+    @FXML
+    Button cancelButton;
+    @FXML
+    DatePicker startDate;
+    @FXML
+    DatePicker endDate;
 
     /**
      * Init data called by main controller
+     *
      * @param stage the current stage so it can be closed
      */
     public void initData(Stage stage) {
@@ -96,7 +99,7 @@ public class MatGenerateExcel {
             cellStyle.setAlignment(HorizontalAlignment.CENTER);
 
 
-            for (String string: matHeaders) {
+            for (String string : matHeaders) {
                 org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(cellNum++);
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
                 cellStyle.setFont(boldFont);
@@ -112,7 +115,7 @@ public class MatGenerateExcel {
                 String[] orderObjArr = selectedData.get(i).toString().split(",");
                 for (int j = 0; j < orderObjArr.length; j++) {
                     Cell cell = row.createCell(cellNum++);
-                    if (j == 8 || j == 9 || j == 10 || j==11 || j==12) {
+                    if (j == 8 || j == 9 || j == 10 || j == 11 || j == 12) {
                         double value = 0.0;
                         try {
                             value = Double.parseDouble(orderObjArr[j]);
@@ -137,21 +140,17 @@ public class MatGenerateExcel {
             workbook.write(fileOutputStream);
             fileOutputStream.close();
         } catch (SQLException e) {
-            AlertBox.display("失败", "没有数据");
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            AlertBox.display("错误", "数据库读取数据错误！");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-        }
-        catch (IOException e) {
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+        } catch (IOException e) {
+            AlertBox.display("错误", "写入文件错误！");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         } catch (Exception e) {
-            AlertBox.display("失败", "删除表格后重试");
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            AlertBox.display("错误", "删除表格后重试！");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
-
         }
     }
 
@@ -159,16 +158,16 @@ public class MatGenerateExcel {
         int[][] input = new int[2][3];
 
         if (startDate.getValue().getYear() > endDate.getValue().getYear()) {
-            AlertBox.display("错误", "开始日期小于结束日期");
+            AlertBox.display("错误", "开始日期小于结束日期！");
             return null;
         } else if (startDate.getValue().getYear() == endDate.getValue().getYear()) {
             if (startDate.getValue().getMonthValue() > endDate.getValue().getMonthValue()) {
-                AlertBox.display("错误", "开始日期小于结束日期");
+                AlertBox.display("错误", "开始日期小于结束日期！");
                 return null;
             } else if (startDate.getValue().getMonthValue() == endDate.getValue().getMonthValue()) {
                 // month okay
                 if (startDate.getValue().getDayOfMonth() > endDate.getValue().getDayOfMonth()) {
-                    AlertBox.display("错误", "开始日期小于结束日期");
+                    AlertBox.display("错误", "开始日期小于结束日期！");
                     return null;
                 }
             }
@@ -183,6 +182,4 @@ public class MatGenerateExcel {
         input[1][2] = endDate.getValue().getDayOfMonth();
         return input;
     }
-
-
 }

@@ -33,7 +33,7 @@ import java.util.Collection;
 public class ProdUnitPriceTable {
 
     // prod table headers
-    private static final String[] headers = new String[] {"日期", "送货单号", "客户名称", "产品名称", "单价", "备注"};
+    private static final String[] headers = new String[]{"日期", "送货单号", "客户名称", "产品名称", "单价", "备注"};
 
     // all matUnitPrice property listed
     private static final String[] property = new String[]{"date", "sku", "customer", "name", "unitPrice", "note"};
@@ -46,8 +46,10 @@ public class ProdUnitPriceTable {
     public HBox matInfoHBoxTop;
     public HBox matInfoHBoxBottom;
 
-    @FXML TextField searchBarTextField;
-    @FXML ImageView searchImageView;
+    @FXML
+    TextField searchBarTextField;
+    @FXML
+    ImageView searchImageView;
 
     // tables
     public TableView<ProdUnitPrice> prodTable;
@@ -60,6 +62,7 @@ public class ProdUnitPriceTable {
 
     /**
      * Public function for main controller to call
+     *
      * @param stage the stage so it can be closed
      */
     public void initData(Stage stage) {
@@ -79,10 +82,8 @@ public class ProdUnitPriceTable {
             Image searchBarImage = new Image(input);
             searchImageView.setImage(searchBarImage);
         } catch (Exception e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
 
         // quick search
@@ -121,19 +122,17 @@ public class ProdUnitPriceTable {
                 newColumn.setStyle("-fx-alignment: CENTER;");
                 newColumn.setMinWidth(110);
                 columnArrayList.add(newColumn);
-            }
-            else if (i == 4) {
+            } else if (i == 4) {
                 // Doubles
                 TableColumn<ProdUnitPrice, Double> newColumn = new TableColumn<>(headers[i]);
                 newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
-                newColumn.setStyle( "-fx-alignment: CENTER;");
+                newColumn.setStyle("-fx-alignment: CENTER;");
                 columnArrayList.add(newColumn);
-            }
-            else {
+            } else {
                 // String
                 TableColumn<ProdUnitPrice, String> newColumn = new TableColumn<>(headers[i]);
                 newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
-                newColumn.setStyle( "-fx-alignment: CENTER;");
+                newColumn.setStyle("-fx-alignment: CENTER;");
                 columnArrayList.add(newColumn);
             }
         }
@@ -155,7 +154,7 @@ public class ProdUnitPriceTable {
                 datePicker.setConverter(new StringConverter<LocalDate>() {
                     @Override
                     public String toString(LocalDate localDate) {
-                        if (localDate==null) {
+                        if (localDate == null) {
                             return "0/0/0";
                         }
                         return dateTimeFormatter.format(localDate);
@@ -163,7 +162,7 @@ public class ProdUnitPriceTable {
 
                     @Override
                     public LocalDate fromString(String string) {
-                        if (string==null || string.isEmpty()) {
+                        if (string == null || string.isEmpty()) {
                             return null;
                         }
                         return LocalDate.from(dateTimeFormatter.parse(string));
@@ -206,10 +205,10 @@ public class ProdUnitPriceTable {
 
 
         // if double clicked, enable edit
-        prodTable.setRowFactory( tv -> {
+        prodTable.setRowFactory(tv -> {
             TableRow<ProdUnitPrice> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     ProdUnitPrice order = row.getItem();
                     modifyPrice(order);
                 }
@@ -244,9 +243,9 @@ public class ProdUnitPriceTable {
                                 new Date(((DatePicker) inputArrayList.get(i)).getValue().getYear(),
                                         ((DatePicker) inputArrayList.get(i)).getValue().getMonthValue(),
                                         ((DatePicker) inputArrayList.get(i)).getValue().getDayOfMonth()));
-                    } catch (NullPointerException ignored) {}
-                }
-                else if (i == 4) {
+                    } catch (NullPointerException ignored) {
+                    }
+                } else if (i == 4) {
                     // double
                     TextField currentTextField = (TextField) inputArrayList.get(i);
                     if (!currentTextField.getText().equals("")) {
@@ -257,15 +256,15 @@ public class ProdUnitPriceTable {
                             AlertBox.display("错误", "单价格式输入错误, 数字默认0");
                         }
                     }
-                }
-                else {
+                } else {
                     // string
                     TextField currentTextField = (TextField) inputArrayList.get(i);
                     if (!currentTextField.getText().equals("")) {
                         try {
                             setter = ProdUnitPrice.class.getDeclaredMethod("set" + propertyMethod[i], String.class);
                             setter.invoke(prodUnitPrice, currentTextField.getText());
-                        } catch (Exception ignored) { }
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             }
@@ -286,10 +285,8 @@ public class ProdUnitPriceTable {
             }
         } catch (SQLException e) {
             AlertBox.display("错误", "无法添加");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
@@ -302,10 +299,8 @@ public class ProdUnitPriceTable {
                 prodTable.getItems().setAll(allUnitPrices);
             } catch (SQLException e) {
                 AlertBox.display("错误", "无法删除");
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         }
     }
@@ -335,10 +330,8 @@ public class ProdUnitPriceTable {
             prodTable.getItems().setAll(allUnitPrices);
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
@@ -347,10 +340,8 @@ public class ProdUnitPriceTable {
             DatabaseUtil.UpdateAllProdUnitPrice(name, customer, price);
         } catch (SQLException e) {
             AlertBox.display("错误", "无法更新");
-            e.printStackTrace();
-            HandleError error = new HandleError(MatUnitPrice.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(MatUnitPrice.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 }

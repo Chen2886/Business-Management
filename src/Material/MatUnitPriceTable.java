@@ -27,7 +27,7 @@ import java.util.Collection;
 public class MatUnitPriceTable {
 
     // prod table headers
-    private static final String[] headers = new String[] {"原料名称", "单价", "备注"};
+    private static final String[] headers = new String[]{"原料名称", "单价", "备注"};
 
     // all matUnitPrice property listed
     private static final String[] property = new String[]{"name", "unitPrice", "note"};
@@ -42,8 +42,10 @@ public class MatUnitPriceTable {
     public Button addMatButton;
     public Button cancelButton;
 
-    @FXML TextField searchBarTextField;
-    @FXML ImageView searchImageView;
+    @FXML
+    TextField searchBarTextField;
+    @FXML
+    ImageView searchImageView;
 
     // tables
     public TableView<Material.MatUnitPrice> matTable;
@@ -55,6 +57,7 @@ public class MatUnitPriceTable {
 
     /**
      * Public function for main controller to call
+     *
      * @param stage the stage so it can be closed
      */
     public void initData(Stage stage) {
@@ -79,10 +82,8 @@ public class MatUnitPriceTable {
             Image searchBarImage = new Image(input);
             searchImageView.setImage(searchBarImage);
         } catch (Exception e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
 
         // quick search
@@ -122,14 +123,13 @@ public class MatUnitPriceTable {
                 // Doubles
                 TableColumn<MatUnitPrice, Double> newColumn = new TableColumn<>(headers[i]);
                 newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
-                newColumn.setStyle( "-fx-alignment: CENTER;");
+                newColumn.setStyle("-fx-alignment: CENTER;");
                 columnArrayList.add(newColumn);
-            }
-            else {
+            } else {
                 // String
                 TableColumn<MatUnitPrice, String> newColumn = new TableColumn<>(headers[i]);
                 newColumn.setCellValueFactory(new PropertyValueFactory<>(property[i]));
-                newColumn.setStyle( "-fx-alignment: CENTER;");
+                newColumn.setStyle("-fx-alignment: CENTER;");
                 columnArrayList.add(newColumn);
             }
         }
@@ -166,10 +166,10 @@ public class MatUnitPriceTable {
         };
 
         // if double clicked, enable edit
-        matTable.setRowFactory( tv -> {
+        matTable.setRowFactory(tv -> {
             TableRow<MatUnitPrice> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     MatUnitPrice order = row.getItem();
                     modifyPrice(order);
                 }
@@ -213,10 +213,8 @@ public class MatUnitPriceTable {
             matNoteTextField.clear();
         } catch (SQLException e) {
             AlertBox.display("错误", "无法添加");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
@@ -229,10 +227,8 @@ public class MatUnitPriceTable {
                 matTable.getItems().setAll(allUnitPrices);
             } catch (SQLException e) {
                 AlertBox.display("错误", "无法删除");
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         }
     }
@@ -261,10 +257,8 @@ public class MatUnitPriceTable {
             matTable.getItems().setAll(allUnitPrices);
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
@@ -273,10 +267,8 @@ public class MatUnitPriceTable {
             DatabaseUtil.UpdateAllMatUnitPrice(name, price);
         } catch (SQLException e) {
             AlertBox.display("错误", "无法更新");
-            e.printStackTrace();
-            HandleError error = new HandleError(MatUnitPrice.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(MatUnitPrice.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
     }
 
