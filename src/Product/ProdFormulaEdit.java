@@ -25,11 +25,16 @@ public class ProdFormulaEdit {
     private static String[] header = new String[]{"原料名称", "数量", "单价", "金额"};
     private static String[] formulaInfoHeader = new String[]{"配方名称", "数量", "单价", "金额"};
 
-    @FXML HBox formulaInfoHBox;
-    @FXML Button cancelButton;
-    @FXML Button saveButton;
-    @FXML TableView<Formula> formulaTable;
-    @FXML HBox infoHBox;
+    @FXML
+    HBox formulaInfoHBox;
+    @FXML
+    Button cancelButton;
+    @FXML
+    Button saveButton;
+    @FXML
+    TableView<Formula> formulaTable;
+    @FXML
+    HBox infoHBox;
 
     Button addItemButton;
 
@@ -47,8 +52,8 @@ public class ProdFormulaEdit {
     /**
      * Called by main controller to give the selected order
      *
-     * @param formula the formula that needs to be edited, to fill the information
-     * @param currentStage  the stage, so it can be closed later
+     * @param formula      the formula that needs to be edited, to fill the information
+     * @param currentStage the stage, so it can be closed later
      */
     public void initData(Formula parentFormula, Formula formula, Stage currentStage,
                          TableView<Formula> parentFormulaTableView) {
@@ -102,7 +107,10 @@ public class ProdFormulaEdit {
             try {
                 getter = Formula.class.getDeclaredMethod("get" + propertyMethodName[i]);
                 newTextField.setText(String.valueOf(getter.invoke(formula)));
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (Exception e) {
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        e.getMessage(), e.getStackTrace(), false);
+            }
 
             formulaInfoHBox.getChildren().add(newTextField);
             formulaInfoInputArray.add(newTextField);
@@ -186,13 +194,15 @@ public class ProdFormulaEdit {
                 try {
                     totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
                             Double.parseDouble(inputArray.get(2).getText())));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             });
             textField.setOnMouseClicked(event -> {
                 try {
                     totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
                             Double.parseDouble(inputArray.get(2).getText())));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             });
             textField.textProperty().addListener(((observableValue, old, newVal) -> {
                 if (newVal == null || newVal.equals("")) {
@@ -201,7 +211,8 @@ public class ProdFormulaEdit {
                     try {
                         totalPrice.setText(String.valueOf(Double.parseDouble(inputArray.get(1).getText()) *
                                 Double.parseDouble(inputArray.get(2).getText())));
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             }));
         }
@@ -212,20 +223,16 @@ public class ProdFormulaEdit {
             try {
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
             } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         });
         unitPrice.setOnMouseClicked(keyEvent -> {
             try {
                 unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
             } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         });
 
@@ -304,6 +311,7 @@ public class ProdFormulaEdit {
 
     /**
      * public function for other controller to call, to add to the list, and refresh table
+     *
      * @param inputFormula the formula to be added to list
      */
     public void addFormulaToList(Formula inputFormula) {
@@ -314,6 +322,7 @@ public class ProdFormulaEdit {
 
     /**
      * public function for other controller to call, to remove item from the list, and refresh table
+     *
      * @param formula the formula to be removed to list
      */
     public void removeFormulaFromList(Formula formula) {
@@ -324,7 +333,8 @@ public class ProdFormulaEdit {
     }
 
     /**
-     *  Add formula to the tableView
+     * Add formula to the tableView
+     *
      * @param newFormula the formula to be added
      */
     public void addFormula(Formula newFormula) {
@@ -342,7 +352,7 @@ public class ProdFormulaEdit {
         Method setter;
         boolean empty = true;
 
-        for(int i = 0; i < header.length; i++) {
+        for (int i = 0; i < header.length; i++) {
             TextField currentTextField = inputArray.get(i);
             if (i == 0) {
                 if (currentTextField.getText() != null && !currentTextField.getText().equals("")) {
@@ -351,10 +361,8 @@ public class ProdFormulaEdit {
                         setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], String.class);
                         setter.invoke(formula, currentTextField.getText());
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                                 e.getMessage(), e.getStackTrace(), false);
-                        error.WriteToLog();
                     }
                 }
             } else if (i == 1 || i == 2) {
@@ -364,10 +372,8 @@ public class ProdFormulaEdit {
                         setter = Formula.class.getDeclaredMethod("set" + propertyMethodName[i], double.class);
                         setter.invoke(formula, Double.parseDouble(currentTextField.getText()));
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                        new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                                 e.getMessage(), e.getStackTrace(), false);
-                        error.WriteToLog();
                     }
                 }
             }
@@ -375,7 +381,7 @@ public class ProdFormulaEdit {
 
         formula.setTotalPrice();
         if (!empty) addFormula(formula);
-        for(TextField textField : inputArray) textField.clear();
+        for (TextField textField : inputArray) textField.clear();
         calcUnitPrice();
     }
 
@@ -390,10 +396,8 @@ public class ProdFormulaEdit {
             formula.setAmount(Double.parseDouble(formulaInfoInputArray.get(1).getText()));
             formula.setUnitPrice(unitPrice == 0 ? Double.parseDouble(formulaInfoInputArray.get(2).getText()) : unitPrice);
         } catch (Exception e) {
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
             AlertBox.display("错误", "数字输入错误");
         }
         formula.setTotalPrice();

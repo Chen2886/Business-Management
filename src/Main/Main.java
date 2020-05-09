@@ -10,9 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,15 +19,23 @@ public class Main extends Application {
 
 	public static Stage mainStage;
 	public static String fxmlPath = "fxml/";
-//	public static String styleSheetPath = System.getProperty("os.name").startsWith("Windows") ?
-//			(System.getProperty("user.dir") + "/fxml/stylesheet.css").replace("/", "\\"):
-//			System.getProperty("user.dir") + "/fxml/stylesheet.css";
 	public static String styleSheetPath =
 		Paths.get("fxml/stylesheet.css").toUri().toString().replace("file:///", "");
 
 
 	// * main function to get everything started
 	public static void main(String[] args) {
+
+		try {
+			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("uncaughtError.log", false));
+			bufferedWriter.write("");
+			bufferedWriter.close();
+			PrintStream printStream = new PrintStream("uncaughtError.log");
+			System.setOut(printStream);
+			System.setErr(printStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		// clear error
 		HandleError.clear();
@@ -41,6 +47,7 @@ public class Main extends Application {
 		}
 
 		FinalConstants.init();
+		SerialNum.initSerialNum();
 
 		Path source = Paths.get("BusinessCashFlow.db");
 		Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
@@ -49,10 +56,9 @@ public class Main extends Application {
 			if (Files.exists(target)) Files.delete(target);
 			Files.copy(source, target);
 		} catch (IOException e) {
-			e.printStackTrace();
+			new HandleError(Main.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
 		}
-
-		SerialNum.initSerialNum();
 
 		launch(args);
 	}
@@ -75,7 +81,8 @@ public class Main extends Application {
 				if (Files.exists(target)) Files.delete(target);
 				Files.copy(source, target);
 			} catch (IOException e) {
-				e.printStackTrace();
+				new HandleError(Main.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+						e.getMessage(), e.getStackTrace(), false);
 			}
 			stage.close();
 		});
@@ -92,11 +99,9 @@ public class Main extends Application {
 			scene.getStylesheets().add("file:///" + styleSheetPath);
 			return scene;
 		} catch (Exception e) {
-			AlertBox.display("错误", "错误，联系管理员");
-			e.printStackTrace();
-			HandleError error = new HandleError(Main.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+			AlertBox.display("错误", "窗口错误！");
+			new HandleError(Main.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
-			error.WriteToLog();
 			return new Scene(new VBox());
 		}
 	}

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class ProdEditUnitPriceTable {
 
     // prod table headers
-    private static final String[] headers = new String[] {"日期", "送货单号", "客户名称", "产品名称", "单价", "备注"};
+    private static final String[] headers = new String[]{"日期", "送货单号", "客户名称", "产品名称", "单价", "备注"};
 
     // all matUnitPrice property listed
     private static final String[] property = new String[]{"date", "sku", "customer", "name", "unitPrice", "note"};
@@ -71,7 +71,7 @@ public class ProdEditUnitPriceTable {
                 datePicker.setConverter(new StringConverter<LocalDate>() {
                     @Override
                     public String toString(LocalDate localDate) {
-                        if (localDate==null) {
+                        if (localDate == null) {
                             return "0/0/0";
                         }
                         return dateTimeFormatter.format(localDate);
@@ -79,7 +79,7 @@ public class ProdEditUnitPriceTable {
 
                     @Override
                     public LocalDate fromString(String string) {
-                        if (string==null || string.isEmpty()) {
+                        if (string == null || string.isEmpty()) {
                             return null;
                         }
                         return LocalDate.from(dateTimeFormatter.parse(string));
@@ -106,10 +106,8 @@ public class ProdEditUnitPriceTable {
                     getter = ProdUnitPrice.class.getDeclaredMethod("get" + propertyMethod[i]);
                     newTextField.setText(String.valueOf(getter.invoke(prodUnitPrice)));
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                             e.getMessage(), e.getStackTrace(), false);
-                    error.WriteToLog();
                 }
             }
 
@@ -131,10 +129,8 @@ public class ProdEditUnitPriceTable {
                 getter = ProdUnitPrice.class.getDeclaredMethod("get" + propertyMethod[i]);
                 newTextField.setText(String.valueOf(getter.invoke(prodUnitPrice)));
             } catch (Exception e) {
-                e.printStackTrace();
-                HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                         e.getMessage(), e.getStackTrace(), false);
-                error.WriteToLog();
             }
         }
 
@@ -162,10 +158,8 @@ public class ProdEditUnitPriceTable {
                     setter = ProdUnitPrice.class.getDeclaredMethod("set" + propertyMethod[i], String.class);
                     setter.invoke(newProdUnitPrice, ((TextField) (inputArrayList.get(i))).getText());
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                             e.getMessage(), e.getStackTrace(), false);
-                    error.WriteToLog();
                 }
             }
 
@@ -177,20 +171,16 @@ public class ProdEditUnitPriceTable {
                     setter = ProdUnitPrice.class.getDeclaredMethod("set" + propertyMethod[i], double.class);
                     setter.invoke(newProdUnitPrice, Double.parseDouble(((TextField) (inputArrayList.get(i))).getText()));
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                             e.getMessage(), e.getStackTrace(), false);
-                    error.WriteToLog();
                 }
             } else {
                 try {
                     setter = ProdUnitPrice.class.getDeclaredMethod("set" + propertyMethod[i], String.class);
                     setter.invoke(newProdUnitPrice, ((TextField) (inputArrayList.get(i))).getText());
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                             e.getMessage(), e.getStackTrace(), false);
-                    error.WriteToLog();
                 }
             }
         }
@@ -200,13 +190,8 @@ public class ProdEditUnitPriceTable {
             stage.close();
         } catch (SQLException e) {
             AlertBox.display("错误", "无法更新");
-            e.printStackTrace();
-            HandleError error = new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
-            error.WriteToLog();
         }
-
     }
-
-
 }
