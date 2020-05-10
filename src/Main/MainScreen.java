@@ -22,7 +22,6 @@ import javafx.stage.*;
 import javafx.util.Callback;
 
 import java.awt.*;
-import java.beans.EventHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -142,7 +141,7 @@ public class MainScreen implements Initializable {
 			else addProdOrder();
 		});
 
-		// quit the application
+		// quit the application and save backup database
 		quitButton.setOnAction(actionEvent -> {
 			Path source = Paths.get("BusinessCashFlow.db");
 			Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
@@ -167,9 +166,10 @@ public class MainScreen implements Initializable {
 			else generateProdExcel();
 		});
 
-
+		// mat unit price
 		matUnitPriceButton.setOnAction(event -> loadMatUnitPrice());
 
+		// prod unit price
 		prodUnitPriceButton.setOnAction(event -> loadProdUnitPrice());
 
 		// listener for search bar text field
@@ -214,6 +214,7 @@ public class MainScreen implements Initializable {
 			}
 		});
 
+		// inventory page
 		mainTabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue.intValue() == 2) {
 				initInventory();
@@ -508,6 +509,7 @@ public class MainScreen implements Initializable {
 			}
 		});
 
+		// able to select each cell
 		matTableView.setEditable(true);
 		matTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
 
@@ -680,6 +682,15 @@ public class MainScreen implements Initializable {
 				deleteProdOrder(prodTableView.getSelectionModel().getSelectedItem());
 		});
 
+		// formula window
+		prodTableView.setOnMouseClicked(keyEvent -> {
+			if (keyEvent.getButton() == MouseButton.SECONDARY) {
+				System.out.println("here");
+				prodFormula(prodTableView.getSelectionModel().getSelectedItem());
+			}
+		});
+
+		// able to select each cell
 		prodTableView.setEditable(true);
 		prodTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
 
@@ -743,70 +754,6 @@ public class MainScreen implements Initializable {
 			prodTableView.refresh();
 		} catch (Exception e) {
 			AlertBox.display("错误", "添加产品订单窗口错误！");
-			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-		}
-	}
-
-	/**
-	 * Helper function set up new window to modify order
-	 *
-	 * @param selectedOrder the order to be updated
-	 */
-	private void modifyMatOrder(MatOrder selectedOrder) {
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatEditOrder.fxml"));
-			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
-
-			MatEditOrder editOrderController = loader.getController();
-			editOrderController.initData(selectedOrder, stage);
-
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("编辑订单");
-
-			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
-			stage.setScene(scene);
-			stage.showAndWait();
-
-			matTableView.getItems().clear();
-			matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
-			matTableView.refresh();
-		} catch (Exception e) {
-			AlertBox.display("错误", "编辑订单窗口错误！");
-			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-		}
-	}
-
-	/**
-	 * Helper function set up new window to modify order
-	 *
-	 * @param selectedOrder the order to be updated
-	 */
-	private void modifyProdOrder(ProductOrder selectedOrder) {
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdEditOrder.fxml"));
-			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
-
-			ProdEditOrder prodEditOrder = loader.getController();
-			prodEditOrder.initData(selectedOrder, stage);
-
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("编辑订单");
-			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
-			stage.setScene(scene);
-			stage.showAndWait();
-			prodTableView.getItems().clear();
-			prodTableView.getItems().setAll(FinalConstants.updateAllProdOrders());
-			prodTableView.refresh();
-		} catch (Exception e) {
-			AlertBox.display("错误", "窗口错误！");
 			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 		}
