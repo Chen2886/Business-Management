@@ -307,6 +307,8 @@ public class MainScreen implements Initializable {
 				p -> new EditingCellForMatOfType<>() {};
 		Callback<TableColumn<MatOrder, Date>, TableCell<MatOrder, Date>> datePickerEditableFactory =
 				p -> new EditingCellWithDatePicker<>() {};
+		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> matSellerEditableFactory =
+				p -> new EditingCellForMatSeller<>() {};
 
 		// loop to set up all regular columns
 		for (int i = 0; i < matHeaders.length; i++) {
@@ -425,6 +427,19 @@ public class MainScreen implements Initializable {
 							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 									e.getMessage(), e.getStackTrace(), false);
 						}
+					});
+				} else if (i == 15) {
+					newColumn.setCellFactory(matSellerEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+						MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+
+						MatSeller selectedSeller = new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "temp");
+						for (MatSeller matSeller : FinalConstants.updateAllMatSellers()) {
+							if (matSeller.getCompanyName().equals(event.getNewValue()))
+								selectedSeller = matSeller;
+						}
+						editingOrder.setSeller(selectedSeller);
+						matTableView.refresh();
 					});
 				} else if (i == 3) {
 					int matPropertyIndex = i;
