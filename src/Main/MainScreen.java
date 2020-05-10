@@ -301,6 +301,8 @@ public class MainScreen implements Initializable {
 
 		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> stringEditableFactory =
 				p -> new EditingCellWithTextFields<>(String.class) {};
+		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> matNameEditableFactory =
+				p -> new EditingCellForMatName<>() {};
 		Callback<TableColumn<MatOrder, Double>, TableCell<MatOrder, Double>> doubleEditableFactory =
 				p -> new EditingCellWithTextFields<>(Double.class) {};
 		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> comboBoxEditableFactory =
@@ -329,7 +331,7 @@ public class MainScreen implements Initializable {
 							return;
 						}
 
-						MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+						MatOrder editingOrder = event.getRowValue();
 						try {
 							Method setter;
 							setter = MatOrder.class.getDeclaredMethod("set" +
@@ -359,7 +361,7 @@ public class MainScreen implements Initializable {
 				int matPropertyIndex = i;
 				newColumn.setCellFactory(datePickerEditableFactory);
 				newColumn.setOnEditCommit(event -> {
-					MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+					MatOrder editingOrder = event.getRowValue();
 					try {
 						System.out.println(event.getNewValue());
 						Method setter;
@@ -387,7 +389,7 @@ public class MainScreen implements Initializable {
 				// Set up for editable table view
 				newColumn.setCellFactory(stringEditableFactory);
 				newColumn.setOnEditCommit(event -> {
-					MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+					MatOrder editingOrder = event.getRowValue();
 					try {
 						Method setter;
 						setter = MatOrder.class.getDeclaredMethod("set" +
@@ -410,11 +412,12 @@ public class MainScreen implements Initializable {
 
 				// Set up for editable table view
 				// NOTES: Not allowing to edit sellers, Mat Of Type and Seller needs combo Box
-				if ((i <= 14 || i == 23) && i != 3) {
+				// matName needs autocomplete
+				if ((i <= 14 || i == 23) && i != 3 && i != 2) {
 					int matPropertyIndex = i;
 					newColumn.setCellFactory(stringEditableFactory);
 					newColumn.setOnEditCommit(event -> {
-						MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+							MatOrder editingOrder = event.getRowValue();
 						try {
 							Method setter;
 							setter = MatOrder.class.getDeclaredMethod("set" +
@@ -431,7 +434,7 @@ public class MainScreen implements Initializable {
 				} else if (i == 15) {
 					newColumn.setCellFactory(matSellerEditableFactory);
 					newColumn.setOnEditCommit(event -> {
-						MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+						MatOrder editingOrder = event.getRowValue();
 
 						MatSeller selectedSeller = new MatSeller(SerialNum.getSerialNum(DBOrder.SELLER), "temp");
 						for (MatSeller matSeller : FinalConstants.updateAllMatSellers()) {
@@ -445,7 +448,7 @@ public class MainScreen implements Initializable {
 					int matPropertyIndex = i;
 					newColumn.setCellFactory(comboBoxEditableFactory);
 					newColumn.setOnEditCommit(event -> {
-						MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+						MatOrder editingOrder = event.getRowValue();
 						try {
 							Method setter;
 							setter = MatOrder.class.getDeclaredMethod("set" +
@@ -455,6 +458,24 @@ public class MainScreen implements Initializable {
 							DatabaseUtil.UpdateMatOrder(editingOrder);
 						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 							AlertBox.display("错误", "编辑订单错误！(文字）");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
+					});
+				} else if (i == 2) {
+					newColumn.setCellFactory(matNameEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+						MatOrder editingOrder = event.getRowValue();
+						try {
+							editingOrder.setName(event.getNewValue());
+							double unitPrice = DatabaseUtil.GetMatUnitPrice(event.getNewValue());
+							editingOrder.setUnitPrice(unitPrice);
+							editingOrder.setKgAmount();
+							editingOrder.setTotalPrice();
+							DatabaseUtil.UpdateMatOrder(editingOrder);
+							matTableView.refresh();
+						} catch (SQLException e) {
+							AlertBox.display("错误", "编辑订单错误！");
 							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 									e.getMessage(), e.getStackTrace(), false);
 						}

@@ -114,7 +114,7 @@ public class FinalConstants {
         return allMatSellers;
     }
 
-    public static void updateAutoCompleteProdCustomerName() {
+    public static String[] updateAutoCompleteProdCustomerName() {
         try {
             ObservableList<ProductOrder> allProductOrder = DatabaseUtil.GetAllProdOrders();
 
@@ -128,14 +128,15 @@ public class FinalConstants {
             int i = 0;
             for (String s : avoidDuplicateSet) autoCompleteProdCustomerName[i++] = s;
         } catch (SQLException e) {
-            autoCompleteMatName = new String[0];
+            autoCompleteProdCustomerName = new String[0];
             e.printStackTrace();
             new HandleError(FinalConstants.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
         }
+        return autoCompleteProdCustomerName;
     }
 
-    public static void updateAutoCompleteProdName() {
+    public static String[] updateAutoCompleteProdName() {
         try {
             ObservableList<ProdUnitPrice> allProdUnitPrices = DatabaseUtil.GetAllProdUnitPrice();
 
@@ -149,14 +150,15 @@ public class FinalConstants {
             int i = 0;
             for (String s : avoidDuplicateSet) autoCompleteProdName[i++] = s;
         } catch (SQLException e) {
-            autoCompleteMatName = new String[0];
+            autoCompleteProdName = new String[0];
             e.printStackTrace();
             new HandleError(FinalConstants.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
         }
+        return autoCompleteProdName;
     }
 
-    public static void updateAutoCompleteMatName() {
+    public static String[] updateAutoCompleteMatName() {
         try {
             ObservableList<MatUnitPrice> allMatUnitPrices = DatabaseUtil.GetAllMatUnitPrice();
             autoCompleteMatName = new String[allMatUnitPrices.size()];
@@ -169,5 +171,6 @@ public class FinalConstants {
             new HandleError(FinalConstants.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
         }
+        return autoCompleteMatName;
     }
 }
