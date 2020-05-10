@@ -32,8 +32,8 @@ public class AlertBox {
 		closeButton.setStyle(smallFont);
 		closeButton.setPadding(new Insets(10, 10, 10, 10));
 		closeButton.setAlignment(Pos.BOTTOM_RIGHT);
-		closeButton.setOnAction(e -> window.close());
-		closeButton.setOnKeyReleased(keyEvent -> {
+		closeButton.setOnMouseClicked(e -> window.close());
+		closeButton.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode() == KeyCode.ENTER)
 				window.close();
 		});
