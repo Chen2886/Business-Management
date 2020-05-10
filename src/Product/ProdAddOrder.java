@@ -135,8 +135,7 @@ public class ProdAddOrder {
                 if (i == 2) {
                     FinalConstants.updateAutoCompleteProdCustomerName();
                     TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdCustomerName);
-                }
-                if (i == 3) {
+                } else if (i == 3) {
                     FinalConstants.updateAutoCompleteProdName();
                     TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdName);
                 }
