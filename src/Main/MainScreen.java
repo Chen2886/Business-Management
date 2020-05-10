@@ -1,18 +1,17 @@
 package Main;
 
 // from my other packages
+import CustomEditingCells.*;
 import Material.*;
 import Product.*;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
@@ -26,6 +25,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -298,6 +299,15 @@ public class MainScreen implements Initializable {
 		// array of columns
 		Collection<TableColumn<MatOrder, ?>> orderColumnArrayList = new ArrayList<>();
 
+		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> stringEditableFactory =
+				p -> new EditingCellWithTextFields<>(String.class) {};
+		Callback<TableColumn<MatOrder, Double>, TableCell<MatOrder, Double>> doubleEditableFactory =
+				p -> new EditingCellWithTextFields<>(Double.class) {};
+		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> comboBoxEditableFactory =
+				p -> new EditingCellForMatOfType<>() {};
+		Callback<TableColumn<MatOrder, Date>, TableCell<MatOrder, Date>> datePickerEditableFactory =
+				p -> new EditingCellWithDatePicker<>() {};
+
 		// loop to set up all regular columns
 		for (int i = 0; i < matHeaders.length; i++) {
 			if (i == 8 || i == 9 || i == 10 || i == 11 || i == 12) {
@@ -307,6 +317,35 @@ public class MainScreen implements Initializable {
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
 
+				if (i != 10 && i != 12) {
+					int matPropertyIndex = i;
+					newColumn.setCellFactory(doubleEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+
+						if (event.getNewValue().equals(Double.MAX_VALUE)) {
+							AlertBox.display("错误", "数字输入格式错误！");
+							return;
+						}
+
+						MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+						try {
+							Method setter;
+							setter = MatOrder.class.getDeclaredMethod("set" +
+									Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
+									matProperty[matPropertyIndex].substring(1), double.class);
+							setter.invoke(editingOrder, event.getNewValue().doubleValue());
+							editingOrder.setKgAmount();
+							editingOrder.setTotalPrice();
+							DatabaseUtil.UpdateMatOrder(editingOrder);
+							matTableView.refresh();
+						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+							e.printStackTrace();
+							AlertBox.display("错误", "编辑订单错误！(数字）");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
+					});
+				}
 			} else if (i == 0 || i == 4 || i == 5 || i == 6) {
 				// Main.Date
 				TableColumn<MatOrder, Date> newColumn = new TableColumn<>(matHeaders[i]);
@@ -314,6 +353,26 @@ public class MainScreen implements Initializable {
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				newColumn.setMinWidth(110);
 				orderColumnArrayList.add(newColumn);
+
+				int matPropertyIndex = i;
+				newColumn.setCellFactory(datePickerEditableFactory);
+				newColumn.setOnEditCommit(event -> {
+					MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+					try {
+						System.out.println(event.getNewValue());
+						Method setter;
+						setter = MatOrder.class.getDeclaredMethod("set" +
+								Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
+								matProperty[matPropertyIndex].substring(1), Date.class);
+						setter.invoke(editingOrder, event.getNewValue());
+						DatabaseUtil.UpdateMatOrder(editingOrder);
+					} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+						AlertBox.display("错误", "编辑订单错误！(日期）");
+						e.printStackTrace();
+						new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+								e.getMessage(), e.getStackTrace(), false);
+					}
+				});
 			} else if (i == 13) {
 				// signed by increase column width
 				TableColumn<MatOrder, String> newColumn = new TableColumn<>(matHeaders[i]);
@@ -321,39 +380,110 @@ public class MainScreen implements Initializable {
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				newColumn.setMinWidth(60);
 				orderColumnArrayList.add(newColumn);
+				int matPropertyIndex = i;
+
+				// Set up for editable table view
+				newColumn.setCellFactory(stringEditableFactory);
+				newColumn.setOnEditCommit(event -> {
+					MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+					try {
+						Method setter;
+						setter = MatOrder.class.getDeclaredMethod("set" +
+								Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
+								matProperty[matPropertyIndex].substring(1), String.class);
+						setter.invoke(editingOrder, event.getNewValue());
+						DatabaseUtil.UpdateMatOrder(editingOrder);
+					} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+						AlertBox.display("错误", "编辑订单错误！(文字）");
+						new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+								e.getMessage(), e.getStackTrace(), false);
+					}
+				});
 			} else {
 				// String
 				TableColumn<MatOrder, String> newColumn = new TableColumn<>(matHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
+
+				// Set up for editable table view
+				// NOTES: Not allowing to edit sellers, Mat Of Type and Seller needs combo Box
+				if ((i <= 14 || i == 23) && i != 3) {
+					int matPropertyIndex = i;
+					newColumn.setCellFactory(stringEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+						MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+						try {
+							Method setter;
+							setter = MatOrder.class.getDeclaredMethod("set" +
+									Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
+									matProperty[matPropertyIndex].substring(1), String.class);
+							setter.invoke(editingOrder, event.getNewValue());
+							DatabaseUtil.UpdateMatOrder(editingOrder);
+						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+							AlertBox.display("错误", "编辑订单错误！(文字）");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
+					});
+				} else if (i == 3) {
+					int matPropertyIndex = i;
+					newColumn.setCellFactory(comboBoxEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+						MatOrder editingOrder = event.getTableView().getItems().get(event.getTablePosition().getRow());
+						try {
+							Method setter;
+							setter = MatOrder.class.getDeclaredMethod("set" +
+									Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
+									matProperty[matPropertyIndex].substring(1), String.class);
+							setter.invoke(editingOrder, event.getNewValue());
+							DatabaseUtil.UpdateMatOrder(editingOrder);
+						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+							AlertBox.display("错误", "编辑订单错误！(文字）");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
+					});
+				}
 			}
 		}
 
-		// if double clicked, enable edit
-		matTableView.setRowFactory(tv -> {
-			TableRow<MatOrder> row = new TableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					MatOrder order = row.getItem();
-					modifyMatOrder(order);
-				}
-			});
-			return row;
-		});
-
 		// if backspace or delete, delete the order
-		matTableView.setOnKeyReleased(keyEvent -> {
+		matTableView.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
 				deleteMatOrder(matTableView.getSelectionModel().getSelectedItem());
 			}
 		});
+
+		// if double clicked, enable edit
+//		matTableView.setRowFactory(tv -> {
+//			TableRow<MatOrder> row = new TableRow<>();
+//			row.setOnMouseClicked(event -> {
+//				if (event.getClickCount() == 2 && (!row.isEmpty())) editFocusedCell();
+//			});
+//			return row;
+//		});
+
+
+		matTableView.setEditable(true);
+		matTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
 
 		// filling the table
 		matTableView.getColumns().setAll(orderColumnArrayList);
 		matTableView.getItems().clear();
 		matTableView.getItems().setAll(selectedMatOrders);
 		matTableView.refresh();
+
+	}
+
+	/**
+	 * Function called when cell is selected and user is typing
+	 */
+	@SuppressWarnings("unchecked")
+	private void editFocusedCell() {
+		final TablePosition <MatOrder, ?> focusedCell =
+				matTableView.focusModelProperty().get().focusedCellProperty().get();
+		matTableView.edit(focusedCell.getRow(), focusedCell.getTableColumn());
 	}
 
 	/**
