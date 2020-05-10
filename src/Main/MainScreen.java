@@ -383,6 +383,7 @@ public class MainScreen implements Initializable {
 								matProperty[matPropertyIndex].substring(1), Date.class);
 						setter.invoke(editingOrder, event.getNewValue());
 						DatabaseUtil.UpdateMatOrder(editingOrder);
+						matTableView.refresh();
 					} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 						AlertBox.display("错误", "编辑订单错误！(日期）");
 						e.printStackTrace();
@@ -410,6 +411,7 @@ public class MainScreen implements Initializable {
 								matProperty[matPropertyIndex].substring(1), String.class);
 						setter.invoke(editingOrder, event.getNewValue());
 						DatabaseUtil.UpdateMatOrder(editingOrder);
+						matTableView.refresh();
 					} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 						AlertBox.display("错误", "编辑订单错误！(文字）");
 						new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -438,6 +440,7 @@ public class MainScreen implements Initializable {
 									matProperty[matPropertyIndex].substring(1), String.class);
 							setter.invoke(editingOrder, event.getNewValue());
 							DatabaseUtil.UpdateMatOrder(editingOrder);
+							matTableView.refresh();
 						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 							AlertBox.display("错误", "编辑订单错误！(文字）");
 							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -469,6 +472,7 @@ public class MainScreen implements Initializable {
 									matProperty[matPropertyIndex].substring(1), String.class);
 							setter.invoke(editingOrder, event.getNewValue());
 							DatabaseUtil.UpdateMatOrder(editingOrder);
+							matTableView.refresh();
 						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 							AlertBox.display("错误", "编辑订单错误！(文字）");
 							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -523,6 +527,26 @@ public class MainScreen implements Initializable {
 		// array of columns
 		Collection<TableColumn<ProductOrder, ?>> productColumnArrayList = new ArrayList<>();
 
+		// Regular String callback
+		Callback<TableColumn<ProductOrder, String>, TableCell<ProductOrder, String>> stringEditableFactory =
+				p -> new EditingCellWithTextFields<>(String.class) {};
+
+		// Prod name callback with autocomplete
+		Callback<TableColumn<ProductOrder, String>, TableCell<ProductOrder, String>> prodNameEditableFactory =
+				p -> new EditingCellForProdName<>() {};
+
+		// Prod name callback with autocomplete
+		Callback<TableColumn<ProductOrder, String>, TableCell<ProductOrder, String>> customerNameEditableFactory =
+				p -> new EditingCellForProdCustomer<>() {};
+
+		// Double callback
+		Callback<TableColumn<ProductOrder, Double>, TableCell<ProductOrder, Double>> doubleEditableFactory =
+				p -> new EditingCellWithTextFields<>(Double.class) {};
+
+		// Date Picker callback
+		Callback<TableColumn<ProductOrder, Date>, TableCell<ProductOrder, Date>> datePickerEditableFactory =
+				p -> new EditingCellWithDatePicker<>() {};
+
 		// loop to set up all regular columns
 		for (int i = 0; i < prodHeaders.length; i++) {
 			if (i == 4 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9) {
@@ -531,6 +555,37 @@ public class MainScreen implements Initializable {
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(prodProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				productColumnArrayList.add(newColumn);
+
+				// Exclude kgAmount and TotalPrice because they are automatic
+				if (i != 6 && i != 8) {
+					int prodPropertyIndex = i;
+					newColumn.setCellFactory(doubleEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+
+						if (event.getNewValue().equals(Double.MAX_VALUE)) {
+							AlertBox.display("错误", "数字输入格式错误！");
+							return;
+						}
+
+						ProductOrder editingOrder = event.getRowValue();
+						try {
+							Method setter;
+							setter = ProductOrder.class.getDeclaredMethod("set" +
+									Character.toUpperCase(prodProperty[prodPropertyIndex].charAt(0)) +
+									prodProperty[prodPropertyIndex].substring(1), double.class);
+							setter.invoke(editingOrder, event.getNewValue());
+							editingOrder.setKgAmount();
+							editingOrder.setTotalPrice();
+							DatabaseUtil.UpdateProdOrder(editingOrder);
+							prodTableView.refresh();
+						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+							e.printStackTrace();
+							AlertBox.display("错误", "编辑订单错误！(数字）");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
+					});
+				}
 			} else if (i == 0) {
 				// Main.Date
 				TableColumn<ProductOrder, Date> newColumn = new TableColumn<>(prodHeaders[i]);
@@ -538,31 +593,95 @@ public class MainScreen implements Initializable {
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				newColumn.setMinWidth(110);
 				productColumnArrayList.add(newColumn);
+
+				newColumn.setCellFactory(datePickerEditableFactory);
+				newColumn.setOnEditCommit(event -> {
+					ProductOrder editingOrder = event.getRowValue();
+					try {
+						editingOrder.setOrderDate(event.getNewValue());
+						DatabaseUtil.UpdateProdOrder(editingOrder);
+						prodTableView.refresh();
+					} catch (SQLException e) {
+						AlertBox.display("错误", "编辑订单错误！(日期）");
+						e.printStackTrace();
+						new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+								e.getMessage(), e.getStackTrace(), false);
+					}
+				});
 			} else {
 				// String
 				TableColumn<ProductOrder, String> newColumn = new TableColumn<>(prodHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(prodProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				productColumnArrayList.add(newColumn);
+
+				if (i == 3) {
+					newColumn.setCellFactory(prodNameEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+						ProductOrder editingOrder = event.getRowValue();
+						try {
+							editingOrder.setName(event.getNewValue());
+							editingOrder.setUnitPrice(DatabaseUtil.GetProdUnitPrice(event.getNewValue(),
+									editingOrder.getCustomer()));
+							editingOrder.setKgAmount();
+							editingOrder.setTotalPrice();
+							DatabaseUtil.UpdateProdOrder(editingOrder);
+							prodTableView.refresh();
+						} catch (SQLException e) {
+							AlertBox.display("错误", "编辑订单错误！(文字）");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
+					});
+				} else if (i == 2) {
+					newColumn.setCellFactory(customerNameEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+						ProductOrder editingOrder = event.getRowValue();
+						try {
+							editingOrder.setCustomer(event.getNewValue());
+							editingOrder.setUnitPrice(DatabaseUtil.GetProdUnitPrice(editingOrder.getName(),
+									event.getNewValue()));
+							editingOrder.setKgAmount();
+							editingOrder.setTotalPrice();
+							DatabaseUtil.UpdateProdOrder(editingOrder);
+							prodTableView.refresh();
+						} catch (SQLException e) {
+							AlertBox.display("错误", "编辑订单错误！(文字）");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
+					});
+				} else {
+					int prodPropertyIndex = i;
+					newColumn.setCellFactory(stringEditableFactory);
+					newColumn.setOnEditCommit(event -> {
+						ProductOrder editingOrder = event.getRowValue();
+						try {
+							Method setter;
+							setter = ProductOrder.class.getDeclaredMethod("set" +
+									Character.toUpperCase(prodProperty[prodPropertyIndex].charAt(0)) +
+									prodProperty[prodPropertyIndex].substring(1), String.class);
+							setter.invoke(editingOrder, event.getNewValue());
+							DatabaseUtil.UpdateProdOrder(editingOrder);
+							prodTableView.refresh();
+						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+							AlertBox.display("错误", "编辑订单错误！(文字）");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
+					});
+				}
 			}
 		}
 
-		// if double clicked, enable edit
-		prodTableView.setRowFactory(tv -> {
-			TableRow<ProductOrder> row = new TableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (event.getButton() == MouseButton.SECONDARY) {
-					if (row.getItem() != null) prodFormula(row.getItem());
-				} else if (event.getClickCount() == 2 && (!row.isEmpty())) modifyProdOrder(row.getItem());
-			});
-			return row;
-		});
-
 		// if delete or backspace, delete order
-		prodTableView.setOnKeyReleased(keyEvent -> {
+		prodTableView.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE)
 				deleteProdOrder(prodTableView.getSelectionModel().getSelectedItem());
 		});
+
+		prodTableView.setEditable(true);
+		prodTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
 
 		// filling the table
 		prodTableView.getColumns().setAll(productColumnArrayList);
