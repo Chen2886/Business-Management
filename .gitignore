@@ -1,2 +1,4 @@
 # Default ignored files
 /out/
+.DS_Store
+BusinessCashFlow.db
