@@ -22,6 +22,7 @@ import javafx.stage.*;
 import javafx.util.Callback;
 
 import java.awt.*;
+import java.beans.EventHandler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -299,16 +300,27 @@ public class MainScreen implements Initializable {
 		// array of columns
 		Collection<TableColumn<MatOrder, ?>> orderColumnArrayList = new ArrayList<>();
 
+		// Regular String callback
 		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> stringEditableFactory =
 				p -> new EditingCellWithTextFields<>(String.class) {};
+
+		// Mat name callback with autocomplete
 		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> matNameEditableFactory =
 				p -> new EditingCellForMatName<>() {};
+
+		// Double callback
 		Callback<TableColumn<MatOrder, Double>, TableCell<MatOrder, Double>> doubleEditableFactory =
 				p -> new EditingCellWithTextFields<>(Double.class) {};
-		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> comboBoxEditableFactory =
+
+		// Mat of Type combo Box callback
+		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> matOfTypeEditableFactory =
 				p -> new EditingCellForMatOfType<>() {};
+
+		// Date Picker callback
 		Callback<TableColumn<MatOrder, Date>, TableCell<MatOrder, Date>> datePickerEditableFactory =
 				p -> new EditingCellWithDatePicker<>() {};
+
+		// Mat Seller callback
 		Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>> matSellerEditableFactory =
 				p -> new EditingCellForMatSeller<>() {};
 
@@ -321,6 +333,7 @@ public class MainScreen implements Initializable {
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
 
+				// Exclude kgAmount and TotalPrice because they are automatic
 				if (i != 10 && i != 12) {
 					int matPropertyIndex = i;
 					newColumn.setCellFactory(doubleEditableFactory);
@@ -337,7 +350,7 @@ public class MainScreen implements Initializable {
 							setter = MatOrder.class.getDeclaredMethod("set" +
 									Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
 									matProperty[matPropertyIndex].substring(1), double.class);
-							setter.invoke(editingOrder, event.getNewValue().doubleValue());
+							setter.invoke(editingOrder, event.getNewValue());
 							editingOrder.setKgAmount();
 							editingOrder.setTotalPrice();
 							DatabaseUtil.UpdateMatOrder(editingOrder);
@@ -446,7 +459,7 @@ public class MainScreen implements Initializable {
 					});
 				} else if (i == 3) {
 					int matPropertyIndex = i;
-					newColumn.setCellFactory(comboBoxEditableFactory);
+					newColumn.setCellFactory(matOfTypeEditableFactory);
 					newColumn.setOnEditCommit(event -> {
 						MatOrder editingOrder = event.getRowValue();
 						try {
@@ -491,16 +504,6 @@ public class MainScreen implements Initializable {
 			}
 		});
 
-		// if double clicked, enable edit
-//		matTableView.setRowFactory(tv -> {
-//			TableRow<MatOrder> row = new TableRow<>();
-//			row.setOnMouseClicked(event -> {
-//				if (event.getClickCount() == 2 && (!row.isEmpty())) editFocusedCell();
-//			});
-//			return row;
-//		});
-
-
 		matTableView.setEditable(true);
 		matTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
 
@@ -509,17 +512,6 @@ public class MainScreen implements Initializable {
 		matTableView.getItems().clear();
 		matTableView.getItems().setAll(selectedMatOrders);
 		matTableView.refresh();
-
-	}
-
-	/**
-	 * Function called when cell is selected and user is typing
-	 */
-	@SuppressWarnings("unchecked")
-	private void editFocusedCell() {
-		final TablePosition <MatOrder, ?> focusedCell =
-				matTableView.focusModelProperty().get().focusedCellProperty().get();
-		matTableView.edit(focusedCell.getRow(), focusedCell.getTableColumn());
 	}
 
 	/**

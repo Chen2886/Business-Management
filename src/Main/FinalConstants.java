@@ -116,12 +116,12 @@ public class FinalConstants {
 
     public static String[] updateAutoCompleteProdCustomerName() {
         try {
-            ObservableList<ProductOrder> allProductOrder = DatabaseUtil.GetAllProdOrders();
+            ObservableList<ProdUnitPrice> allProdUnitPrice = DatabaseUtil.GetAllProdUnitPrice();
 
             // put everything into hashset to avoid duplicates
             HashSet<String> avoidDuplicateSet = new HashSet<>();
-            for (ProductOrder order : allProductOrder)
-                avoidDuplicateSet.add(order.getCustomer());
+            for (ProdUnitPrice unitPrice : allProdUnitPrice)
+                avoidDuplicateSet.add(unitPrice.getCustomer());
 
             // populating the actual array
             autoCompleteProdCustomerName = new String[avoidDuplicateSet.size()];
