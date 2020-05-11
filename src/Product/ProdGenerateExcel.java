@@ -20,7 +20,6 @@ import java.util.ArrayList;
 public class ProdGenerateExcel {
 
     // prod table headers
-    // TODO: Add Formula
     private static final String[] prodHeaders = new String[] {"订单日期", "送货单号", "客户", "产品名称",
             "规格", "数量", "公斤", "单价", "金额", "成本价", "备注"};
 

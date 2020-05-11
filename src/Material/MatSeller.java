@@ -1,7 +1,6 @@
 package Material;
 
 // from my other packages
-import Main.*;
 
 public class MatSeller {
 	private int sellerId;
