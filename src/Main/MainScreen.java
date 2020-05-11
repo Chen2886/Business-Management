@@ -1,24 +1,29 @@
 package Main;
 
 // from my other packages
+
 import CustomEditingCells.*;
 import Material.*;
 import Product.*;
-
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.stage.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.awt.*;
@@ -156,7 +161,7 @@ public class MainScreen implements Initializable {
 		});
 
 		// reset both table
-		resetButton.setOnAction(actionEvent -> resetTable());
+		resetButton.setOnMouseClicked(actionEvent -> resetTable());
 
 		// excel button
 		excelButton.setOnAction(event -> {
@@ -377,7 +382,6 @@ public class MainScreen implements Initializable {
 				newColumn.setOnEditCommit(event -> {
 					MatOrder editingOrder = event.getRowValue();
 					try {
-						System.out.println(event.getNewValue());
 						Method setter;
 						setter = MatOrder.class.getDeclaredMethod("set" +
 								Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
@@ -685,7 +689,6 @@ public class MainScreen implements Initializable {
 		// formula window
 		prodTableView.setOnMouseClicked(keyEvent -> {
 			if (keyEvent.getButton() == MouseButton.SECONDARY) {
-				System.out.println("here");
 				prodFormula(prodTableView.getSelectionModel().getSelectedItem());
 			}
 		});

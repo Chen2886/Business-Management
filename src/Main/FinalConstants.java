@@ -7,7 +7,9 @@ import Product.ProdUnitPrice;
 import Product.ProductOrder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.image.Image;
 
+import java.io.FileInputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -61,12 +63,21 @@ public class FinalConstants {
     // all material types
     public static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
+    public static Image refreshImage;
+
     public static void init() {
         updateAutoCompleteMatName();
         updateAutoCompleteProdName();
         updateAllMatSellers();
         updateAllMatOrders();
         updateAllProdOrders();
+
+        try {
+            FileInputStream input = new FileInputStream("refreshIcon.png");
+            refreshImage = new Image(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static ObservableList<MatOrder> updateAllMatOrders() {

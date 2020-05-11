@@ -1,14 +1,16 @@
 package CustomEditingCells;
 
 import Main.AlertBox;
-import Main.FinalConstants;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.input.KeyCode;
+import javafx.util.StringConverter;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +62,22 @@ public abstract class EditingCellWithDatePicker<S, T> extends TableCell<S, T> {
 
     private void createDatePicker() {
         datePicker = new DatePicker();
+        datePicker.setConverter(new StringConverter<>() {
+
+            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+            @Override
+            public String toString(LocalDate object) {
+                if (object == null) return "";
+                else return dateTimeFormatter.format(object);
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if(string == null || string.trim().isEmpty()) return null;
+                return LocalDate.parse(string, dateTimeFormatter);
+            }
+        });
         datePicker.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         datePicker.setOnKeyPressed(t -> {
             if (t.getCode() == KeyCode.ENTER) {
@@ -94,13 +112,6 @@ public abstract class EditingCellWithDatePicker<S, T> extends TableCell<S, T> {
     private String getString() {
         return getItem() == null ? "" : getItem().toString();
     }
-
-
-//    @Override
-//    public void commitEdit(T newValue) {
-//        super.commitEdit(newValue);
-//        System.out.println(newValue.toString());
-//    }
 
     /**
      *

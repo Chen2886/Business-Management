@@ -112,13 +112,6 @@ public abstract class EditingCellWithTextFields<S, T> extends TableCell<S, T> {
         return getItem() == null ? "" : getItem().toString();
     }
 
-
-//    @Override
-//    public void commitEdit(T newValue) {
-//        super.commitEdit(newValue);
-//        System.out.println(newValue.toString());
-//    }
-
     /**
      *
      * @param forward true gets the column to the right, false the column to the left of the current column

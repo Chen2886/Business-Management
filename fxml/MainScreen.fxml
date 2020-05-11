@@ -17,7 +17,7 @@
         </padding>
         <Button fx:id="resetButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
-                prefWidth="115.0" text="重置表格" wrapText="true"/>
+                prefWidth="115.0" wrapText="true"/>
         <Button fx:id="searchButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0"
                 prefWidth="115.0" text="精确搜索" wrapText="true"/>

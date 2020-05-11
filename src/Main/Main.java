@@ -31,8 +31,8 @@ public class Main extends Application {
 			bufferedWriter.write("");
 			bufferedWriter.close();
 			PrintStream printStream = new PrintStream("uncaughtError.log");
-//			System.setOut(printStream);
-//			System.setErr(printStream);
+			System.setOut(printStream);
+			System.setErr(printStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

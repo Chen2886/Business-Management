@@ -63,8 +63,6 @@ public abstract class EditingCellForMatOfType<S, T> extends TableCell<S, T> {
         ComboBox = new ComboBox<>(matOfType);
         ComboBox.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         ComboBox.setOnKeyPressed(t -> {
-            System.out.println("Key pressed");
-            System.out.println(t.getCode().toString());
             if (t.getCode() == KeyCode.ENTER) {
                 commitEdit((T) ComboBox.getSelectionModel().getSelectedItem());
                 t.consume();
@@ -83,13 +81,6 @@ public abstract class EditingCellForMatOfType<S, T> extends TableCell<S, T> {
     private String getString() {
         return getItem() == null ? "" : getItem().toString();
     }
-
-
-//    @Override
-//    public void commitEdit(T newValue) {
-//        super.commitEdit(newValue);
-//        System.out.println(newValue.toString());
-//    }
 
     /**
      *
