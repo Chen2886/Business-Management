@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -63,7 +64,17 @@ public class FinalConstants {
     // all material types
     public static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
-    public static Image refreshImage;
+    public static File resetWhite;
+    public static File resetBlack;
+    public static File searchWhite;
+    public static File searchBlack;
+    public static File addWhite;
+    public static File addBlack;
+    public static File excelWhite;
+    public static File excelBlack;
+    public static File quitWhite;
+    public static File quitBlack;
+
 
     public static void init() {
         updateAutoCompleteMatName();
@@ -71,13 +82,21 @@ public class FinalConstants {
         updateAllMatSellers();
         updateAllMatOrders();
         updateAllProdOrders();
+        initPictures();
+    }
 
-        try {
-            FileInputStream input = new FileInputStream("refreshIcon.png");
-            refreshImage = new Image(input);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void initPictures() {
+        resetWhite = new File("resources/images/resetWhite.png");
+        resetBlack = new File("resources/images/resetBlack.png");
+        searchWhite = new File("resources/images/searchWhite.png");
+        searchBlack = new File("resources/images/searchBlack.png");
+        addWhite = new File("resources/images/addWhite.png");
+        addBlack = new File("resources/images/addBlack.png");
+        excelWhite = new File("resources/images/exportWhite.png");
+        excelBlack = new File("resources/images/exportBlack.png");
+        quitWhite = new File("resources/images/powerWhite.png");
+        quitBlack = new File("resources/images/powerBlack.png");
+
     }
 
     public static ObservableList<MatOrder> updateAllMatOrders() {

@@ -26,6 +26,18 @@
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
 }
 
+/*For all the default buttons*/
+.custom-button {
+    -fx-background-color: transparent;
+    -fx-font-size: 22px;
+}
+
+/*hover over button*/
+.custom-button:hover {
+    -fx-cursor: hand;
+    -fx-text-base-color: BLACK;
+}
+
 /*For all the default labels*/
 .labels {
     -fx-alignment: center;
@@ -96,10 +108,10 @@
 }
 
 .search-text-field {
-    -fx-border-color: black;
-    -fx-border-width: 0 0 2 0;
+    /*-fx-border-color: black;*/
+    /*-fx-border-width: 0 0 2 0;*/
     -fx-background-color: transparent;
-    -fx-text-fill: grey;
+    /*-fx-text-fill: grey;*/
 }
 
 .search-text-field:hover {

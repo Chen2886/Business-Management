@@ -18,9 +18,9 @@ import java.nio.file.Paths;
 public class Main extends Application {
 
 	public static Stage mainStage;
-	public static String fxmlPath = "fxml/";
+	public static String fxmlPath = "resources/fxml/";
 	public static String styleSheetPath =
-		Paths.get("fxml/stylesheet.css").toUri().toString().replace("file:///", "");
+		Paths.get("resources/fxml/stylesheet.css").toUri().toString().replace("file:///", "");
 
 
 	// * main function to get everything started

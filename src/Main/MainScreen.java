@@ -5,6 +5,7 @@ package Main;
 import CustomEditingCells.*;
 import Material.*;
 import Product.*;
+import com.jfoenix.controls.JFXButton;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -12,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -78,23 +80,17 @@ public class MainScreen implements Initializable {
 	@FXML
 	TableView inventoryTableView;
 	@FXML
-	Button searchButton;
+	ImageView searchButton;
 	@FXML
-	Button addButton;
+	ImageView addButton;
 	@FXML
-	Button quitButton;
+	ImageView quitButton;
 	@FXML
-	Button resetButton;
+	ImageView resetButton;
 	@FXML
-	Button excelButton;
-	@FXML
-	Button matUnitPriceButton;
-	@FXML
-	Button prodUnitPriceButton;
+	ImageView excelButton;
 	@FXML
 	TextField searchBarTextField;
-	@FXML
-	ImageView searchImageView;
 
 	/**
 	 * Call to fill the table with all orders, set up actions for all buttons, set up search bars, set up image view
@@ -104,22 +100,8 @@ public class MainScreen implements Initializable {
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
-		resetButton.setText("重置\n表格");
-		searchButton.setText("精确\n搜索");
-		addButton.setText("添加\n编辑");
-		excelButton.setText("生成\n表格");
-		matUnitPriceButton.setText("原料\n单价");
-		prodUnitPriceButton.setText("产品\n单价");
 
-		// setting up the image for search bar
-		try {
-			FileInputStream input = new FileInputStream("searchIcon.png");
-			Image searchBarImage = new Image(input);
-			searchImageView.setImage(searchBarImage);
-		} catch (Exception e) {
-			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-					e.getMessage(), e.getStackTrace(), false);
-		}
+		initButtons();
 
 		fillMatTable(FinalConstants.updateAllMatOrders());
 		fillProdTable(FinalConstants.updateAllProdOrders());
@@ -131,7 +113,7 @@ public class MainScreen implements Initializable {
 		tempQuickSearchProdOrderList.addAll(FinalConstants.allProdOrders);
 
 		// precision search mat/prod orders
-		searchButton.setOnAction(event -> {
+		searchButton.setOnMouseClicked(event -> {
 			// if selected tab is material
 			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) searchMatOrder();
 				// if selected tab is product
@@ -139,7 +121,7 @@ public class MainScreen implements Initializable {
 		});
 
 		// add mat/prod orders
-		addButton.setOnAction(event -> {
+		addButton.setOnMouseClicked(event -> {
 			// if selected tab is material
 			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) addMatOrder();
 				// if selected tab is product
@@ -147,7 +129,7 @@ public class MainScreen implements Initializable {
 		});
 
 		// quit the application and save backup database
-		quitButton.setOnAction(actionEvent -> {
+		quitButton.setOnMouseClicked(actionEvent -> {
 			Path source = Paths.get("BusinessCashFlow.db");
 			Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
 			try {
@@ -164,18 +146,18 @@ public class MainScreen implements Initializable {
 		resetButton.setOnMouseClicked(actionEvent -> resetTable());
 
 		// excel button
-		excelButton.setOnAction(event -> {
+		excelButton.setOnMouseClicked(event -> {
 			// if selected tab is material
 			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) generateMatExcel();
 				// if selected tab is product
 			else generateProdExcel();
 		});
 
-		// mat unit price
-		matUnitPriceButton.setOnAction(event -> loadMatUnitPrice());
-
-		// prod unit price
-		prodUnitPriceButton.setOnAction(event -> loadProdUnitPrice());
+//		// mat unit price
+//		matUnitPriceButton.setOnMouseClicked(event -> loadMatUnitPrice());
+//
+//		// prod unit price
+//		prodUnitPriceButton.setOnMouseClicked(event -> loadProdUnitPrice());
 
 		// listener for search bar text field
 		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -227,10 +209,33 @@ public class MainScreen implements Initializable {
 		});
 	}
 
+	private void initButtons() {
+		setButtonImagesAndCursor(resetButton, FinalConstants.resetWhite, FinalConstants.resetBlack);
+		setButtonImagesAndCursor(searchButton, FinalConstants.searchWhite, FinalConstants.searchBlack);
+		setButtonImagesAndCursor(addButton, FinalConstants.addWhite, FinalConstants.addBlack);
+		setButtonImagesAndCursor(excelButton, FinalConstants.excelWhite, FinalConstants.excelBlack);
+		setButtonImagesAndCursor(quitButton, FinalConstants.quitWhite, FinalConstants.quitBlack);
+
+
+	}
+
+	private void setButtonImagesAndCursor(ImageView imageView, File White, File Black) {
+		imageView.setImage(new Image(White.toURI().toString()));
+		imageView.setOnMouseEntered(event -> {
+			imageView.setImage(new Image(Black.toURI().toString()));
+			Main.mainStage.getScene().setCursor(javafx.scene.Cursor.HAND);
+		});
+		imageView.setOnMouseExited(event -> {
+			imageView.setImage(new Image(White.toURI().toString()));
+			Main.mainStage.getScene().setCursor(Cursor.DEFAULT);
+		});
+
+	}
+
 	/**
 	 * Fill the inventory page
 	 */
-	public void initInventory() {
+	private void initInventory() {
 		try {
 			ArrayList<MatOrder> allMatOrders = new ArrayList<>(DatabaseUtil.GetAllMatOrders());
 			ArrayList<ProductOrder> allProdOrders = new ArrayList<>(DatabaseUtil.GetAllProdOrders());
