@@ -1,11 +1,11 @@
 package CustomEditingCells;
 
 import Main.FinalConstants;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.controlsfx.control.textfield.TextFields;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EditingCellForMatName<S, T> extends TableCell<S, T> {
-    private TextField textField;
+    private JFXTextField textField;
 
     public EditingCellForMatName() {
     }
@@ -60,7 +60,7 @@ public abstract class EditingCellForMatName<S, T> extends TableCell<S, T> {
     }
 
     private void createTextField() {
-        textField = new TextField(getString());
+        textField = new JFXTextField(getString());
         TextFields.bindAutoCompletion(textField, FinalConstants.updateAutoCompleteMatName());
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.setOnKeyPressed(t -> {

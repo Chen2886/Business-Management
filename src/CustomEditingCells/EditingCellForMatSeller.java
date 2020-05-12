@@ -2,15 +2,16 @@ package CustomEditingCells;
 
 import Main.AlertBox;
 import Main.DatabaseUtil;
-import Main.FinalConstants;
 import Main.HandleError;
 import Material.MatSeller;
+import com.jfoenix.controls.JFXComboBox;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.input.KeyCode;
 
 import java.sql.SQLException;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EditingCellForMatSeller<S, T> extends TableCell<S, T> {
-    private javafx.scene.control.ComboBox<String> ComboBox;
+    private JFXComboBox<String> ComboBox;
 
     public EditingCellForMatSeller() {
     }
@@ -76,7 +77,7 @@ public abstract class EditingCellForMatSeller<S, T> extends TableCell<S, T> {
         ObservableList<String> sellerNameList = FXCollections.observableArrayList();
         for (MatSeller seller : sellerList) sellerNameList.add(seller.getCompanyName());
 
-        ComboBox = new ComboBox<>(sellerNameList);
+        ComboBox = new JFXComboBox<>(sellerNameList);
         ComboBox.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         ComboBox.setOnKeyPressed(t -> {
             if (t.getCode() == KeyCode.ENTER) {

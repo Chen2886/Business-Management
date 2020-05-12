@@ -1,6 +1,7 @@
 package CustomEditingCells;
 
 import Main.AlertBox;
+import com.jfoenix.controls.JFXDatePicker;
 import javafx.application.Platform;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.DatePicker;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EditingCellWithDatePicker<S, T> extends TableCell<S, T> {
-    private DatePicker datePicker;
+    private JFXDatePicker datePicker;
 
     public EditingCellWithDatePicker() {
     }
@@ -61,7 +62,7 @@ public abstract class EditingCellWithDatePicker<S, T> extends TableCell<S, T> {
     }
 
     private void createDatePicker() {
-        datePicker = new DatePicker();
+        datePicker = new JFXDatePicker();
         datePicker.setConverter(new StringConverter<>() {
 
             private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");

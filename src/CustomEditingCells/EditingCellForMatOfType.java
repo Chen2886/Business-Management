@@ -1,19 +1,21 @@
 package CustomEditingCells;
 
 import Main.FinalConstants;
+import com.jfoenix.controls.JFXComboBox;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EditingCellForMatOfType<S, T> extends TableCell<S, T> {
-    private javafx.scene.control.ComboBox<String> ComboBox;
+    private JFXComboBox<String> ComboBox;
 
     public EditingCellForMatOfType() {
     }
@@ -60,7 +62,7 @@ public abstract class EditingCellForMatOfType<S, T> extends TableCell<S, T> {
 
     private void createComboBox() {
         ObservableList<String> matOfType = FXCollections.observableArrayList(FinalConstants.matOfType);
-        ComboBox = new ComboBox<>(matOfType);
+        ComboBox = new JFXComboBox<>(matOfType);
         ComboBox.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         ComboBox.setOnKeyPressed(t -> {
             if (t.getCode() == KeyCode.ENTER) {

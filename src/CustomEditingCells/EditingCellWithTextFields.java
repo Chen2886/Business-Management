@@ -1,20 +1,18 @@
 package CustomEditingCells;
 
 import Main.AlertBox;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EditingCellWithTextFields<S, T> extends TableCell<S, T> {
-    private TextField textField;
+    private JFXTextField textField;
     private final Class<T> type;
 
     public EditingCellWithTextFields(Class<T> type) {
@@ -63,7 +61,7 @@ public abstract class EditingCellWithTextFields<S, T> extends TableCell<S, T> {
     }
 
     private void createTextField() {
-        textField = new TextField(getString());
+        textField = new JFXTextField(getString());
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.setOnKeyPressed(t -> {
             if (t.getCode() == KeyCode.ENTER) {

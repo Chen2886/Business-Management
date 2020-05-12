@@ -1,6 +1,7 @@
 package CustomEditingCells;
 
 import Main.FinalConstants;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EditingCellForProdName<S, T> extends TableCell<S, T> {
-    private TextField textField;
+    private JFXTextField textField;
 
     public EditingCellForProdName() {
     }
@@ -60,7 +61,7 @@ public abstract class EditingCellForProdName<S, T> extends TableCell<S, T> {
     }
 
     private void createTextField() {
-        textField = new TextField(getString());
+        textField = new JFXTextField(getString());
         TextFields.bindAutoCompletion(textField, FinalConstants.updateAutoCompleteProdName());
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.setOnKeyPressed(t -> {
