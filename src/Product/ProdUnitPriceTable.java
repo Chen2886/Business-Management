@@ -2,6 +2,8 @@ package Product;
 
 import Main.*;
 import Material.MatUnitPrice;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -131,14 +133,14 @@ public class ProdUnitPriceTable implements Initializable {
         inputArrayList = new ArrayList<>();
         for (int i = 0; i < headers.length; i++) {
 
-            Label newLabel = new Label(headers[i]);
+            Label newLabel = new Label(headers[i] + ":");
             newLabel.setStyle("-fx-font-size: 20px;" +
                     "-fx-alignment: center-right;");
             prodInfoHBoxTop.getChildren().add(newLabel);
 
             if (i == 0) {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-                DatePicker datePicker = new DatePicker();
+                JFXDatePicker datePicker = new JFXDatePicker();
                 datePicker.setMaxWidth(Double.MAX_VALUE);
 
                 datePicker.setConverter(new StringConverter<LocalDate>() {
@@ -162,7 +164,7 @@ public class ProdUnitPriceTable implements Initializable {
                 inputArrayList.add(datePicker);
                 prodInfoHBoxTop.getChildren().add(datePicker);
             } else {
-                TextField newTextField = new TextField();
+                JFXTextField newTextField = new JFXTextField();
                 newTextField.setMaxWidth(Double.MAX_VALUE);
                 newTextField.setPromptText("输入" + headers[i]);
                 inputArrayList.add(newTextField);
