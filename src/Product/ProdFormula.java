@@ -219,18 +219,18 @@ public class ProdFormula {
             textField.setOnMouseClicked(autoTotalPriceEventHandler);
         }
 
-        // auto unit price
-        TextField unitPrice = inputArray.get(2);
-        EventHandler autoUnitPriceEventHandler = event -> {
-            try {
-                unitPrice.setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(inputArray.get(0).getText())));
-            } catch (Exception e) {
-                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                        e.getMessage(), e.getStackTrace(), false);
+        TextField nameTextField = inputArray.get(0);
+        nameTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                try {
+                    inputArray.get(2).setText(String.valueOf(DatabaseUtil.GetMatUnitPrice(nameTextField.getText())));
+                } catch (SQLException e) {
+                    inputArray.get(2).setText("0");
+                    new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                            e.getMessage(), e.getStackTrace(), false);
+                }
             }
-        };
-        unitPrice.setOnKeyTyped(autoUnitPriceEventHandler);
-        unitPrice.setOnMouseClicked(autoUnitPriceEventHandler);
+        });
     }
 
     /**
@@ -239,11 +239,6 @@ public class ProdFormula {
     private void initFormulaTable() {
 
         // init table
-        // setting up first action column
-        TableColumn<Formula, String> actionColumn = new TableColumn<>("动作");
-        actionColumn.setSortable(false);
-        actionColumn.setMinWidth(180);
-        formulaColumnList.add(actionColumn);
 
         // loop to set up all regular columns
         for (int i = 0; i < property.length; i++) {
@@ -264,45 +259,21 @@ public class ProdFormula {
             }
         }
 
-        // Setting a call back to handle the first column of action buttons
-        Callback<TableColumn<Formula, String>, TableCell<Formula, String>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<Formula, String> call(TableColumn<Formula, String> formulaItem) {
-                TableCell<Formula, String> cell = new TableCell<>() {
-                    // define new buttons
-                    Button edit = new Button("查看/编辑");
-                    Button delete = new Button("删除");
-                    HBox actionButtons = new HBox(edit, delete);
-
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            delete.setOnAction(event -> {
-                                if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
-                                    removeFormulaFromList(getTableView().getItems().get(getIndex()));
-                            });
-                            edit.setOnAction(event -> {
-                                viewFormula(getTableView().getItems().get(getIndex()));
-                            });
-
-                            edit.getStyleClass().add("actionButtons");
-                            delete.getStyleClass().add("actionButtons");
-                            actionButtons.setSpacing(5);
-                            actionButtons.setAlignment(Pos.CENTER);
-                            setGraphic(actionButtons);
-                        }
-                        setText(null);
-                    }
-                };
-                return cell;
+        formulaTable.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
+                removeFormulaFromList(formulaTable.getSelectionModel().getSelectedItem());
             }
-        };
-
-        actionColumn.setCellFactory(cellFactory);
-
+        });
+        formulaTable.setRowFactory(param -> {
+            TableRow<Formula> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    viewFormula(row.getItem());
+                }
+            });
+            return row;
+        });
+        
         formulaTable.getColumns().setAll(formulaColumnList);
         if (formula != null) formulaTable.getItems().setAll(formula.getFormulaList());
     }

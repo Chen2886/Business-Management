@@ -161,12 +161,6 @@ public class MainScreen implements Initializable {
 			else generateProdExcel();
 		});
 
-//		// mat unit price
-//		matUnitPriceButton.setOnMouseClicked(event -> loadMatUnitPrice());
-//
-//		// prod unit price
-//		prodUnitPriceButton.setOnMouseClicked(event -> loadProdUnitPrice());
-
 		// listener for mat search
 		matSearchTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
 			// if the text field is updated to be empty
