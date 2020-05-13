@@ -18,9 +18,7 @@
             </font>
         </TextField>
     </HBox>
-    <TableView VBox.vgrow="ALWAYS" fx:id="prodTable" styleClass="table-row-cell" AnchorPane.bottomAnchor="185" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="120" />
-    <HBox fx:id="matInfoHBoxTop" alignment="CENTER" prefHeight="55.0" spacing="10.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
-    </HBox>
-    <HBox fx:id="matInfoHBoxBottom" alignment="CENTER" prefHeight="55.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+    <TableView VBox.vgrow="ALWAYS" fx:id="prodTable" styleClass="table-row-cell"/>
+    <HBox fx:id="prodInfoHBoxTop" alignment="CENTER" prefHeight="55.0" spacing="10.0">
     </HBox>
 </VBox>

@@ -66,6 +66,10 @@ public class MatUnitPriceTable implements Initializable {
         return searchBarTextField;
     }
 
+    public TableView<MatUnitPrice> getMatTable() {
+        return matTable;
+    }
+
     private void init() {
 
         matNameTextField.setPromptText("输入" + headers[0]);

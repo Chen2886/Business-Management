@@ -72,6 +72,7 @@ public class MainScreen implements Initializable {
 	public Tab prodTab;
 	public Tab matUnitPriceTab;
 	public Tab prodUnitPriceTab;
+	public Tab remoteInventoryTab;
 	public TableView<ProductOrder> prodTableView;
 	public TableView<MatOrder> matTableView;
 	public TableView inventoryTableView;
@@ -126,6 +127,18 @@ public class MainScreen implements Initializable {
 			else addProdOrder();
 		});
 
+		mainTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue.equals(matUnitPriceTab) || newValue.equals(prodUnitPriceTab) || newValue.equals(remoteInventoryTab)) {
+				addButton.setDisable(true);
+				excelButton.setDisable(true);
+				searchButton.setDisable(true);
+			} else {
+				addButton.setDisable(false);
+				excelButton.setDisable(false);
+				searchButton.setDisable(false);
+			}
+		});
+
 		// quit the application and save backup database
 		quitButton.setOnMouseClicked(actionEvent -> {
 			Path source = Paths.get("BusinessCashFlow.db");
@@ -137,7 +150,8 @@ public class MainScreen implements Initializable {
 				new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 						e.getMessage(), e.getStackTrace(), false);
 			}
-			Main.mainStage.close();
+			if (ConfirmBox.display("确认", "确认关闭？", "是", "否"))
+				Main.mainStage.close();
 		});
 
 		// reset both table
@@ -870,6 +884,15 @@ public class MainScreen implements Initializable {
 			prodTableView.getItems().clear();
 			prodTableView.getItems().setAll(FinalConstants.updateAllProdOrders());
 			prodTableView.refresh();
+
+			matUnitPriceTableView.getItems().clear();
+			matUnitPriceTableView.getItems().setAll(DatabaseUtil.GetAllMatUnitPrice());
+			matUnitPriceTableView.refresh();
+
+			prodUnitPriceTableView.getItems().clear();
+			prodUnitPriceTableView.getItems().setAll(DatabaseUtil.GetAllProdUnitPrice());
+			prodUnitPriceTableView.refresh();
+
 		} catch (Exception e) {
 			AlertBox.display("错误", "重置表格错误，无法读取数据库！");
 			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -941,6 +964,7 @@ public class MainScreen implements Initializable {
 
 			MatUnitPriceTable matUnitPriceTable = loader.getController();
 			matUnitPriceSearchTextField = matUnitPriceTable.getSearchBarTextField();
+			matUnitPriceTableView = matUnitPriceTable.getMatTable();
 
 			matUnitPriceTab.setContent(vbox);
 		} catch (Exception e) {
@@ -961,6 +985,7 @@ public class MainScreen implements Initializable {
 
 			ProdUnitPriceTable prodUnitPriceTable = loader.getController();
 			prodUnitPriceSearchTextField = prodUnitPriceTable.getSearchBarTextField();
+			prodUnitPriceTableView = prodUnitPriceTable.getProdTable();
 
 			prodUnitPriceTab.setContent(vbox);
 		} catch (Exception e) {

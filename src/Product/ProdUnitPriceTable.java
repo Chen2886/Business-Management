@@ -12,7 +12,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -44,7 +43,7 @@ public class ProdUnitPriceTable implements Initializable {
 
     // mat section
     public Button cancelButton;
-    public HBox matInfoHBoxTop;
+    public HBox prodInfoHBoxTop;
     public HBox matInfoHBoxBottom;
 
     @FXML
@@ -74,6 +73,10 @@ public class ProdUnitPriceTable implements Initializable {
         return searchBarTextField;
     }
 
+    public TableView<ProdUnitPrice> getProdTable() {
+        return prodTable;
+    }
+
     private void init() {
 
         // quick search
@@ -97,8 +100,6 @@ public class ProdUnitPriceTable implements Initializable {
             prodTable.setItems(tempQuickSearchList);
 
         });
-
-//        addMatButton.setOnAction(event -> addMatUnitPrices());
 
         // array of columns
         Collection<TableColumn<ProdUnitPrice, ?>> columnArrayList = new ArrayList<>();
@@ -128,12 +129,12 @@ public class ProdUnitPriceTable implements Initializable {
 
         // set up all the text fields and labels
         inputArrayList = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < headers.length; i++) {
 
             Label newLabel = new Label(headers[i]);
             newLabel.setStyle("-fx-font-size: 20px;" +
                     "-fx-alignment: center-right;");
-            matInfoHBoxTop.getChildren().add(newLabel);
+            prodInfoHBoxTop.getChildren().add(newLabel);
 
             if (i == 0) {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -159,33 +160,20 @@ public class ProdUnitPriceTable implements Initializable {
                 });
 
                 inputArrayList.add(datePicker);
-                matInfoHBoxTop.getChildren().add(datePicker);
+                prodInfoHBoxTop.getChildren().add(datePicker);
             } else {
                 TextField newTextField = new TextField();
                 newTextField.setMaxWidth(Double.MAX_VALUE);
                 newTextField.setPromptText("输入" + headers[i]);
                 inputArrayList.add(newTextField);
-                matInfoHBoxTop.getChildren().add(newTextField);
+                prodInfoHBoxTop.getChildren().add(newTextField);
             }
 
         }
 
-        for (int i = 3; i < headers.length; i++) {
-            Label newLabel = new Label(headers[i]);
-            newLabel.setStyle("-fx-font-size: 20px;" +
-                    "-fx-alignment: center-right;");
-            matInfoHBoxBottom.getChildren().add(newLabel);
-
-            TextField newTextField = new TextField();
-            newTextField.setMaxWidth(Double.MAX_VALUE);
-            newTextField.setPromptText("输入" + headers[i]);
-            inputArrayList.add(newTextField);
-            matInfoHBoxBottom.getChildren().add(newTextField);
-        }
-
         Button addButton = new Button("添加");
         addButton.setStyle("-fx-font-size: 18px;");
-        matInfoHBoxBottom.getChildren().add(addButton);
+        prodInfoHBoxTop.getChildren().add(addButton);
 
         addButton.setOnAction(event -> {
             addProdUnitPrices();
