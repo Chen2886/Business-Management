@@ -3,11 +3,14 @@ package Product;
 import Main.*;
 
 // from my other packages
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.TextFields;
@@ -27,6 +30,7 @@ public class ProdAddOrder {
     // all prod property listed
     private static final String[] prodProperty = new String[]{"OrderDate", "Sku", "Customer", "Name",
             "UnitAmount", "Amount", "UnitPrice", "Note"};
+    public JFXDatePicker orderDatePicker;
 
     @FXML
     Button prodAddOrderCancelButton;
@@ -83,23 +87,6 @@ public class ProdAddOrder {
         int row = 1;
         int col = 0;
 
-        // setting up all the labels
-        ArrayList<Label> prodOrderLabelArray = new ArrayList<>();
-        for (int i = 0; i < prodHeaders.length; i++) {
-            Label newLabel = new Label(prodHeaders[i]);
-            newLabel.setStyle("-fx-font-size: 20px;" +
-                    "-fx-alignment: center-right;");
-            GridPane.setConstraints(newLabel, col, row++);
-            prodOrderLabelArray.add(newLabel);
-            if ((i + 5) % 4 == 0) {
-                row = 1;
-                col += 2;
-            }
-        }
-
-        row = 1;
-        col = 1;
-
         // setting up all the text field
         prodOrderInputArray = new ArrayList<>();
         for (int i = 0; i < prodProperty.length; i++) {
@@ -107,9 +94,8 @@ public class ProdAddOrder {
             // dates, date picker
             if (i == 0) {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-                DatePicker datePicker = new DatePicker();
 
-                datePicker.setConverter(new StringConverter<>() {
+                orderDatePicker.setConverter(new StringConverter<>() {
                     @Override
                     public String toString(LocalDate localDate) {
                         if (localDate == null) {
@@ -127,11 +113,11 @@ public class ProdAddOrder {
                     }
                 });
 
-                GridPane.setConstraints(datePicker, col, row++);
-                prodOrderInputArray.add(datePicker);
+                prodOrderInputArray.add(orderDatePicker);
+                row++;
             } else {
                 // regular text field
-                TextField newTextField = new TextField();
+                JFXTextField newTextField = new JFXTextField();
                 if (i == 2) {
                     FinalConstants.updateAutoCompleteProdCustomerName();
                     TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdCustomerName);
@@ -140,6 +126,7 @@ public class ProdAddOrder {
                     TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdName);
                 }
                 newTextField.setPromptText("输入" + prodHeaders[i].replace("\u3000", ""));
+                newTextField.setStyle("-fx-font-size: 20px;");
                 GridPane.setConstraints(newTextField, col, row++);
                 prodOrderInputArray.add(newTextField);
             }
@@ -147,7 +134,7 @@ public class ProdAddOrder {
             if ((i + 5) % 4 == 0) {
                 // grid constraint
                 row = 1;
-                col += 2;
+                col += 1;
             }
         }
 
@@ -175,8 +162,7 @@ public class ProdAddOrder {
 
         prodAddOrderGrid.setVgap(10);
         prodAddOrderGrid.setHgap(10);
-        prodAddOrderGrid.getChildren().addAll(prodOrderLabelArray);
-        prodAddOrderGrid.getChildren().addAll(prodOrderInputArray);
+        prodAddOrderGrid.getChildren().addAll(prodOrderInputArray.subList(1, prodOrderInputArray.size()));
 
     }
 

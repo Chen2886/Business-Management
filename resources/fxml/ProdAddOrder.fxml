@@ -4,13 +4,17 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import com.jfoenix.controls.JFXDatePicker?>
 <AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdAddOrder">
-    <GridPane fx:id="prodAddOrderGrid" alignment="CENTER" hgap="30.0" vgap="10.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" VBox.vgrow="ALWAYS">
+    <GridPane fx:id="prodAddOrderGrid" alignment="CENTER_RIGHT" hgap="50.0" vgap="130.0"
+              AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50" AnchorPane.rightAnchor="50" AnchorPane.topAnchor="10" VBox.vgrow="ALWAYS">
+        <HBox alignment="CENTER_RIGHT" spacing="20" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="订单日期:" style="-fx-font-size: 20px;" HBox.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
+            <JFXDatePicker fx:id="orderDatePicker" HBox.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" style="-fx-font-size: 20px;"/>
+        </HBox>
         <columnConstraints>
-            <ColumnConstraints/>
-            <ColumnConstraints/>
-            <ColumnConstraints/>
-            <ColumnConstraints/>
+            <ColumnConstraints percentWidth="50"/>
+            <ColumnConstraints percentWidth="50"/>
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />
@@ -19,7 +23,7 @@
             <RowConstraints vgrow="ALWAYS" />
             <RowConstraints vgrow="ALWAYS" />
         </rowConstraints>
-        <Label fx:id="prodAddOrderTitle" alignment="CENTER" contentDisplay="CENTER" text="添加产品" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+        <Label fx:id="prodAddOrderTitle" alignment="CENTER" contentDisplay="CENTER" text="添加产品" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
             <font>
                 <Font size="30.0" />
             </font>
