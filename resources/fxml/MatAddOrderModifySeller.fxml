@@ -73,10 +73,10 @@
                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                         </padding>
                         <columnConstraints>
-                           <ColumnConstraints halignment="RIGHT" />
-                           <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
-                           <ColumnConstraints halignment="RIGHT" />
-                           <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
+                           <ColumnConstraints halignment="RIGHT" percentWidth="10" />
+                           <ColumnConstraints halignment="LEFT" percentWidth="35" />
+                           <ColumnConstraints halignment="RIGHT" percentWidth="20" />
+                           <ColumnConstraints halignment="LEFT" percentWidth="35" />
                         </columnConstraints>
                         <rowConstraints>
                            <RowConstraints vgrow="ALWAYS" />

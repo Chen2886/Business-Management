@@ -306,7 +306,7 @@ public class MatAddOrderModifySeller {
 
 		// setting up seller text field
 		for (int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
-			TextField newTextField = new TextField();
+			JFXTextField newTextField = new JFXTextField();
 			newTextField.setMaxWidth(Double.MAX_VALUE);
 			newTextField.setAlignment(Pos.CENTER_LEFT);
 			newTextField.setPromptText("输入" + FinalConstants.matSellerTableHeaders[i]);
@@ -437,7 +437,7 @@ public class MatAddOrderModifySeller {
 
 		// setting up seller text field
 		for (int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
-			TextField newTextField = new TextField();
+			JFXTextField newTextField = new JFXTextField();
 			newTextField.setMaxWidth(Double.MAX_VALUE);
 			newTextField.setAlignment(Pos.CENTER_LEFT);
 			newTextField.setPromptText("输入" + FinalConstants.matSellerTableHeaders[i]);
