@@ -595,7 +595,7 @@ public class DatabaseUtil {
      * @throws SQLException if any error occurs while operating on database
      */
     public static ObservableList<MatUnitPrice> GetAllMatUnitPrice() throws SQLException {
-        String SQLCommand = "SELECT * FROM materialUnitPrice";
+        String SQLCommand = "SELECT * FROM materialUnitPrice REVER";
         ObservableList<MatUnitPrice> matUnitPriceTableObservableList = FXCollections.observableArrayList();
         try {
             ConnectToDB();
@@ -604,13 +604,10 @@ public class DatabaseUtil {
             ResultSet resultSet = statement.executeQuery(SQLCommand);
 
             while (resultSet.next()) {
-
                 // new order
                 MatUnitPrice newUnitPrice = new MatUnitPrice(resultSet.getString("name"),
                         resultSet.getInt("price"), resultSet.getString("note"));
-
-                // adding unitPrice
-                matUnitPriceTableObservableList.add(newUnitPrice);
+                matUnitPriceTableObservableList.add(0, newUnitPrice);
             }
             CloseConnectionToDB();
             return matUnitPriceTableObservableList;
@@ -629,7 +626,7 @@ public class DatabaseUtil {
      * @throws SQLException if any error occurs while operating on database
      */
     public static ObservableList<ProdUnitPrice> GetAllProdUnitPrice() throws SQLException {
-        String SQLCommand = "SELECT * FROM productUnitPrice";
+        String SQLCommand = "SELECT * FROM productUnitPrice ORDER BY serialNum DESC";
         ObservableList<ProdUnitPrice> prodUnitPriceObservableList = FXCollections.observableArrayList();
         try {
             ConnectToDB();

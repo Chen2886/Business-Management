@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,11 +21,13 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ResourceBundle;
 
-public class MatUnitPriceTable {
+public class MatUnitPriceTable implements Initializable {
 
     // prod table headers
     private static final String[] headers = new String[]{"原料名称", "单价", "备注"};
@@ -40,28 +43,17 @@ public class MatUnitPriceTable {
     public TextField matPriceTextField;
     public TextField matNoteTextField;
     public Button addMatButton;
-    public Button cancelButton;
-
-    @FXML
-    TextField searchBarTextField;
-    @FXML
-    ImageView searchImageView;
+    public TextField searchBarTextField;
 
     // tables
     public TableView<Material.MatUnitPrice> matTable;
-    Stage stage;
 
     // Arraylist
     ObservableList<MatUnitPrice> allUnitPrices;
     ObservableList<MatUnitPrice> tempQuickSearchList;
 
-    /**
-     * Public function for main controller to call
-     *
-     * @param stage the stage so it can be closed
-     */
-    public void initData(Stage stage) {
-        this.stage = stage;
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         try {
             allUnitPrices = DatabaseUtil.GetAllMatUnitPrice();
         } catch (SQLException e) {
@@ -70,21 +62,15 @@ public class MatUnitPriceTable {
         init();
     }
 
+    public TextField getSearchBarTextField() {
+        return searchBarTextField;
+    }
+
     private void init() {
 
         matNameTextField.setPromptText("输入" + headers[0]);
         matPriceTextField.setPromptText("输入" + headers[1]);
         matNoteTextField.setPromptText("输入" + headers[2]);
-
-        // setting up the image for search bar
-        try {
-            FileInputStream input = new FileInputStream("searchIcon.png");
-            Image searchBarImage = new Image(input);
-            searchImageView.setImage(searchBarImage);
-        } catch (Exception e) {
-            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-        }
 
         // quick search
         tempQuickSearchList = FXCollections.observableArrayList(allUnitPrices);
@@ -108,7 +94,6 @@ public class MatUnitPriceTable {
 
         });
 
-        cancelButton.setOnAction(event -> stage.close());
         addMatButton.setOnAction(event -> {
             addMatUnitPrices();
             FinalConstants.updateAutoCompleteMatName();
@@ -205,6 +190,7 @@ public class MatUnitPriceTable {
             allUnitPrices = DatabaseUtil.GetAllMatUnitPrice();
             matTable.getItems().clear();
             matTable.getItems().setAll(allUnitPrices);
+            matTable.refresh();
             if (ConfirmBox.display("确认", "是否更新所有此原料没有单价的订单？", "是", "否"))
                 updateAllUnitPrice(matUnitPrice.getName(), matUnitPrice.getUnitPrice());
             AlertBox.display("成功", "添加成功");
@@ -271,5 +257,4 @@ public class MatUnitPriceTable {
                     e.getMessage(), e.getStackTrace(), false);
         }
     }
-
 }

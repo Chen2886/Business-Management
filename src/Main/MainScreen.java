@@ -67,30 +67,26 @@ public class MainScreen implements Initializable {
 
 	private ObservableList<ProductOrder> tempQuickSearchProdOrderList;
 
-	@FXML
-	TabPane mainTabPane;
-	@FXML
-	Tab matTab;
-	@FXML
-	Tab prodTab;
-	@FXML
-	TableView<ProductOrder> prodTableView;
-	@FXML
-	TableView<MatOrder> matTableView;
-	@FXML
-	TableView inventoryTableView;
-	@FXML
-	ImageView searchButton;
-	@FXML
-	ImageView addButton;
-	@FXML
-	ImageView quitButton;
-	@FXML
-	ImageView resetButton;
-	@FXML
-	ImageView excelButton;
-	@FXML
-	TextField searchBarTextField;
+	public TabPane mainTabPane;
+	public Tab matTab;
+	public Tab prodTab;
+	public Tab matUnitPriceTab;
+	public Tab prodUnitPriceTab;
+	public TableView<ProductOrder> prodTableView;
+	public TableView<MatOrder> matTableView;
+	public TableView inventoryTableView;
+	public ImageView searchButton;
+	public ImageView addButton;
+	public ImageView quitButton;
+	public ImageView resetButton;
+	public ImageView excelButton;
+	public TextField prodUnitPriceSearchTextField;
+	public TextField matUnitPriceSearchTextField;
+	public TextField prodSearchTextField;
+	public TextField matSearchTextField;
+
+	public TableView<ProdUnitPrice> prodUnitPriceTableView;
+	public TableView<MatUnitPrice> matUnitPriceTableView;
 
 	/**
 	 * Call to fill the table with all orders, set up actions for all buttons, set up search bars, set up image view
@@ -105,6 +101,8 @@ public class MainScreen implements Initializable {
 
 		fillMatTable(FinalConstants.updateAllMatOrders());
 		fillProdTable(FinalConstants.updateAllProdOrders());
+		initMatUnitPrice();
+		initProdUnitPrice();
 
 		// filling the mat table
 		tempQuickSearchMatOrderList = FXCollections.observableArrayList();
@@ -159,46 +157,41 @@ public class MainScreen implements Initializable {
 //		// prod unit price
 //		prodUnitPriceButton.setOnMouseClicked(event -> loadProdUnitPrice());
 
-		// listener for search bar text field
-		searchBarTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-
-			// if selected tab is material
-			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) {
-
-				// if the text field is updated to be empty
-				if (newValue == null || newValue.equals("")) {
+		// listener for mat search
+		matSearchTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+			// if the text field is updated to be empty
+			if (newValue == null || newValue.equals("")) {
+				matTableView.getItems().clear();
+				tempQuickSearchMatOrderList = FXCollections.observableArrayList(FinalConstants.allMatOrders);
+			} else {
+				// if user deleted char, copying original array
+				if (newValue.length() < oldValue.length()) {
 					matTableView.getItems().clear();
 					tempQuickSearchMatOrderList = FXCollections.observableArrayList(FinalConstants.allMatOrders);
-				} else {
-					// if user deleted char, copying original array
-					if (newValue.length() < oldValue.length()) {
-						matTableView.getItems().clear();
-						tempQuickSearchMatOrderList = FXCollections.observableArrayList(FinalConstants.allMatOrders);
-					}
-					// removing orders that doesn't contain key word
-					tempQuickSearchMatOrderList.removeIf(matOrder -> !matOrder.toString().contains(newValue));
 				}
-				matTableView.setItems(tempQuickSearchMatOrderList);
+				// removing orders that doesn't contain key word
+				tempQuickSearchMatOrderList.removeIf(matOrder -> !matOrder.toString().contains(newValue));
 			}
+			matTableView.setItems(tempQuickSearchMatOrderList);
+		});
 
-			// if selected tab is order
-			else if (mainTabPane.getSelectionModel().getSelectedItem().equals(prodTab)) {
-
-				// if the text field is updated to be empty
-				if (newValue == null || newValue.equals("")) {
+		// listener for prod search
+		prodSearchTextField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+			// if the text field is updated to be empty
+			if (newValue == null || newValue.equals("")) {
+				prodTableView.getItems().clear();
+				tempQuickSearchProdOrderList = FXCollections.observableArrayList(FinalConstants.allProdOrders);
+			} else {
+				// if user deleted char, copying original array
+				if (newValue.length() < oldValue.length()) {
 					prodTableView.getItems().clear();
 					tempQuickSearchProdOrderList = FXCollections.observableArrayList(FinalConstants.allProdOrders);
-				} else {
-					// if user deleted char, copying original array
-					if (newValue.length() < oldValue.length()) {
-						prodTableView.getItems().clear();
-						tempQuickSearchProdOrderList = FXCollections.observableArrayList(FinalConstants.allProdOrders);
-					}
-					// removing orders that doesn't contain key word
-					tempQuickSearchProdOrderList.removeIf(productOrder -> !productOrder.toString().contains(newValue));
 				}
-				prodTableView.setItems(tempQuickSearchProdOrderList);
+				// removing orders that doesn't contain key word
+				tempQuickSearchProdOrderList.removeIf(productOrder -> !productOrder.toString().contains(newValue));
 			}
+			prodTableView.setItems(tempQuickSearchProdOrderList);
+
 		});
 
 		// inventory page
@@ -207,29 +200,6 @@ public class MainScreen implements Initializable {
 				initInventory();
 			}
 		});
-	}
-
-	private void initButtons() {
-		setButtonImagesAndCursor(resetButton, FinalConstants.resetWhite, FinalConstants.resetBlack);
-		setButtonImagesAndCursor(searchButton, FinalConstants.searchWhite, FinalConstants.searchBlack);
-		setButtonImagesAndCursor(addButton, FinalConstants.addWhite, FinalConstants.addBlack);
-		setButtonImagesAndCursor(excelButton, FinalConstants.excelWhite, FinalConstants.excelBlack);
-		setButtonImagesAndCursor(quitButton, FinalConstants.quitWhite, FinalConstants.quitBlack);
-
-
-	}
-
-	private void setButtonImagesAndCursor(ImageView imageView, File White, File Black) {
-		imageView.setImage(new Image(White.toURI().toString()));
-		imageView.setOnMouseEntered(event -> {
-			imageView.setImage(new Image(Black.toURI().toString()));
-			Main.mainStage.getScene().setCursor(javafx.scene.Cursor.HAND);
-		});
-		imageView.setOnMouseExited(event -> {
-			imageView.setImage(new Image(White.toURI().toString()));
-			Main.mainStage.getScene().setCursor(Cursor.DEFAULT);
-		});
-
 	}
 
 	/**
@@ -710,6 +680,35 @@ public class MainScreen implements Initializable {
 	}
 
 	/**
+	 * Change all button's image and behaviour
+	 */
+	private void initButtons() {
+		setButtonImagesAndCursor(resetButton, FinalConstants.resetWhite, FinalConstants.resetBlack);
+		setButtonImagesAndCursor(searchButton, FinalConstants.searchWhite, FinalConstants.searchBlack);
+		setButtonImagesAndCursor(addButton, FinalConstants.addWhite, FinalConstants.addBlack);
+		setButtonImagesAndCursor(excelButton, FinalConstants.excelWhite, FinalConstants.excelBlack);
+		setButtonImagesAndCursor(quitButton, FinalConstants.quitWhite, FinalConstants.quitBlack);
+	}
+
+	/**
+	 * Set image, when hovered, turn to black, otherwise turn to white
+	 * @param imageView the button that needs to be changed
+	 * @param White the white image
+	 * @param Black the black image
+	 */
+	private void setButtonImagesAndCursor(ImageView imageView, File White, File Black) {
+		imageView.setImage(new Image(White.toURI().toString()));
+		imageView.setOnMouseEntered(event -> {
+			imageView.setImage(new Image(Black.toURI().toString()));
+			Main.mainStage.getScene().setCursor(javafx.scene.Cursor.HAND);
+		});
+		imageView.setOnMouseExited(event -> {
+			imageView.setImage(new Image(White.toURI().toString()));
+			Main.mainStage.getScene().setCursor(Cursor.DEFAULT);
+		});
+	}
+
+	/**
 	 * Helper function to set up window to add a mat order
 	 */
 	private void addMatOrder() {
@@ -859,7 +858,10 @@ public class MainScreen implements Initializable {
 	 */
 	private void resetTable() {
 		try {
-			searchBarTextField.setText("");
+			matSearchTextField.clear();
+			prodSearchTextField.clear();
+			matUnitPriceSearchTextField.clear();
+			prodUnitPriceSearchTextField.clear();
 
 			matTableView.getItems().clear();
 			matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
@@ -931,22 +933,16 @@ public class MainScreen implements Initializable {
 	/**
 	 * Load FXML for unit price table
 	 */
-	private void loadMatUnitPrice() {
+	private void initMatUnitPrice() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatUnitPriceTable.fxml"));
-			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
+			Parent vbox = loader.load(fileInputStream);
 
 			MatUnitPriceTable matUnitPriceTable = loader.getController();
-			matUnitPriceTable.initData(stage);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("原料单价系统");
-			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
-			stage.setScene(scene);
-			stage.showAndWait();
-			resetTable();
+			matUnitPriceSearchTextField = matUnitPriceTable.getSearchBarTextField();
+
+			matUnitPriceTab.setContent(vbox);
 		} catch (Exception e) {
 			AlertBox.display("错误", "原料单价窗口错误！");
 			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -957,22 +953,16 @@ public class MainScreen implements Initializable {
 	/**
 	 * Load FXML for unit price table
 	 */
-	private void loadProdUnitPrice() {
+	private void initProdUnitPrice() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdUnitPriceTable.fxml"));
-			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
+			Parent vbox = loader.load(fileInputStream);
 
 			ProdUnitPriceTable prodUnitPriceTable = loader.getController();
-			prodUnitPriceTable.initData(stage);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("产品单价系统");
-			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
-			stage.setScene(scene);
-			stage.showAndWait();
-			resetTable();
+			prodUnitPriceSearchTextField = prodUnitPriceTable.getSearchBarTextField();
+
+			prodUnitPriceTab.setContent(vbox);
 		} catch (Exception e) {
 			AlertBox.display("错误", "产品单价窗口错误！");
 			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),

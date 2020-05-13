@@ -28,42 +28,49 @@
         <ImageView fx:id="quitButton" fitHeight="50" fitWidth="50" pickOnBounds="true" preserveRatio="true" />
         <Region VBox.vgrow="ALWAYS"/>
     </VBox>
-    <HBox alignment="CENTER_RIGHT" layoutX="135.0" prefHeight="100.0" spacing="10.0" styleClass="sidebar"
-          AnchorPane.leftAnchor="135.0" AnchorPane.rightAnchor="0.0"
-          AnchorPane.topAnchor="0.0">
-        <padding>
-            <Insets bottom="10.0" left="10.0" right="30.0" top="10.0"/>
-        </padding>
-        <TextField fx:id="searchBarTextField" styleClass="search-text-field" promptText="搜索"
-                   style="-fx-border-color: BLACK; -fx-border-radius: 2em;">
-            <font>
-                <Font size="25.0"/>
-            </font>
-            <padding>
-                <Insets top="10" bottom="10" left="10" right="10"/>
-            </padding>
-        </TextField>
-    </HBox>
-    <TabPane fx:id="mainTabPane" layoutX="135.0" layoutY="100.0" prefHeight="200.0"
-             prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
-             AnchorPane.leftAnchor="135.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+    <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
+             AnchorPane.leftAnchor="135.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Tab fx:id="matTab" text="原料管理" styleClass="main-screen-tab">
-            <TableView fx:id="matTableView" styleClass="table-row-cell" 
-                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <columns>
+            <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="135.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" spacing="10">
+                <HBox alignment="CENTER_RIGHT">
+                    <padding>
+                        <Insets top="10" left="10" right="10"/>
+                    </padding>
+                    <TextField fx:id="matSearchTextField" styleClass="search-text-field" promptText="搜索" maxHeight="20"
+                               HBox.hgrow="ALWAYS" style="-fx-border-color: BLACK; -fx-border-radius: 2em;">
+                        <font>
+                            <Font size="20.0"/>
+                        </font>
+                    </TextField>
+                </HBox>
+                <TableView fx:id="matTableView" styleClass="table-row-cell" VBox.vgrow="ALWAYS">
+                    <columns>
 
-                </columns>
-            </TableView>
+                    </columns>
+                </TableView>
+            </VBox>
         </Tab>
         <Tab fx:id="prodTab" styleClass="main-screen-tab" text="产品管理">
-            <TableView fx:id="prodTableView" styleClass="table-row-cell" 
-                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <columns>
+            <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="135.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" spacing="10">
+                <HBox alignment="CENTER_RIGHT">
+                    <padding>
+                        <Insets top="10" left="10" right="10"/>
+                    </padding>
+                    <TextField fx:id="prodSearchTextField" styleClass="search-text-field" promptText="搜索" maxHeight="20"
+                               HBox.hgrow="ALWAYS" style="-fx-border-color: BLACK; -fx-border-radius: 2em;">
+                        <font>
+                            <Font size="20.0"/>
+                        </font>
+                    </TextField>
+                </HBox>
+                <TableView fx:id="prodTableView" styleClass="table-row-cell" VBox.vgrow="ALWAYS">
+                    <columns>
 
-                </columns>
-            </TableView>
+                    </columns>
+                </TableView>
+            </VBox>
         </Tab>
         <Tab fx:id="remoteInventoryTab" styleClass="main-screen-tab" text="张家港库存">
             <TableView fx:id="inventoryTableView" styleClass="table-row-cell"
@@ -75,22 +82,8 @@
             </TableView>
         </Tab>
         <Tab fx:id="matUnitPriceTab" text="原料单价" styleClass="main-screen-tab">
-            <TableView fx:id="matUnitPriceTableView" styleClass="table-row-cell"
-                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <columns>
-
-                </columns>
-            </TableView>
         </Tab>
         <Tab fx:id="prodUnitPriceTab" text="产品单价" styleClass="main-screen-tab">
-            <TableView fx:id="prodUnitPriceTableView" styleClass="table-row-cell"
-                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <columns>
-
-                </columns>
-            </TableView>
         </Tab>
     </TabPane>
 </AnchorPane>

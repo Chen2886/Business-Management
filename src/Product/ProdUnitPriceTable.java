@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,13 +23,15 @@ import javafx.util.StringConverter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ResourceBundle;
 
-public class ProdUnitPriceTable {
+public class ProdUnitPriceTable implements Initializable {
 
     // prod table headers
     private static final String[] headers = new String[]{"日期", "送货单号", "客户名称", "产品名称", "单价", "备注"};
@@ -51,20 +54,14 @@ public class ProdUnitPriceTable {
 
     // tables
     public TableView<ProdUnitPrice> prodTable;
-    Stage stage;
 
     // Arraylist
     ObservableList<ProdUnitPrice> allUnitPrices;
     ObservableList<ProdUnitPrice> tempQuickSearchList;
     ArrayList<Node> inputArrayList;
 
-    /**
-     * Public function for main controller to call
-     *
-     * @param stage the stage so it can be closed
-     */
-    public void initData(Stage stage) {
-        this.stage = stage;
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         try {
             allUnitPrices = DatabaseUtil.GetAllProdUnitPrice();
         } catch (SQLException e) {
@@ -73,16 +70,11 @@ public class ProdUnitPriceTable {
         init();
     }
 
+    public TextField getSearchBarTextField() {
+        return searchBarTextField;
+    }
+
     private void init() {
-        // setting up the image for search bar
-        try {
-            FileInputStream input = new FileInputStream("searchIcon.png");
-            Image searchBarImage = new Image(input);
-            searchImageView.setImage(searchBarImage);
-        } catch (Exception e) {
-            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    e.getMessage(), e.getStackTrace(), false);
-        }
 
         // quick search
         tempQuickSearchList = FXCollections.observableArrayList(allUnitPrices);
@@ -106,7 +98,6 @@ public class ProdUnitPriceTable {
 
         });
 
-        cancelButton.setOnAction(event -> stage.close());
 //        addMatButton.setOnAction(event -> addMatUnitPrices());
 
         // array of columns
