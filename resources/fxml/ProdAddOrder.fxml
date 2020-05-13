@@ -5,11 +5,13 @@
 <?import javafx.scene.text.*?>
 
 <?import com.jfoenix.controls.JFXDatePicker?>
+<?import com.jfoenix.controls.JFXButton?>
 <AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdAddOrder">
-    <GridPane fx:id="prodAddOrderGrid" alignment="CENTER_RIGHT" hgap="50.0" vgap="130.0"
+    <GridPane fx:id="prodAddOrderGrid" alignment="CENTER_RIGHT" hgap="50.0" vgap="50.0"
               AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50" AnchorPane.rightAnchor="50" AnchorPane.topAnchor="10" VBox.vgrow="ALWAYS">
         <HBox alignment="CENTER_RIGHT" spacing="20" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
             <Label text="订单日期:" style="-fx-font-size: 20px;" HBox.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
+            <Region HBox.hgrow="ALWAYS"/>
             <JFXDatePicker fx:id="orderDatePicker" HBox.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" style="-fx-font-size: 20px;"/>
         </HBox>
         <columnConstraints>
@@ -31,24 +33,24 @@
     </GridPane>
     <HBox alignment="CENTER_RIGHT" layoutX="800.0" layoutY="480.0" prefHeight="35.0" prefWidth="300.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="10.0">
         <children>
-            <Button fx:id="prodAddOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons"
-                    text="取消" textAlignment="CENTER">
+            <JFXButton fx:id="prodAddOrderCancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false"
+                       style="-fx-background-color: #bbbdf6;" text="取消" textAlignment="CENTER">
                 <font>
                     <Font size="18.0" />
                 </font>
-            </Button>
-            <Button fx:id="prodAddOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons"
-                    text="完成" textAlignment="CENTER">
+            </JFXButton>
+            <JFXButton fx:id="prodAddOrderCompleteButton" alignment="CENTER_RIGHT" mnemonicParsing="false"
+                       style="-fx-background-color: #bbbdf6;" text="完成" textAlignment="CENTER">
                 <font>
                     <Font size="18.0" />
                 </font>
-            </Button>
-            <Button fx:id="prodAddOrderContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false" styleClass="actionButtons"
-                    text="保存并继续添加" textAlignment="CENTER">
+            </JFXButton>
+            <JFXButton fx:id="prodAddOrderContinueButton" alignment="CENTER_RIGHT" mnemonicParsing="false"
+                       style="-fx-background-color: #bbbdf6;" text="保存并继续添加" textAlignment="CENTER">
                 <font>
                     <Font size="18.0" />
                 </font>
-            </Button>
+            </JFXButton>
         </children>
     </HBox>
 </AnchorPane>

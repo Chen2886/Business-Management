@@ -94,7 +94,6 @@ public class ProdAddOrder {
             // dates, date picker
             if (i == 0) {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-
                 orderDatePicker.setConverter(new StringConverter<>() {
                     @Override
                     public String toString(LocalDate localDate) {
@@ -112,7 +111,7 @@ public class ProdAddOrder {
                         return LocalDate.from(dateTimeFormatter.parse(string));
                     }
                 });
-
+                orderDatePicker.setValue(LocalDate.now());
                 prodOrderInputArray.add(orderDatePicker);
                 row++;
             } else {
@@ -239,7 +238,7 @@ public class ProdAddOrder {
      */
     private void clearProdOrderFields() {
         for (Node node : prodOrderInputArray) {
-            if (node instanceof TextField) ((TextField) node).clear();
+            if (node instanceof TextField && !node.equals(prodOrderInputArray.get(1))) ((TextField) node).clear();
         }
     }
 

@@ -38,6 +38,10 @@
     -fx-text-base-color: BLACK;
 }
 
+.empty-button {
+
+}
+
 /*For all the default labels*/
 .labels {
     -fx-alignment: center;
