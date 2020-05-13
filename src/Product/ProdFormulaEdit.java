@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -30,13 +31,10 @@ public class ProdFormulaEdit {
     private static String[] property = new String[]{"name", "amount", "unitPrice", "totalPrice"};
     private static String[] header = new String[]{"原料名称", "数量", "单价", "金额"};
     private static String[] formulaInfoHeader = new String[]{"配方名称", "数量", "单价", "金额"};
+    public ImageView backButton;
 
     @FXML
     HBox formulaInfoHBox;
-    @FXML
-    Button cancelButton;
-    @FXML
-    Button saveButton;
     @FXML
     TableView<Formula> formulaTable;
     @FXML
@@ -67,7 +65,6 @@ public class ProdFormulaEdit {
         this.formula = formula;
         this.currentStage = currentStage;
         formulaColumnList = new ArrayList<>();
-
         this.parentFormulaTableView = parentFormulaTableView;
         init();
     }
@@ -76,6 +73,8 @@ public class ProdFormulaEdit {
      * Initialize everything on the screen
      */
     private void init() {
+
+        FinalConstants.setButtonImagesAndCursor(backButton, FinalConstants.backWhite, FinalConstants.backBlack);
 
         initFormulaTable();
         initFormulaInfoHBox();
@@ -88,11 +87,7 @@ public class ProdFormulaEdit {
                 currentStage.close();
             event.consume();
         });
-        cancelButton.setOnAction(event -> {
-            if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
-                currentStage.close();
-        });
-        saveButton.setOnAction(event -> saveFormula());
+        backButton.setOnMouseClicked(event -> saveFormula());
     }
 
     /**
@@ -245,11 +240,6 @@ public class ProdFormulaEdit {
     private void initFormulaTable() {
 
         // init table
-        // setting up first action column
-        TableColumn<Formula, String> actionColumn = new TableColumn<>("动作");
-        actionColumn.setSortable(false);
-        actionColumn.setMinWidth(180);
-        formulaColumnList.add(actionColumn);
 
         // loop to set up all regular columns
         for (int i = 0; i < property.length; i++) {
@@ -270,45 +260,22 @@ public class ProdFormulaEdit {
             }
         }
 
-        // Setting a call back to handle the first column of action buttons
-        Callback<TableColumn<Formula, String>, TableCell<Formula, String>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<Formula, String> call(TableColumn<Formula, String> formulaItem) {
-                TableCell<Formula, String> cell = new TableCell<>() {
-                    // define new buttons
-                    Button edit = new Button("查看/编辑");
-                    Button delete = new Button("删除");
-                    HBox actionButtons = new HBox(edit, delete);
-
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-
-                            delete.setOnAction(event -> {
-                                if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
-                                    removeFormulaFromList(getTableView().getItems().get(getIndex()));
-                            });
-                            edit.setOnAction(event -> {
-                                viewFormula(getTableView().getItems().get(getIndex()));
-                            });
-
-                            edit.getStyleClass().add("actionButtons");
-                            delete.getStyleClass().add("actionButtons");
-                            actionButtons.setSpacing(5);
-                            actionButtons.setAlignment(Pos.CENTER);
-                            setGraphic(actionButtons);
-                        }
-                        setText(null);
-                    }
-                };
-                return cell;
+        formulaTable.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
+                if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
+                    removeFormulaFromList(formulaTable.getSelectionModel().getSelectedItem());
             }
-        };
+        });
 
-        actionColumn.setCellFactory(cellFactory);
+        formulaTable.setRowFactory(param -> {
+            TableRow<Formula> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    viewFormula(row.getItem());
+                }
+            });
+            return row;
+        });
 
         formulaTable.getColumns().setAll(formulaColumnList);
         if (formula != null) formulaTable.getItems().setAll(formula.getFormulaList());
@@ -434,20 +401,9 @@ public class ProdFormulaEdit {
             FXMLLoader loader = new FXMLLoader();
             InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdFormulaEdit.fxml");
             Parent newScene = loader.load(fileInputStream);
-            Stage stage = new Stage();
-
             ProdFormulaEdit prodFormulaEdit = loader.getController();
-            prodFormulaEdit.initData(parentFormula, formula, stage, formulaTable);
-
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("编辑配方");
-
-            Scene scene = new Scene(newScene);
-            scene.getStylesheets().add(getClass().getResource(Main.styleSheetPath).toURI().toString());
-            stage.setScene(scene);
-            stage.showAndWait();
-            formulaTable.refresh();
-            calcBasePrice();
+            prodFormulaEdit.initData(parentFormula, formula, currentStage, formulaTable);
+            currentStage.setScene(new Scene(newScene));
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
             new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),

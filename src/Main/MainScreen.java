@@ -687,29 +687,11 @@ public class MainScreen implements Initializable {
 	 * Change all button's image and behaviour
 	 */
 	private void initButtons() {
-		setButtonImagesAndCursor(resetButton, FinalConstants.resetWhite, FinalConstants.resetBlack);
-		setButtonImagesAndCursor(searchButton, FinalConstants.searchWhite, FinalConstants.searchBlack);
-		setButtonImagesAndCursor(addButton, FinalConstants.addWhite, FinalConstants.addBlack);
-		setButtonImagesAndCursor(excelButton, FinalConstants.excelWhite, FinalConstants.excelBlack);
-		setButtonImagesAndCursor(quitButton, FinalConstants.quitWhite, FinalConstants.quitBlack);
-	}
-
-	/**
-	 * Set image, when hovered, turn to black, otherwise turn to white
-	 * @param imageView the button that needs to be changed
-	 * @param White the white image
-	 * @param Black the black image
-	 */
-	private void setButtonImagesAndCursor(ImageView imageView, URL White, URL Black) {
-		imageView.setImage(new Image(White.toString()));
-		imageView.setOnMouseEntered(event -> {
-			imageView.setImage(new Image(Black.toString()));
-			Main.mainStage.getScene().setCursor(javafx.scene.Cursor.HAND);
-		});
-		imageView.setOnMouseExited(event -> {
-			imageView.setImage(new Image(White.toString()));
-			Main.mainStage.getScene().setCursor(Cursor.DEFAULT);
-		});
+		FinalConstants.setButtonImagesAndCursor(resetButton, FinalConstants.resetWhite, FinalConstants.resetBlack);
+		FinalConstants.setButtonImagesAndCursor(searchButton, FinalConstants.searchWhite, FinalConstants.searchBlack);
+		FinalConstants.setButtonImagesAndCursor(addButton, FinalConstants.addWhite, FinalConstants.addBlack);
+		FinalConstants.setButtonImagesAndCursor(excelButton, FinalConstants.excelWhite, FinalConstants.excelBlack);
+		FinalConstants.setButtonImagesAndCursor(quitButton, FinalConstants.quitWhite, FinalConstants.quitBlack);
 	}
 
 	/**
@@ -922,20 +904,14 @@ public class MainScreen implements Initializable {
 			FXMLLoader loader = new FXMLLoader();
 			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdFormula.fxml");
 			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
-
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			stage.setHeight(screenSize.height * 0.9);
 
 			ProdFormula prodFormula = loader.getController();
-			prodFormula.initData(order, stage);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("配方");
+			prodFormula.initData(order, Main.mainStage);
+			Main.mainStage.setTitle("编辑配方");
+
 			Scene scene = new Scene(newScene);
 			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
-			stage.setScene(scene);
-			stage.showAndWait();
-			resetTable();
+			Main.mainStage.setScene(scene);
 		} catch (Exception e) {
 			AlertBox.display("错误", "配方窗口错误！");
 			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),

@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -22,6 +23,7 @@ import javafx.util.Callback;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -36,10 +38,9 @@ public class ProdFormula {
     private static String[] formulaInfoProperty = new String[]{"Name", "BasePrice"};
 
     public Button defaultButton;
+    public ImageView backButton;
     @FXML
     HBox formulaTopHBox;
-    @FXML
-    Button cancelButton;
     @FXML
     Button overrideButton;
     @FXML
@@ -68,6 +69,9 @@ public class ProdFormula {
      * @param currentStage  the stage, so it can be closed later
      */
     public void initData(ProductOrder selectedOrder, Stage currentStage) {
+
+        FinalConstants.setButtonImagesAndCursor(backButton, FinalConstants.backWhite, FinalConstants.backBlack);
+
         this.selectedOrder = selectedOrder;
         this.currentStage = currentStage;
         formulaColumnList = new ArrayList<>();
@@ -115,13 +119,14 @@ public class ProdFormula {
             event.consume();
         });
 
-        cancelButton.setOnAction(event -> {
-            if (ConfirmBox.display("确认", "确定关闭窗口？进度即将丢失", "是", "否"))
-                currentStage.close();
+        backButton.setOnMouseClicked(event -> {
+            if (ConfirmBox.display("确认", "确定回到主页？配方即将不被保存", "是", "否"))
+                loadMainScreen();
         });
-        saveNewButton.setOnAction(event -> saveNewFormula());
-        overrideButton.setOnAction(event -> overrideCurrentFormula());
-        defaultButton.setOnAction(event -> saveDefaultFormula());
+
+        saveNewButton.setOnMouseClicked(event -> saveNewFormula());
+        overrideButton.setOnMouseClicked(event -> overrideCurrentFormula());
+        defaultButton.setOnMouseClicked(event -> saveDefaultFormula());
         if (formula == null) {
             formula = new Formula(selectedOrder.getName());
             isNewFormula = true;
@@ -261,9 +266,11 @@ public class ProdFormula {
 
         formulaTable.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
-                removeFormulaFromList(formulaTable.getSelectionModel().getSelectedItem());
+                if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
+                    removeFormulaFromList(formulaTable.getSelectionModel().getSelectedItem());
             }
         });
+
         formulaTable.setRowFactory(param -> {
             TableRow<Formula> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -273,7 +280,7 @@ public class ProdFormula {
             });
             return row;
         });
-        
+
         formulaTable.getColumns().setAll(formulaColumnList);
         if (formula != null) formulaTable.getItems().setAll(formula.getFormulaList());
     }
@@ -283,24 +290,14 @@ public class ProdFormula {
      */
     private void viewFormula(Formula formula) {
         try {
-
             FXMLLoader loader = new FXMLLoader();
             InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdFormulaEdit.fxml");
             Parent newScene = loader.load(fileInputStream);
-            Stage stage = new Stage();
-
             ProdFormulaEdit prodFormulaEdit = loader.getController();
-            prodFormulaEdit.initData(null, formula, stage, formulaTable);
-
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("编辑配方");
-
+            prodFormulaEdit.initData(null, formula, currentStage, formulaTable);
             Scene scene = new Scene(newScene);
             scene.getStylesheets().add(getClass().getResource(Main.styleSheetPath).toURI().toString());
-            stage.setScene(scene);
-            stage.showAndWait();
-            formulaTable.refresh();
-            calcBasePrice();
+            currentStage.setScene(scene);
         } catch (Exception e) {
             AlertBox.display("错误", "窗口错误");
             new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -401,10 +398,9 @@ public class ProdFormula {
             selectedOrder.setFormulaIndex(index);
             DatabaseUtil.UpdateProdOrder(selectedOrder);
 
-            DatabaseUtil.UpdateProdOrder(selectedOrder);
-            defaultButton.setVisible(true);
-            currentStage.close();
+            loadMainScreen();
         } catch (SQLException e) {
+            AlertBox.display("错误", "保存配方错误！");
             new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
         }
@@ -448,7 +444,6 @@ public class ProdFormula {
                 DatabaseUtil.UpdateNewestFormula(true, selectedOrder.getName(), selectedOrder.getFormulaIndex());
             else DatabaseUtil.UpdateNewestFormula(false, selectedOrder.getName(), selectedOrder.getFormulaIndex());
             AlertBox.display("成功", "设置成功");
-            currentStage.close();
         } catch (SQLException e) {
             AlertBox.display("错误", "设置默认错误");
             new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -475,6 +470,23 @@ public class ProdFormula {
         } catch (Exception ignored) {
         }
         return returnVal;
+    }
+
+    private void loadMainScreen() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MainScreen.fxml");
+            Parent newScene = loader.load(fileInputStream);
+            Main.mainStage.setTitle("订单管理系统");
+
+            Scene scene = new Scene(newScene);
+            scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
+            Main.mainStage.setScene(scene);
+        } catch (Exception e) {
+            AlertBox.display("错误", "主页窗口错误！");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+        }
     }
 
 }

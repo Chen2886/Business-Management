@@ -2,6 +2,7 @@ package Product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Formula implements Serializable {
 
@@ -33,6 +34,25 @@ public class Formula implements Serializable {
         this.unitPrice = unitPrice;
         setTotalPrice();
         formulaList = new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Formula)) return false;
+        else {
+            Formula formula = (Formula) o;
+            return Double.compare(formula.amount, amount) == 0 &&
+                    Double.compare(formula.unitPrice, unitPrice) == 0 &&
+                    Double.compare(formula.totalPrice, totalPrice) == 0 &&
+                    Objects.equals(parent, formula.parent) &&
+                    Objects.equals(name, formula.name) &&
+                    Objects.equals(formulaList, formula.formulaList);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(parent, name, amount, unitPrice, totalPrice, formulaList);
     }
 
     public void addFormula(Formula formula) {

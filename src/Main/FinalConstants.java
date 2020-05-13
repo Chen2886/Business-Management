@@ -7,6 +7,9 @@ import Product.ProdUnitPrice;
 import Product.ProductOrder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Cursor;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -72,7 +75,8 @@ public class FinalConstants {
     public static URL excelBlack;
     public static URL quitWhite;
     public static URL quitBlack;
-
+    public static URL backWhite;
+    public static URL backBlack;
 
     public static void init() {
         updateAutoCompleteMatName();
@@ -94,7 +98,8 @@ public class FinalConstants {
         excelBlack = FinalConstants.class.getResource("/images/exportBlack.png");
         quitWhite = FinalConstants.class.getResource("/images/powerWhite.png");
         quitBlack = FinalConstants.class.getResource("/images/powerBlack.png");
-
+        backWhite = FinalConstants.class.getResource("/images/backWhite.png");
+        backBlack = FinalConstants.class.getResource("/images/backBlack.png");
     }
 
     public static ObservableList<MatOrder> updateAllMatOrders() {
@@ -200,5 +205,23 @@ public class FinalConstants {
                     e.getMessage(), e.getStackTrace(), false);
         }
         return autoCompleteMatName;
+    }
+
+    /**
+     * Set image, when hovered, turn to black, otherwise turn to white
+     * @param imageView the button that needs to be changed
+     * @param White the white image
+     * @param Black the black image
+     */
+    public static void setButtonImagesAndCursor(ImageView imageView, URL White, URL Black) {
+        imageView.setImage(new Image(White.toString()));
+        imageView.setOnMouseEntered(event -> {
+            imageView.setImage(new Image(Black.toString()));
+            Main.mainStage.getScene().setCursor(javafx.scene.Cursor.HAND);
+        });
+        imageView.setOnMouseExited(event -> {
+            imageView.setImage(new Image(White.toString()));
+            Main.mainStage.getScene().setCursor(Cursor.DEFAULT);
+        });
     }
 }
