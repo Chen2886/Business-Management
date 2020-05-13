@@ -3,6 +3,9 @@ package Material;
 // from my other packages
 import Main.*;
 
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -183,7 +186,8 @@ public class MatAddOrderModifySeller {
 
 			// type of mat, combo box
 			if (i == 3) {
-				ComboBox<String> newComboBox = new ComboBox<>();
+				JFXComboBox<String> newComboBox = new JFXComboBox<>();
+				newComboBox.setPromptText("选择" + FinalConstants.matTableHeaders[i]);
 				newComboBox.getItems().setAll(FinalConstants.matOfType);
 				newComboBox.setMaxWidth(Double.MAX_VALUE);
 				GridPane.setConstraints(newComboBox, col, row++);
@@ -192,7 +196,8 @@ public class MatAddOrderModifySeller {
 
 			// seller, combo box
 			else if (i == FinalConstants.matPropertyHeaders.length - 1) {
-				ComboBox<String> sellerComboBox = new ComboBox<>();
+				JFXComboBox<String> sellerComboBox = new JFXComboBox<>();
+				sellerComboBox.setPromptText("选择" + FinalConstants.matTableHeaders[i]);
 
 				// getting all the company names
 				String[] allSellerCompany = new String[allMatSeller.size()];
@@ -209,7 +214,8 @@ public class MatAddOrderModifySeller {
 			// dates, date picker
 			else if (i == 0 || i == 4 || i == 5 || i == 6) {
 				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-				DatePicker datePicker = new DatePicker();
+				JFXDatePicker datePicker = new JFXDatePicker();
+				datePicker.setPromptText("选择" + FinalConstants.matTableHeaders[i]);
 				datePicker.setMaxWidth(Double.MAX_VALUE);
 
 				datePicker.setConverter(new StringConverter<>() {
@@ -232,7 +238,7 @@ public class MatAddOrderModifySeller {
 
 			// regular text field
 			else {
-				TextField newTextField = new TextField();
+				JFXTextField newTextField = new JFXTextField();
 				// auto complete for name
 				if (i == 2) {
 					FinalConstants.updateAutoCompleteMatName();

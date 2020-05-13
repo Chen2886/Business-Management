@@ -5,16 +5,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Material.MatSearchOrder">
    <children>
-      <GridPane fx:id="MatEditOrderGrid" layoutX="14.0" layoutY="14.0" prefHeight="453.0" prefWidth="920.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
+      <GridPane hgap="30" vgap="30" fx:id="MatEditOrderGrid" layoutX="14.0" layoutY="14.0" prefHeight="453.0" prefWidth="920.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
          <columnConstraints>
-            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="33" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="33" />
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="33" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
@@ -26,7 +24,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
          </rowConstraints>
          <children>
-            <Label fx:id="editOrderTitleLabel" alignment="CENTER" contentDisplay="CENTER" text="搜索订单" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+            <Label fx:id="editOrderTitleLabel" alignment="CENTER" contentDisplay="CENTER" text="搜索订单" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
                <font>
                   <Font size="30.0" />
                </font>
@@ -35,18 +33,18 @@
       </GridPane>
       <HBox layoutX="800.0" layoutY="480.0" prefHeight="75.0" prefWidth="131.0" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="460.0">
          <children>
-            <Button fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="取消" styleClass="actionButtons"
+            <JFXButton fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="取消" styleClass="actionButtons"
+                       textAlignment="RIGHT">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </JFXButton>
+            <JFXButton fx:id="completeButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="搜索" styleClass="actionButtons"
                     textAlignment="RIGHT">
                <font>
                   <Font size="18.0" />
                </font>
-            </Button>
-            <Button fx:id="completeButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="搜索" styleClass="actionButtons"
-                    textAlignment="RIGHT">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
+            </JFXButton>
          </children>
       </HBox>
    </children>

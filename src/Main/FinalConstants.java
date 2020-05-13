@@ -7,10 +7,8 @@ import Product.ProdUnitPrice;
 import Product.ProductOrder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -64,16 +62,16 @@ public class FinalConstants {
     // all material types
     public static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
-    public static File resetWhite;
-    public static File resetBlack;
-    public static File searchWhite;
-    public static File searchBlack;
-    public static File addWhite;
-    public static File addBlack;
-    public static File excelWhite;
-    public static File excelBlack;
-    public static File quitWhite;
-    public static File quitBlack;
+    public static URL resetWhite;
+    public static URL resetBlack;
+    public static URL searchWhite;
+    public static URL searchBlack;
+    public static URL addWhite;
+    public static URL addBlack;
+    public static URL excelWhite;
+    public static URL excelBlack;
+    public static URL quitWhite;
+    public static URL quitBlack;
 
 
     public static void init() {
@@ -86,16 +84,16 @@ public class FinalConstants {
     }
 
     public static void initPictures() {
-        resetWhite = new File("resources/images/resetWhite.png");
-        resetBlack = new File("resources/images/resetBlack.png");
-        searchWhite = new File("resources/images/searchWhite.png");
-        searchBlack = new File("resources/images/searchBlack.png");
-        addWhite = new File("resources/images/addWhite.png");
-        addBlack = new File("resources/images/addBlack.png");
-        excelWhite = new File("resources/images/exportWhite.png");
-        excelBlack = new File("resources/images/exportBlack.png");
-        quitWhite = new File("resources/images/powerWhite.png");
-        quitBlack = new File("resources/images/powerBlack.png");
+        resetWhite = FinalConstants.class.getResource("/images/resetWhite.png");
+        resetBlack = FinalConstants.class.getResource("/images/resetBlack.png");
+        searchWhite = FinalConstants.class.getResource("/images/searchWhite.png");
+        searchBlack = FinalConstants.class.getResource("/images/searchBlack.png");
+        addWhite = FinalConstants.class.getResource("/images/addWhite.png");
+        addBlack = FinalConstants.class.getResource("/images/addBlack.png");
+        excelWhite = FinalConstants.class.getResource("/images/exportWhite.png");
+        excelBlack = FinalConstants.class.getResource("/images/exportBlack.png");
+        quitWhite = FinalConstants.class.getResource("/images/powerWhite.png");
+        quitBlack = FinalConstants.class.getResource("/images/powerBlack.png");
 
     }
 

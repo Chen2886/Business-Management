@@ -7,6 +7,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXButton?>
 <VBox spacing="10" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Material.MatUnitPriceTable">
     <HBox alignment="CENTER_RIGHT">
         <padding>
@@ -23,29 +24,14 @@
 
     </TableView>
     <HBox fx:id="matInfoHBox" alignment="CENTER" prefHeight="55.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
-        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="原料名称：" textAlignment="CENTER">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
         <JFXTextField fx:id="matNameTextField" />
-        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="原料单价:" textAlignment="CENTER">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
         <JFXTextField fx:id="matPriceTextField" />
-        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="备注:" textAlignment="CENTER">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
         <JFXTextField fx:id="matNoteTextField" />
-        <Button fx:id="addMatButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="添加" styleClass="actionButtons"
+        <JFXButton fx:id="addMatButton" alignment="CENTER_RIGHT" mnemonicParsing="false" text="添加" styleClass="actionButtons"
                 textAlignment="RIGHT">
             <font>
                 <Font size="18.0" />
             </font>
-        </Button>
+        </JFXButton>
     </HBox>
 </VBox>

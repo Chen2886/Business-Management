@@ -1,8 +1,12 @@
 package Product;
 
 import Main.*;
+import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -10,11 +14,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.awt.*;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -102,7 +108,7 @@ public class ProdFormulaEdit {
                     "-fx-alignment: center-right;");
             formulaInfoHBox.getChildren().add(newLabel);
 
-            TextField newTextField = new TextField();
+            JFXTextField newTextField = new JFXTextField();
             if (i == 0) TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
             try {
                 getter = Formula.class.getDeclaredMethod("get" + propertyMethodName[i]);
@@ -165,12 +171,7 @@ public class ProdFormulaEdit {
         // populating the info hbox
         inputArray = new ArrayList<>();
         for (String s : header) {
-            Label newLabel = new Label(s);
-            newLabel.setStyle("-fx-font-size: 20px;" +
-                    "-fx-alignment: center-right;");
-            infoHBox.getChildren().add(newLabel);
-
-            TextField newTextField = new TextField();
+            JFXTextField newTextField = new JFXTextField();
             if (s.equals("原料名称")) TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
             newTextField.setPromptText("输入" + s);
             infoHBox.getChildren().add(newTextField);
@@ -285,9 +286,13 @@ public class ProdFormulaEdit {
                         if (empty) {
                             setGraphic(null);
                         } else {
+
                             delete.setOnAction(event -> {
                                 if (ConfirmBox.display("确认", "确定删除原料？", "是", "否"))
                                     removeFormulaFromList(getTableView().getItems().get(getIndex()));
+                            });
+                            edit.setOnAction(event -> {
+                                viewFormula(getTableView().getItems().get(getIndex()));
                             });
 
                             edit.getStyleClass().add("actionButtons");
@@ -322,14 +327,13 @@ public class ProdFormulaEdit {
 
     /**
      * public function for other controller to call, to remove item from the list, and refresh table
-     *
-     * @param formula the formula to be removed to list
+     * @param inputFormula the formula to be removed to list
      */
-    public void removeFormulaFromList(Formula formula) {
-        formula.removeFormula(formula);
+    public void removeFormulaFromList(Formula inputFormula) {
+        formula.removeFormula(inputFormula);
         formulaTable.getItems().clear();
         formulaTable.getItems().setAll(formula.getFormulaList());
-        calcUnitPrice();
+        calcBasePrice();
     }
 
     /**
@@ -341,7 +345,7 @@ public class ProdFormulaEdit {
         formula.addFormula(newFormula);
         formulaTable.getItems().clear();
         formulaTable.getItems().setAll(formula.getFormulaList());
-        calcUnitPrice();
+        calcBasePrice();
     }
 
     /**
@@ -382,14 +386,14 @@ public class ProdFormulaEdit {
         formula.setTotalPrice();
         if (!empty) addFormula(formula);
         for (TextField textField : inputArray) textField.clear();
-        calcUnitPrice();
+        calcBasePrice();
     }
 
     /**
      * Save the formula to the selected order, and push formula to database
      */
     private void saveFormula() {
-        double unitPrice = calcUnitPrice();
+        double unitPrice = calcBasePrice();
 
         formula.setName(formulaInfoInputArray.get(0).getText());
         try {
@@ -406,15 +410,48 @@ public class ProdFormulaEdit {
         currentStage.close();
     }
 
-    private double calcUnitPrice() {
+    private double calcBasePrice() {
         double totalSum = 0.0;
         double totalAmount = 0.0;
+        if (formula == null) return 0.0;
         for (Formula formula : formula.getFormulaList()) {
             totalSum += formula.getTotalPrice();
             totalAmount += formula.getAmount();
         }
         double returnVal = Math.round(totalSum / totalAmount * 1.05 * 100.0) / 100.0;
-        formulaInfoInputArray.get(3).setText(String.valueOf(returnVal));
+        try {
+            if (returnVal != 0) formulaInfoInputArray.get(2).setText(String.valueOf(returnVal));
+        } catch (Exception ignored) {
+        }
         return returnVal;
+    }
+
+    /**
+     * Pop up window to edit/add formula within formula
+     */
+    private void viewFormula(Formula formula) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdFormulaEdit.fxml");
+            Parent newScene = loader.load(fileInputStream);
+            Stage stage = new Stage();
+
+            ProdFormulaEdit prodFormulaEdit = loader.getController();
+            prodFormulaEdit.initData(parentFormula, formula, stage, formulaTable);
+
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("编辑配方");
+
+            Scene scene = new Scene(newScene);
+            scene.getStylesheets().add(getClass().getResource(Main.styleSheetPath).toURI().toString());
+            stage.setScene(scene);
+            stage.showAndWait();
+            formulaTable.refresh();
+            calcBasePrice();
+        } catch (Exception e) {
+            AlertBox.display("错误", "窗口错误");
+            new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    e.getMessage(), e.getStackTrace(), false);
+        }
     }
 }

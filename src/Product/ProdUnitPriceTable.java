@@ -23,6 +23,7 @@ import javafx.util.StringConverter;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.SQLException;
@@ -133,12 +134,13 @@ public class ProdUnitPriceTable implements Initializable {
         inputArrayList = new ArrayList<>();
         for (int i = 0; i < headers.length; i++) {
 
-            Label newLabel = new Label(headers[i] + ":");
-            newLabel.setStyle("-fx-font-size: 20px;" +
-                    "-fx-alignment: center-right;");
-            prodInfoHBoxTop.getChildren().add(newLabel);
-
             if (i == 0) {
+
+                Label newLabel = new Label(headers[i] + ":");
+                newLabel.setStyle("-fx-font-size: 20px;" +
+                        "-fx-alignment: center-right;");
+                prodInfoHBoxTop.getChildren().add(newLabel);
+
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
                 JFXDatePicker datePicker = new JFXDatePicker();
                 datePicker.setMaxWidth(Double.MAX_VALUE);
@@ -288,7 +290,7 @@ public class ProdUnitPriceTable implements Initializable {
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdEditUnitPriceTable.fxml"));
+            InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdEditUnitPriceTable.fxml");
             Parent newScene = loader.load(fileInputStream);
             Stage stage = new Stage();
 
@@ -298,7 +300,7 @@ public class ProdUnitPriceTable implements Initializable {
             stage.setTitle("配方");
 
             Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+            scene.getStylesheets().add(getClass().getResource(Main.styleSheetPath).toURI().toString());
             stage.setScene(scene);
             stage.showAndWait();
 

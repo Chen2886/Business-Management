@@ -1,6 +1,8 @@
 package Product;
 
 import Main.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,8 +22,7 @@ import javafx.util.Callback;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -146,7 +147,7 @@ public class ProdFormula {
             newLabel.setStyle("-fx-font-size: 20px; -fx-alignment: center-right;");
 
             // new text field
-            TextField newTextField = new TextField();
+            JFXTextField newTextField = new JFXTextField();
             newTextField.setDisable(true);
             try {
                 getter = ProductOrder.class.getDeclaredMethod("get" + formulaInfoProperty[i]);
@@ -174,17 +175,12 @@ public class ProdFormula {
         inputArray = new ArrayList<>();
         for (String s : header) {
 
-            // new label
-            Label newLabel = new Label(s);
-            newLabel.setStyle("-fx-font-size: 20px; -fx-alignment: center-right;");
-
             // new text field
-            TextField newTextField = new TextField();
+            JFXTextField newTextField = new JFXTextField();
             if (s.equals("原料名称")) TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
             newTextField.setPromptText("输入" + s);
 
             // add to the HBox
-            formulaInfoInputBottomHBox.getChildren().add(newLabel);
             formulaInfoInputBottomHBox.getChildren().add(newTextField);
 
             // add to array
@@ -192,7 +188,7 @@ public class ProdFormula {
         }
 
         // info hbox add button
-        addItemButton = new Button("添加");
+        addItemButton = new JFXButton("添加");
         addItemButton.getStyleClass().add("actionButtons");
         formulaInfoInputBottomHBox.getChildren().add(addItemButton);
 
@@ -318,7 +314,7 @@ public class ProdFormula {
         try {
 
             FXMLLoader loader = new FXMLLoader();
-            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormulaEdit.fxml"));
+            InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdFormulaEdit.fxml");
             Parent newScene = loader.load(fileInputStream);
             Stage stage = new Stage();
 
@@ -329,7 +325,7 @@ public class ProdFormula {
             stage.setTitle("编辑配方");
 
             Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+            scene.getStylesheets().add(getClass().getResource(Main.styleSheetPath).toURI().toString());
             stage.setScene(scene);
             stage.showAndWait();
             formulaTable.refresh();

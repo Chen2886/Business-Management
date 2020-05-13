@@ -45,7 +45,7 @@ public class HandleError {
         String startHeader =                  "=====================Start=====================\n";
         String classHeader =    String.format("Class Name:    %s\n", className);
         String functionHeader = String.format("Function Name: %s\n", functionName);
-        String startErrorHeader =             "\nMessage    :\n";
+        String startErrorHeader =             "\nMessage    : ";
         String startStackTrace =              "\nStack Trace:\n";
         String endHeader =                    "\n======================End=====================\n\n";
 

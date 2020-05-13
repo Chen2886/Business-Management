@@ -3,7 +3,6 @@ package Material;
 import Main.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -11,16 +10,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -226,7 +222,7 @@ public class MatUnitPriceTable implements Initializable {
     private void modifyPrice(MatUnitPrice matUnitPrice) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatEditUnitPrice.fxml"));
+            InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatEditUnitPrice.fxml");
             Parent newScene = loader.load(fileInputStream);
             Stage stage = new Stage();
 
@@ -236,7 +232,7 @@ public class MatUnitPriceTable implements Initializable {
             stage.setTitle("配方");
 
             Scene scene = new Scene(newScene);
-            scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+            scene.getStylesheets().add(getClass().getResource(Main.fxmlPath).toURI().toString());
             stage.setScene(scene);
             stage.showAndWait();
 

@@ -3,12 +3,19 @@ package Material;
 // from my other packages
 import Main.*;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -33,8 +40,8 @@ public class MatSearchOrder {
 
     @FXML GridPane MatEditOrderGrid;
     @FXML Label editOrderTitleLabel;
-    @FXML Button cancelButton;
-    @FXML Button completeButton;
+    @FXML JFXButton cancelButton;
+    @FXML JFXButton completeButton;
 
     Stage currentStage;
     ObservableList<MatSeller> allSeller;
@@ -73,34 +80,36 @@ public class MatSearchOrder {
         });
 
 
+//        int row = 1;
+//        int col = 0;
+//
+//        // setting up all the labels
+//        ArrayList<Label> labelArrayList = new ArrayList<>();
+//        for(int i = 0; i < tableHeaders.length; i++) {
+//            Label newLabel = new Label(tableHeaders[i]);
+//            newLabel.setStyle("-fx-font-size: 20px;" +
+//                    "-fx-alignment: center-right;");
+//
+//            newLabel.setMaxWidth(Double.MAX_VALUE);
+//            GridPane.setConstraints(newLabel, col, row++);
+//            labelArrayList.add(newLabel);
+//            if ((i + 7) % 6 == 0) {
+//                row = 1;
+//                col += 2;
+//            }
+//        }
+
         int row = 1;
         int col = 0;
-
-        // setting up all the labels
-        ArrayList<Label> labelArrayList = new ArrayList<>();
-        for(int i = 0; i < tableHeaders.length; i++) {
-            Label newLabel = new Label(tableHeaders[i]);
-            newLabel.setStyle("-fx-font-size: 20px;" +
-                    "-fx-alignment: center-right;");
-
-            newLabel.setMaxWidth(Double.MAX_VALUE);
-            GridPane.setConstraints(newLabel, col, row++);
-            labelArrayList.add(newLabel);
-            if ((i + 7) % 6 == 0) {
-                row = 1;
-                col += 2;
-            }
-        }
-
-        row = 1;
-        col = 1;
         // setting up all the text field
         inputArrayList = new ArrayList<>();
         for(int i = 0; i < propertyHeaders.length; i++) {
 
             // type of mat, combo box
             if (i == 2) {
-                ComboBox<String> newComboBox = new ComboBox<>();
+                JFXComboBox<String> newComboBox = new JFXComboBox<>();
+                newComboBox.setStyle("-fx-font-size: 18px");
+                newComboBox.setPromptText("选择" + tableHeaders[i]);
                 newComboBox.getItems().setAll(matOfType);
                 newComboBox.setMaxWidth(Double.MAX_VALUE);
                 GridPane.setConstraints(newComboBox, col, row++);
@@ -109,7 +118,9 @@ public class MatSearchOrder {
 
             // seller, combo box
             else if (i == propertyHeaders.length - 1) {
-                ComboBox<String> sellerComboBox = new ComboBox<>();
+                JFXComboBox<String> sellerComboBox = new JFXComboBox<>();
+                sellerComboBox.setPromptText("选择" + tableHeaders[i]);
+                sellerComboBox.setStyle("-fx-font-size: 18px");
                 try {
                     allSeller = DatabaseUtil.GetAllMatSellers();
                 } catch (SQLException e) {
@@ -130,8 +141,19 @@ public class MatSearchOrder {
 
             // dates, date picker
             else if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7) {
+
+                Label newLabel = new Label(tableHeaders[i] + ":");
+                if (i == 3 || i == 4) {
+                    newLabel.setStyle("-fx-font-size: 16px; -fx-alignment: center-right;");
+                } else {
+                    newLabel.setStyle("-fx-font-size: 20px; -fx-alignment: center-right;");
+                }
+
+                Region region = new Region();
+                HBox.setHgrow(region, Priority.ALWAYS);
+
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-                DatePicker datePicker = new DatePicker();
+                JFXDatePicker datePicker = new JFXDatePicker();
 
                 datePicker.setConverter(new StringConverter<>() {
                     @Override
@@ -151,15 +173,19 @@ public class MatSearchOrder {
                     }
                 });
 
-
-                GridPane.setConstraints(datePicker, col, row++);
                 inputArrayList.add(datePicker);
+
+                HBox hBox = new HBox(newLabel, region, datePicker);
+                GridPane.setConstraints(hBox, col, row++);
+                MatEditOrderGrid.getChildren().add(hBox);
             }
 
             // regular text field
             else {
-                TextField newTextField = new TextField();
+                JFXTextField newTextField = new JFXTextField();
+                newTextField.setPromptText("输入" + tableHeaders[i]);
                 newTextField.setMaxWidth(Double.MAX_VALUE);
+                newTextField.setStyle("-fx-font-size: 18px");
                 GridPane.setConstraints(newTextField, col, row++);
                 inputArrayList.add(newTextField);
 
@@ -167,15 +193,16 @@ public class MatSearchOrder {
 
             if ((i + 7) % 6 == 0) {
                 row = 1;
-                col += 2;
+                col++;
             }
         }
 
         // * setting up grid properties
         MatEditOrderGrid.setVgap(10);
         MatEditOrderGrid.setHgap(10);
-        MatEditOrderGrid.getChildren().addAll(labelArrayList);
-        MatEditOrderGrid.getChildren().addAll(inputArrayList);
+//        MatEditOrderGrid.getChildren().addAll(labelArrayList);
+        MatEditOrderGrid.getChildren().addAll(inputArrayList.subList(0, 3));
+        MatEditOrderGrid.getChildren().addAll(inputArrayList.subList(8, inputArrayList.size()));
     }
 
     /**

@@ -18,9 +18,8 @@ import java.nio.file.Paths;
 public class Main extends Application {
 
 	public static Stage mainStage;
-	public static String fxmlPath = "resources/fxml/";
-	public static String styleSheetPath =
-		Paths.get("resources/fxml/stylesheet.css").toUri().toString().replace("file:///", "");
+	public static String fxmlPath = "/fxml/";
+	public static String styleSheetPath = fxmlPath + "stylesheet.css";
 
 
 	// * main function to get everything started
@@ -93,10 +92,10 @@ public class Main extends Application {
 	public static Scene loadFXML(String fxmlName) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + fxmlName));
+			InputStream fileInputStream = Main.class.getResourceAsStream(Main.fxmlPath + fxmlName);
 			Parent parent = loader.load(fileInputStream);
 			Scene scene = new Scene(parent);
-			scene.getStylesheets().add("file:///" + styleSheetPath);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
 			return scene;
 		} catch (Exception e) {
 			AlertBox.display("错误", "窗口错误！");

@@ -5,18 +5,15 @@ package Main;
 import CustomEditingCells.*;
 import Material.*;
 import Product.*;
-import com.jfoenix.controls.JFXButton;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -29,9 +26,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -710,14 +706,14 @@ public class MainScreen implements Initializable {
 	 * @param White the white image
 	 * @param Black the black image
 	 */
-	private void setButtonImagesAndCursor(ImageView imageView, File White, File Black) {
-		imageView.setImage(new Image(White.toURI().toString()));
+	private void setButtonImagesAndCursor(ImageView imageView, URL White, URL Black) {
+		imageView.setImage(new Image(White.toString()));
 		imageView.setOnMouseEntered(event -> {
-			imageView.setImage(new Image(Black.toURI().toString()));
+			imageView.setImage(new Image(Black.toString()));
 			Main.mainStage.getScene().setCursor(javafx.scene.Cursor.HAND);
 		});
 		imageView.setOnMouseExited(event -> {
-			imageView.setImage(new Image(White.toURI().toString()));
+			imageView.setImage(new Image(White.toString()));
 			Main.mainStage.getScene().setCursor(Cursor.DEFAULT);
 		});
 	}
@@ -728,7 +724,7 @@ public class MainScreen implements Initializable {
 	private void addMatOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatAddOrderModifySeller.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatAddOrderModifySeller.fxml");
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
@@ -738,7 +734,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加订单");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
 			stage.setScene(scene);
 			stage.showAndWait();
 			matTableView.getItems().clear();
@@ -757,7 +753,7 @@ public class MainScreen implements Initializable {
 	private void addProdOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdAddOrder.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdAddOrder.fxml");
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
@@ -767,7 +763,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("添加产品");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
 			stage.setScene(scene);
 			stage.showAndWait();
 			prodTableView.getItems().clear();
@@ -823,7 +819,7 @@ public class MainScreen implements Initializable {
 	private void searchMatOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatSearchOrder.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatSearchOrder.fxml");
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
@@ -832,7 +828,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("搜索订单");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
@@ -848,7 +844,7 @@ public class MainScreen implements Initializable {
 	private void searchProdOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdSearchOrder.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdSearchOrder.fxml");
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
@@ -857,7 +853,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("搜索产品");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
@@ -930,7 +926,7 @@ public class MainScreen implements Initializable {
 	public void prodFormula(ProductOrder order) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdFormula.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdFormula.fxml");
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
@@ -942,7 +938,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("配方");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
 			stage.setScene(scene);
 			stage.showAndWait();
 			resetTable();
@@ -959,7 +955,7 @@ public class MainScreen implements Initializable {
 	private void initMatUnitPrice() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatUnitPriceTable.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatUnitPriceTable.fxml");
 			Parent vbox = loader.load(fileInputStream);
 
 			MatUnitPriceTable matUnitPriceTable = loader.getController();
@@ -980,7 +976,7 @@ public class MainScreen implements Initializable {
 	private void initProdUnitPrice() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdUnitPriceTable.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdUnitPriceTable.fxml");
 			Parent vbox = loader.load(fileInputStream);
 
 			ProdUnitPriceTable prodUnitPriceTable = loader.getController();
@@ -1001,7 +997,7 @@ public class MainScreen implements Initializable {
 	private void generateMatExcel() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "MatGenerateExcel.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatGenerateExcel.fxml");
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
@@ -1010,7 +1006,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("生成表格");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
@@ -1026,7 +1022,7 @@ public class MainScreen implements Initializable {
 	private void generateProdExcel() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			FileInputStream fileInputStream = new FileInputStream(new File(Main.fxmlPath + "ProdGenerateExcel.fxml"));
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "ProdGenerateExcel.fxml");
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
@@ -1035,7 +1031,7 @@ public class MainScreen implements Initializable {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.setTitle("生成表格");
 			Scene scene = new Scene(newScene);
-			scene.getStylesheets().add("file:///" + Main.styleSheetPath);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
 			stage.setScene(scene);
 			stage.show();
 		} catch (Exception e) {
