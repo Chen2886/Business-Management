@@ -23,19 +23,19 @@
 
     </TableView>
     <HBox fx:id="matInfoHBox" alignment="CENTER" prefHeight="55.0" spacing="10.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
-        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="原料名称" textAlignment="CENTER">
+        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="原料名称：" textAlignment="CENTER">
             <font>
                 <Font size="18.0" />
             </font>
         </Label>
         <JFXTextField fx:id="matNameTextField" />
-        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="原料单价" textAlignment="CENTER">
+        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="原料单价:" textAlignment="CENTER">
             <font>
                 <Font size="18.0" />
             </font>
         </Label>
         <JFXTextField fx:id="matPriceTextField" />
-        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="备注" textAlignment="CENTER">
+        <Label contentDisplay="CENTER" maxWidth="-Infinity" prefHeight="40.0" text="备注:" textAlignment="CENTER">
             <font>
                 <Font size="18.0" />
             </font>
