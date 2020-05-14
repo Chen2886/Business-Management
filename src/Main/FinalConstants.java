@@ -65,6 +65,9 @@ public class FinalConstants {
     // all material types
     public static final String[] matOfType = new String[]{"RD", "S", "P", "A", "R", "PA"};
 
+    // save user's last selected tab
+    public static int selectedTab;
+
     public static URL resetWhite;
     public static URL resetBlack;
     public static URL searchWhite;
@@ -78,6 +81,14 @@ public class FinalConstants {
     public static URL backWhite;
     public static URL backBlack;
 
+    public static int getSelectedTab() {
+        return selectedTab;
+    }
+
+    public static void setSelectedTab(int selectedTab) {
+        FinalConstants.selectedTab = selectedTab;
+    }
+
     public static void init() {
         updateAutoCompleteMatName();
         updateAutoCompleteProdName();
@@ -85,6 +96,7 @@ public class FinalConstants {
         updateAllMatOrders();
         updateAllProdOrders();
         initPictures();
+        selectedTab = 0;
     }
 
     public static void initPictures() {

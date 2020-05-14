@@ -11,13 +11,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -25,7 +23,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -100,6 +97,8 @@ public class MainScreen implements Initializable {
 		fillProdTable(FinalConstants.updateAllProdOrders());
 		initMatUnitPrice();
 		initProdUnitPrice();
+
+		mainTabPane.getSelectionModel().select(FinalConstants.getSelectedTab());
 
 		// filling the mat table
 		tempQuickSearchMatOrderList = FXCollections.observableArrayList();
@@ -200,6 +199,7 @@ public class MainScreen implements Initializable {
 
 		// inventory page
 		mainTabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+			FinalConstants.setSelectedTab(newValue.intValue());
 			if (newValue.intValue() == 2) {
 				initInventory();
 			}
@@ -906,7 +906,7 @@ public class MainScreen implements Initializable {
 			Parent newScene = loader.load(fileInputStream);
 
 			ProdFormula prodFormula = loader.getController();
-			prodFormula.initData(order, Main.mainStage);
+			prodFormula.init(order, null, null);
 			Main.mainStage.setTitle("编辑配方");
 
 			Scene scene = new Scene(newScene);
@@ -1035,4 +1035,6 @@ public class MainScreen implements Initializable {
 		}
 		return formulaTotalAmount;
 	}
+
+
 }
