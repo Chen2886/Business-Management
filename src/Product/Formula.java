@@ -6,6 +6,8 @@ import java.util.Objects;
 
 public class Formula implements Serializable {
 
+    private static final long serialVersionUID = 6248373880211192274L;
+
     private Formula parent;
     private String name;
     private double amount;

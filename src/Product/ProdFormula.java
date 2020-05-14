@@ -59,6 +59,7 @@ public class ProdFormula {
     Stage currentStage;
     ProductOrder selectedOrder;
     Formula formula;
+    Formula initialFormula;
     boolean isNewFormula;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -75,6 +76,7 @@ public class ProdFormula {
         this.selectedOrder = selectedOrder;
         this.currentStage = currentStage;
         formulaColumnList = new ArrayList<>();
+
         // getting current formula
         try {
             // if this is a product that doesn't have existing formula
@@ -99,6 +101,7 @@ public class ProdFormula {
             selectedOrder.setFormulaIndex(-1);
             formula = null;
         }
+        initialFormula = formula;
         init();
     }
 
@@ -120,7 +123,8 @@ public class ProdFormula {
         });
 
         backButton.setOnMouseClicked(event -> {
-            if (ConfirmBox.display("确认", "确定回到主页？配方即将不被保存", "是", "否"))
+            System.out.println("here");
+            if ((formula == null && initialFormula == null) || initialFormula.equals(formula) || ConfirmBox.display("确认", "确定回到主页？配方即将不被保存", "是", "否"))
                 loadMainScreen();
         });
 
