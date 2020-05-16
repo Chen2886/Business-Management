@@ -48,21 +48,76 @@
     -fx-text-fill: #050A05;
 }
 
-/*change color for selected rows*/
-.table-row-cell:selected {
-    -fx-background-color: #947eb0;
+/* VERSION 1*/
+/*!*change color for selected rows*!*/
+/*.table-row-cell:selected {*/
+/*    -fx-background-color: #947eb0;*/
+/*}*/
+
+/*!*set table cell font size*!*/
+/*.table-view .table-cell{*/
+/*    -fx-font-size: 18px;*/
+/*}*/
+
+/*!*change size of table column header*!*/
+/*.table-view .column-header-background .label{*/
+/*    -fx-background-color: transparent;*/
+/*    -fx-font-weight:bold;*/
+/*    -fx-font-size: 18px;*/
+/*}*/
+
+/* VERSION 2 */
+/*.table-view .column-header,*/
+/*.table-view .column-header-background .filler {*/
+/*    -fx-background-color: #8923f3;*/
+/*}*/
+
+/*.table-view .column-header .label{*/
+/*    -fx-text-fill: white;*/
+/*    -fx-font-weight: bold;*/
+/*    -fx-alignment: CENTER;*/
+/*    -fx-font-size: 16px;*/
+/*}*/
+
+/*.table-view .cell{*/
+/*    -fx-alignment: center;*/
+/*    -fx-background-color: #29292D;*/
+/*    -fx-border-color: #29292D;*/
+/*    -fx-text-fill: lightgray;*/
+/*    -fx-alignment: CENTER;*/
+/*    -fx-font-size: 20px;*/
+/*}*/
+
+/*.table-row-cell:selected {*/
+/*    -fx-background-color: whitesmoke;*/
+/*    -fx-text-background-color:  #6622CC;*/
+/*}*/
+
+/* scroll bar starts here */
+
+/* The increment and decrement button CSS class of scrollbar */
+.table-view .increment-button ,.table-view .decrement-button {
+    -fx-background-color:transparent;
+    -fx-background-radius: 2em;
 }
 
-/*set table cell font size*/
-.table-view .table-cell{
-    -fx-font-size: 18px;
-}
-
-/*change size of table column header*/
-.table-view .column-header-background .label{
+/* The main scrollbar **track** CSS class  */
+.table-view .scroll-bar:horizontal .track,
+.table-view .scroll-bar:vertical .track{
     -fx-background-color: transparent;
-    -fx-font-weight:bold;
-    -fx-font-size: 18px;
+    -fx-border-color:derive( #6622CC,80%);
+
+    -fx-background-radius: 2em;
+    -fx-border-radius:2em;
+}
+
+/* The main scrollbar **thumb** CSS class which we drag every time (movable) */
+.table-view .scroll-bar:horizontal .thumb,
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color:derive( #6622CC,90%);
+    -fx-background-insets: 2, 0, 0;
+    -fx-background-radius: 2em;
+
 }
 
 /*buttons within the table view*/
@@ -128,4 +183,144 @@
 
 .default-button {
     -fx-text-fill: black;
+}
+
+/* Table view VERSION 3 */
+.table-view {
+    -fx-table-color: #252525;
+    /*-fx-table-rippler-color: rgba(82, 100, 174, 0.6);*/
+
+    /* Styles a selected row. See https://material.io/guidelines/components/data-tables.html#interaction-figure-caption-0*/
+    -fx-selection-bar: #c6c6c6;
+
+    -fx-selection-bar-non-focused: -fx-selection-bar;
+
+    /* Gets rid of the even odd highlighting */
+    -fx-control-inner-background-alt: -fx-control-inner-background;
+}
+
+.table-view .table-cell {
+    -fx-font-size: 18px;
+}
+
+.table-view:focused .table-row-cell:selected{
+    /*-fx-table-cell-border-color: -fx-table-color;*/
+    -fx-text-fill: BLACK;
+}
+
+.table-view:focused .table-row-cell:selected .table-cell {
+    -fx-text-fill: BLACK;
+}
+
+.table-row-cell:filled:hover {
+    /*Allows Row Hover Effect. See https://material.io/design/components/data-tables.html#behavior*/
+    -fx-background: #EEEEEE;
+}
+
+
+.table-view .column-header,
+.table-view .column-header-background,
+.table-view .column-header-background .filler {
+    -fx-background-color: TRANSPARENT;
+}
+
+
+.table-view .column-header {
+    /* Gets rid of the borders in the column header */
+    -fx-border-width: 0 0 0 0;
+    -fx-font-size: 18px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: BLACK;
+    -fx-padding: 16 0 16 0;
+}
+
+.table-view .column-header .arrow, .table-view .column-header .sort-order-dot {
+    -fx-background-color: #949494;
+}
+
+
+.table-view .column-header-background {
+    -fx-border-width: 0 0.0 1 0;
+    -fx-border-color: #F3F3F3;
+}
+
+/* Default Alignment. We'll just assume its text until you say otherwise.
+   See: https://material.io/guidelines/components/data-tables.html#data-tables-structure */
+.table-view .table-column {
+    -fx-alignment: CENTER;
+    -fx-background-insets: 0px;
+}
+
+.table-view .table-column > .label {
+    /* Aligns the header label */
+    -fx-alignment: CENTER;
+}
+
+/* Add this style class to columns containing text to make them left aligned.
+   See: https://material.io/guidelines/components/data-tables.html#data-tables-structure */
+.text-column {
+    -fx-alignment: CENTER !important;
+}
+
+.text-column > .label {
+    /* Aligns the header label */
+    -fx-alignment: CENTER;
+}
+
+/* Add this style class to columns containing numbers to make them right aligned.
+   See: https://material.io/guidelines/components/data-tables.html#data-tables-structure */
+.numeric-column {
+    -fx-alignment: CENTER;
+}
+
+.numeric-column > .label {
+    /* Aligns the header label */
+    -fx-alignment: CENTER_RIGHT;
+}
+
+.table-view .table-cell {
+    -fx-border-width: 0 0 0 0;
+    -fx-padding: 16 0 10 0; /* Note that this should be 16 on top and bottom, but something is causing to look uneven, so I compensate.*/
+}
+
+.table-view .column-overlay {
+    -fx-background-color: -fx-table-color;
+}
+
+.table-row-cell > .disclosure-node > .arrow {
+    -fx-background-color: -fx-text-fill;
+    -fx-padding: 0.333333em 0.229em 0.333333em 0.229em; /* 4 */
+    -fx-shape: "M 0 -3.5 L 4 0 L 0 3.5 z";
+}
+
+.table-row-cell .jfx-text-field {
+    -fx-focus-color: rgb(82, 100, 174);
+}
+
+.table-view .menu-item:focused {
+    -fx-background-color: -fx-table-color;
+
+}
+
+.table-view .menu-item .label {
+    -fx-padding: 5 0 5 0;
+}
+
+.table-view .virtual-flow .clipped-container .sheet .table-row-cell .table-cell .text {
+    /* Note, that something about this doesn't work. The text isn't colored right.*/
+    -fx-text-fill: BLACK; /* 87% black per MDG */
+}
+
+/*
+    Since we can't get the table lines to go all the way across the table by using -fx-padding, we're going to use these
+    dummy columns. Make sure that they are not editable, nor sortable in your FXML, as there is no CSS way of doing that.
+    See this link for what we're trying to replicate: https://material.io/design/components/data-tables.html#specs
+*/
+.padding-column {
+    -fx-min-width: 24px;
+    -fx-pref-width: 24px;
+    -fx-max-width: 24px;
+
 }

@@ -139,9 +139,11 @@ public class MainScreen implements Initializable {
 			Path source = Paths.get("BusinessCashFlow.db");
 			Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
 			try {
-				if (Files.exists(target)) Files.delete(target);
-				Files.copy(source, target);
-			} catch (IOException e) {
+				if (DatabaseUtil.GetAllMatOrders().size() > 0) {
+					if (Files.exists(target)) Files.delete(target);
+					Files.copy(source, target);
+				}
+			} catch (IOException | SQLException e) {
 				new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 						e.getMessage(), e.getStackTrace(), false);
 			}
@@ -408,6 +410,8 @@ public class MainScreen implements Initializable {
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
+
+				if (i == 7) newColumn.setMinWidth(110);
 
 				// Set up for editable table view
 				// NOTES: Not allowing to edit sellers, Mat Of Type and Seller needs combo Box

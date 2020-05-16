@@ -14,6 +14,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 
 public class Main extends Application {
 
@@ -52,9 +53,11 @@ public class Main extends Application {
 		Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
 
 		try {
-			if (Files.exists(target)) Files.delete(target);
-			Files.copy(source, target);
-		} catch (IOException e) {
+			if (DatabaseUtil.GetAllMatOrders().size() > 0) {
+				if (Files.exists(target)) Files.delete(target);
+				Files.copy(source, target);
+			}
+		} catch (IOException | SQLException e) {
 			new HandleError(Main.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 		}
@@ -77,9 +80,11 @@ public class Main extends Application {
 			Path source = Paths.get("BusinessCashFlow.db");
 			Path target = Paths.get(System.getProperty("user.home") + "/BusinessCashFlow.db");
 			try {
-				if (Files.exists(target)) Files.delete(target);
-				Files.copy(source, target);
-			} catch (IOException e) {
+				if (DatabaseUtil.GetAllMatOrders().size() > 0) {
+					if (Files.exists(target)) Files.delete(target);
+					Files.copy(source, target);
+				}
+			} catch (IOException | SQLException e) {
 				new HandleError(Main.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 						e.getMessage(), e.getStackTrace(), false);
 			}

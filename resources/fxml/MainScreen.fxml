@@ -44,7 +44,7 @@
                         </font>
                     </TextField>
                 </HBox>
-                <TableView fx:id="matTableView" styleClass="table-row-cell" VBox.vgrow="ALWAYS">
+                <TableView fx:id="matTableView" VBox.vgrow="ALWAYS">
                     <columns>
 
                     </columns>
