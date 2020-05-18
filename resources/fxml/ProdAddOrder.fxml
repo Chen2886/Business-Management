@@ -6,26 +6,32 @@
 
 <?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXToggleButton?>
 <AnchorPane prefHeight="475.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Product.ProdAddOrder">
     <GridPane fx:id="prodAddOrderGrid" alignment="CENTER_RIGHT" hgap="50.0" vgap="50.0"
               AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50" AnchorPane.rightAnchor="50" AnchorPane.topAnchor="10" VBox.vgrow="ALWAYS">
-        <HBox alignment="CENTER_RIGHT" spacing="20" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-            <Label text="订单日期:" style="-fx-font-size: 20px;" HBox.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <JFXDatePicker fx:id="orderDatePicker" HBox.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" style="-fx-font-size: 20px;"/>
+        <HBox alignment="CENTER" spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="订单日期" style="-fx-font-size: 15px;" GridPane.vgrow="ALWAYS" alignment="CENTER" textAlignment="CENTER"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <JFXDatePicker fx:id="orderDatePicker" GridPane.vgrow="ALWAYS" style="-fx-font-size: 15px;"/>
+        </HBox>
+        <HBox alignment="CENTER" spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Label text="张家港生产" style="-fx-font-size: 20px;" GridPane.vgrow="ALWAYS"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <JFXToggleButton fx:id="remoteToggle" GridPane.vgrow="ALWAYS" />
         </HBox>
         <columnConstraints>
-            <ColumnConstraints percentWidth="50"/>
-            <ColumnConstraints percentWidth="50"/>
+            <ColumnConstraints percentWidth="33"/>
+            <ColumnConstraints percentWidth="33"/>
+            <ColumnConstraints percentWidth="33"/>
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />
             <RowConstraints vgrow="ALWAYS" />
             <RowConstraints vgrow="ALWAYS" />
             <RowConstraints vgrow="ALWAYS" />
-            <RowConstraints vgrow="ALWAYS" />
         </rowConstraints>
-        <Label fx:id="prodAddOrderTitle" alignment="CENTER" contentDisplay="CENTER" text="添加产品" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+        <Label fx:id="prodAddOrderTitle" alignment="CENTER" contentDisplay="CENTER" text="添加产品" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
             <font>
                 <Font size="30.0" />
             </font>

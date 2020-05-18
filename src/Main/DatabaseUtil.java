@@ -237,6 +237,7 @@ public class DatabaseUtil {
                             "amount 		REAL			,\n" +
                             "unitPrice  	REAL			,\n" +
                             "basePrice  	REAL			,\n" +
+                            "remote         INTEGER			,\n" +
                             "formulaIndex   INTEGER			\n" +
                             ");";
                     break;
@@ -539,6 +540,7 @@ public class DatabaseUtil {
                 newOrder.setBasePrice(resultSet.getDouble("basePrice"));
                 newOrder.setTotalPrice();
                 newOrder.setFormulaIndex(resultSet.getInt("formulaIndex"));
+                newOrder.setRemote(resultSet.getInt("remote"));
 
                 // adding order
                 orderObservableList.add(newOrder);
@@ -997,8 +999,8 @@ public class DatabaseUtil {
             ConnectToDB();
             String SQLCommand = "INSERT INTO [productManagement] (sku, name, customer, " +
                     "orderDateYear, orderDateMonth, orderDateDay, unitAmount, amount, unitPrice, " +
-                    "basePrice, formulaIndex, note, serialNum) " +
-                    "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    "basePrice, formulaIndex, note, serialNum, remote) " +
+                    "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setString(1, order.getSku());
             preparedStatement.setString(2, order.getName());
@@ -1013,6 +1015,7 @@ public class DatabaseUtil {
             preparedStatement.setInt(11, order.getFormulaIndex());
             preparedStatement.setString(12, order.getNote() == null ? "" : order.getNote());
             preparedStatement.setInt(13, order.getSerialNum());
+            preparedStatement.setInt(14, order.getRemoteInt());
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
@@ -1233,7 +1236,7 @@ public class DatabaseUtil {
             ConnectToDB();
             String SQLCommand = "UPDATE productManagement SET sku = ?, name = ?, customer = ?, " +
                     "orderDateYear = ?, orderDateMonth = ?, orderDateDay = ?, unitAmount = ?, amount = ?, unitPrice = ?, " +
-                    "basePrice = ?, formulaIndex = ?, note = ? WHERE serialNum = ?";
+                    "basePrice = ?, formulaIndex = ?, note = ?, remote = ? WHERE serialNum = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setString(1, order.getSku());
             preparedStatement.setString(2, order.getName());
@@ -1247,7 +1250,8 @@ public class DatabaseUtil {
             preparedStatement.setDouble(10, order.getBasePrice());
             preparedStatement.setInt(11, order.getFormulaIndex());
             preparedStatement.setString(12, order.getNote() == null ? "" : order.getNote());
-            preparedStatement.setInt(13, order.getSerialNum());
+            preparedStatement.setInt(13, order.getRemoteInt());
+            preparedStatement.setInt(14, order.getSerialNum());
             preparedStatement.executeUpdate();
             CloseConnectionToDB();
         } catch (SQLException e) {
@@ -1495,7 +1499,8 @@ public class DatabaseUtil {
     public static void UpdateAllProdUnitPrice(String name, String customer, double price) throws SQLException {
         try {
             ConnectToDB();
-            String SQLCommand = "UPDATE [productManagement] SET unitPrice = ? WHERE name = ? AND customer = ? AND unitPrice = 0.0";
+            String SQLCommand = "UPDATE [productManagement] SET unitPrice = ? " +
+                    "WHERE name = ? AND customer = ? AND unitPrice = 0.0";
             PreparedStatement preparedStatement = connection.prepareStatement(SQLCommand);
             preparedStatement.setDouble(1, price);
             preparedStatement.setString(2, name);

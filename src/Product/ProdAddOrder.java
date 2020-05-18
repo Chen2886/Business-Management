@@ -5,6 +5,7 @@ import Main.*;
 // from my other packages
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -25,12 +26,14 @@ public class ProdAddOrder {
 
     // prod table headers
     private static final String[] prodHeaders = new String[]{"订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
-            "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注"};
+            "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注", "张家港生产"};
 
     // all prod property listed
     private static final String[] prodProperty = new String[]{"OrderDate", "Sku", "Customer", "Name",
-            "UnitAmount", "Amount", "UnitPrice", "Note"};
+            "UnitAmount", "Amount", "UnitPrice", "Note", "Remote"};
+
     public JFXDatePicker orderDatePicker;
+    public JFXToggleButton remoteToggle;
 
     @FXML
     Button prodAddOrderCancelButton;
@@ -114,6 +117,8 @@ public class ProdAddOrder {
                 orderDatePicker.setValue(LocalDate.now());
                 prodOrderInputArray.add(orderDatePicker);
                 row++;
+            } else if (i == 8) {
+                prodOrderInputArray.add(remoteToggle);
             } else {
                 // regular text field
                 JFXTextField newTextField = new JFXTextField();
@@ -125,12 +130,12 @@ public class ProdAddOrder {
                     TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteProdName);
                 }
                 newTextField.setPromptText("输入" + prodHeaders[i].replace("\u3000", ""));
-                newTextField.setStyle("-fx-font-size: 20px;");
+                newTextField.setStyle("-fx-font-size: 20px; -fx-alignment: CENTER");
                 GridPane.setConstraints(newTextField, col, row++);
                 prodOrderInputArray.add(newTextField);
             }
 
-            if ((i + 5) % 4 == 0) {
+            if ((i + 4) % 3 == 0) {
                 // grid constraint
                 row = 1;
                 col += 1;
@@ -161,7 +166,7 @@ public class ProdAddOrder {
 
         prodAddOrderGrid.setVgap(10);
         prodAddOrderGrid.setHgap(10);
-        prodAddOrderGrid.getChildren().addAll(prodOrderInputArray.subList(1, prodOrderInputArray.size()));
+        prodAddOrderGrid.getChildren().addAll(prodOrderInputArray.subList(1, prodOrderInputArray.size() - 1));
 
     }
 
@@ -190,6 +195,9 @@ public class ProdAddOrder {
                         AlertBox.display("错误", prodHeaders[i] + "格式输入错误, 数字默认0");
                     }
                 }
+            } else if (i == 8) {
+                // remote
+                newOrder.setRemote(remoteToggle.selectedProperty().get() ? 1 : 0);
             } else {
                 // string
                 TextField currentTextField = (TextField) prodOrderInputArray.get(i);

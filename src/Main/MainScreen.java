@@ -50,11 +50,11 @@ public class MainScreen implements Initializable {
 
 	// prod table headers
 	private static final String[] prodHeaders = new String[]{"订单日期", "送货单号", "客户", "产品名称",
-			"规格", "数量", "公斤", "单价", "金额", "成本价", "备注"};
+			"规格", "数量", "公斤", "单价", "金额", "成本价", "备注", "张家港生产"};
 
 	// all prod property listed
 	private static final String[] prodProperty = new String[]{"orderDate", "sku", "customer", "name",
-			"unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice", "basePrice", "note"};
+			"unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice", "basePrice", "note", "remote"};
 
 	private ObservableList<MatOrder> tempQuickSearchMatOrderList;
 
@@ -78,6 +78,9 @@ public class MainScreen implements Initializable {
 	public TextField matUnitPriceSearchTextField;
 	public TextField prodSearchTextField;
 	public TextField matSearchTextField;
+	public Tab matSeller;
+	public TextField matSellerSearchTextField;
+	public TableView<MatSeller> matSellerTableView;
 
 	public TableView<ProdUnitPrice> prodUnitPriceTableView;
 	public TableView<MatUnitPrice> matUnitPriceTableView;
@@ -95,6 +98,7 @@ public class MainScreen implements Initializable {
 
 		fillMatTable(FinalConstants.updateAllMatOrders());
 		fillProdTable(FinalConstants.updateAllProdOrders());
+		fillMatSellerTable(FinalConstants.updateAllMatSellers());
 		initMatUnitPrice();
 		initProdUnitPrice();
 
@@ -209,6 +213,68 @@ public class MainScreen implements Initializable {
 	}
 
 	/**
+	 * Filling of the material table
+	 *
+	 * @param selectedMatSeller the orders specified
+	 */
+	public void fillMatSellerTable(ObservableList<MatSeller> selectedMatSeller) {
+
+		// array of columns
+		Collection<TableColumn<MatSeller, ?>> matSellerColumnArrayList = new ArrayList<>();
+
+		// Regular String callback
+		Callback<TableColumn<MatSeller, String>, TableCell<MatSeller, String>> stringEditableFactory =
+				p -> new EditingCellWithTextFields<>(String.class) {};
+
+		// loop to set up all regular columns
+		for (int i = 0; i < FinalConstants.matSellerTableHeaders.length; i++) {
+			// String
+			TableColumn<MatSeller, String> newColumn = new TableColumn<>(FinalConstants.matSellerTableHeaders[i]);
+			newColumn.setCellValueFactory(new PropertyValueFactory<>(FinalConstants.matSellerPropertyHeaders[i]));
+			newColumn.setStyle("-fx-alignment: CENTER;");
+			matSellerColumnArrayList.add(newColumn);
+
+			// Set up for editable table view
+			int matPropertyIndex = i;
+			newColumn.setCellFactory(stringEditableFactory);
+			newColumn.setOnEditCommit(event -> {
+				MatSeller editingSeller = event.getRowValue();
+				try {
+					Method setter;
+					setter = MatSeller.class.getDeclaredMethod("set" +
+							Character.toUpperCase(FinalConstants.matSellerPropertyHeaders[matPropertyIndex].charAt(0)) +
+							FinalConstants.matSellerPropertyHeaders[matPropertyIndex].substring(1), String.class);
+					setter.invoke(editingSeller, event.getNewValue());
+					DatabaseUtil.UpdateMatSellerInSeller(editingSeller);
+					DatabaseUtil.UpdateMatSellerInMain(editingSeller);
+					resetTable();
+				} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+					AlertBox.display("错误", "编辑订单错误！(文字）");
+					new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+							e.getMessage(), e.getStackTrace(), false);
+				}
+			});
+		}
+
+		// if backspace or delete, delete the order
+		matSellerTableView.setOnKeyPressed(keyEvent -> {
+			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
+				deleteMatSeller(matSellerTableView.getSelectionModel().getSelectedItem());
+			}
+		});
+
+		// able to select each cell
+		matSellerTableView.setEditable(true);
+		matSellerTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
+
+		// filling the table
+		matSellerTableView.getColumns().setAll(matSellerColumnArrayList);
+		matSellerTableView.getItems().clear();
+		matSellerTableView.getItems().setAll(selectedMatSeller);
+		matSellerTableView.refresh();
+	}
+
+	/**
 	 * Fill the inventory page
 	 */
 	private void initInventory() {
@@ -229,13 +295,13 @@ public class MainScreen implements Initializable {
 
 			for (ProductOrder order : allProdOrders) {
 				int formulaIndex = order.getFormulaIndex();
-				if (formulaIndex != -1) {
+				if (formulaIndex != -1 && order.getRemoteInt() == 1) {
 					Formula formula = DatabaseUtil.GetFormulaByIndex(formulaIndex);
 					inventoryHelper(matOrdersDict, formula, order, 1.0);
 				}
 			}
 
-			// populating the tableview
+			// populating the table view
 			TableColumn<Map.Entry<String, Double>, String> matNameCol = new TableColumn<>("原料名称");
 			matNameCol.setStyle("-fx-alignment: CENTER;");
 			matNameCol.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getKey()));
@@ -536,6 +602,10 @@ public class MainScreen implements Initializable {
 		Callback<TableColumn<ProductOrder, Date>, TableCell<ProductOrder, Date>> datePickerEditableFactory =
 				p -> new EditingCellWithDatePicker<>() {};
 
+		// Date Picker callback
+		Callback<TableColumn<ProductOrder, String>, TableCell<ProductOrder, String>> remoteEditableFactory =
+				p -> new EditingCellWithToggleButtonForProdRemote<>() {};
+
 		// loop to set up all regular columns
 		for (int i = 0; i < prodHeaders.length; i++) {
 			if (i == 4 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9) {
@@ -597,12 +667,34 @@ public class MainScreen implements Initializable {
 								e.getMessage(), e.getStackTrace(), false);
 					}
 				});
+			} else if (i == 11) {
+				// remote
+				TableColumn<ProductOrder, String> newColumn = new TableColumn<>(prodHeaders[i]);
+				newColumn.setCellValueFactory(new PropertyValueFactory<>(prodProperty[i]));
+				newColumn.setStyle("-fx-alignment: CENTER;");
+				productColumnArrayList.add(newColumn);
+
+				newColumn.setCellFactory(remoteEditableFactory);
+				newColumn.setOnEditCommit(event -> {
+					ProductOrder editingOrder = event.getRowValue();
+					try {
+						editingOrder.setRemote(event.getNewValue().equals("是") ? 1 : 0);
+						DatabaseUtil.UpdateProdOrder(editingOrder);
+						prodTableView.refresh();
+					} catch (SQLException e) {
+						AlertBox.display("错误", "编辑订单错误！(文字）");
+						new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+								e.getMessage(), e.getStackTrace(), false);
+					}
+				});
+
 			} else {
 				// String
 				TableColumn<ProductOrder, String> newColumn = new TableColumn<>(prodHeaders[i]);
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(prodProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				productColumnArrayList.add(newColumn);
+
 
 				if (i == 3) {
 					newColumn.setCellFactory(prodNameEditableFactory);
@@ -704,7 +796,7 @@ public class MainScreen implements Initializable {
 	private void addMatOrder() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatAddOrderModifySeller.fxml");
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatAddOrder.fxml");
 			Parent newScene = loader.load(fileInputStream);
 			Stage stage = new Stage();
 
@@ -768,6 +860,24 @@ public class MainScreen implements Initializable {
 				matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
 			} catch (SQLException e) {
 				AlertBox.display("错误", "无法删除原料订单！");
+				new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+						e.getMessage(), e.getStackTrace(), false);
+			}
+		}
+	}
+
+	/**
+	 * Helper function to delete mat seller
+	 *
+	 * @param selectedSeller the order to be deleted
+	 */
+	private void deleteMatSeller(MatSeller selectedSeller) {
+		if (ConfirmBox.display("确认", "确定删除？", "是", "否")) {
+			try {
+				DatabaseUtil.DeleteMatSeller(selectedSeller.getSellerId());
+				matSellerTableView.getItems().setAll(FinalConstants.updateAllMatSellers());
+			} catch (SQLException e) {
+				AlertBox.display("错误", "无法删除原料供应商！");
 				new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 						e.getMessage(), e.getStackTrace(), false);
 			}
@@ -856,6 +966,10 @@ public class MainScreen implements Initializable {
 			matTableView.getItems().clear();
 			matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
 			matTableView.refresh();
+
+			matSellerTableView.getItems().clear();
+			matSellerTableView.getItems().setAll(FinalConstants.updateAllMatSellers());
+			matSellerTableView.refresh();
 
 			prodTableView.getItems().clear();
 			prodTableView.getItems().setAll(FinalConstants.updateAllProdOrders());

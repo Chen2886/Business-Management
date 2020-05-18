@@ -51,6 +51,27 @@
                 </TableView>
             </VBox>
         </Tab>
+        <Tab fx:id="matSeller" text="原料供应商" styleClass="main-screen-tab">
+            <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="135.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" spacing="10">
+                <HBox alignment="CENTER_RIGHT">
+                    <padding>
+                        <Insets top="10" left="10" right="10"/>
+                    </padding>
+                    <TextField fx:id="matSellerSearchTextField" styleClass="search-text-field" promptText="搜索" maxHeight="20"
+                               HBox.hgrow="ALWAYS" style="-fx-border-color: BLACK; -fx-border-radius: 2em;">
+                        <font>
+                            <Font size="20.0"/>
+                        </font>
+                    </TextField>
+                </HBox>
+                <TableView fx:id="matSellerTableView" VBox.vgrow="ALWAYS">
+                    <columns>
+
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
         <Tab fx:id="prodTab" styleClass="main-screen-tab" text="产品管理">
             <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="135.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" spacing="10">

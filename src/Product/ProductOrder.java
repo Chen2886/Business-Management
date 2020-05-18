@@ -27,6 +27,9 @@ public class ProductOrder {
 
     private int formulaIndex;
 
+    // 0 for false, 1 for true
+    private int remote;
+
     public ProductOrder(int serialNum) {
         this.serialNum = serialNum;
         this.sku = "";
@@ -38,9 +41,22 @@ public class ProductOrder {
         this.amount = Math.round(0.0 * 100.0) / 100.0;
         this.unitPrice = Math.round(0.0 * 100.0) / 100.0;
         this.basePrice = Math.round(0.0 * 100.0) / 100.0;
+        this.remote = 0;
         this.formulaIndex = -1;
         setKgAmount();
         setTotalPrice();
+    }
+
+    public String getRemote() {
+        return remote == 0 ? "否" : "是";
+    }
+
+    public int getRemoteInt() {
+        return remote;
+    }
+
+    public void setRemote(int remote) {
+        this.remote = remote;
     }
 
     public double getBasePrice() {
