@@ -322,5 +322,25 @@
     -fx-min-width: 24px;
     -fx-pref-width: 24px;
     -fx-max-width: 24px;
+}
 
+.white-jfx-date-picker {
+    -jfx-default-color: WHITE;
+    -jfx-unfocus-color: WHITE;
+    -jfx-focus-color: WHITE;
+    -fx-prompt-text-fill: WHITE;
+    -fx-text-fill: WHITE;
+}
+
+.white-jfx-date-picker .month-year-pane {
+    -fx-text-fill: black;
+    -fx-background-color: black;
+}
+
+.white-jfx-date-picker .text-field {
+    -jfx-default-color: WHITE;
+    -jfx-unfocus-color: WHITE;
+    -jfx-focus-color: WHITE;
+    -fx-prompt-text-fill: WHITE;
+    -fx-text-fill: WHITE;
 }

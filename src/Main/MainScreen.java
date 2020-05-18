@@ -512,6 +512,13 @@ public class MainScreen implements Initializable {
 								selectedSeller = matSeller;
 						}
 						editingOrder.setSeller(selectedSeller);
+						try {
+							DatabaseUtil.UpdateMatOrder(editingOrder);
+						} catch (SQLException e) {
+							AlertBox.display("错误", "编辑订单错误！");
+							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+									e.getMessage(), e.getStackTrace(), false);
+						}
 						matTableView.refresh();
 					});
 				} else if (i == 3) {
@@ -798,20 +805,15 @@ public class MainScreen implements Initializable {
 			FXMLLoader loader = new FXMLLoader();
 			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatAddOrder.fxml");
 			Parent newScene = loader.load(fileInputStream);
-			Stage stage = new Stage();
 
-			MatAddOrderModifySeller matAddOrderModifySeller = loader.getController();
-			matAddOrderModifySeller.initData(stage);
+			MatAddOrder matAddOrder = loader.getController();
+			matAddOrder.initData(Main.mainStage);
 
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("添加订单");
+			Main.mainStage.setTitle("添加订单");
 			Scene scene = new Scene(newScene);
 			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
-			stage.setScene(scene);
-			stage.showAndWait();
-			matTableView.getItems().clear();
-			matTableView.getItems().setAll(FinalConstants.updateAllMatOrders());
-			matTableView.refresh();
+			Main.mainStage.setScene(scene);
+			Main.mainStage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "添加原料窗口错误！");
 			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
