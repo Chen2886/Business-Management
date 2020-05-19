@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class FinalConstants {
 
@@ -123,14 +124,7 @@ public class FinalConstants {
             new HandleError(FinalConstants.class.getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
                     e.getMessage(), e.getStackTrace(), false);
         }
-        Comparator<MatOrder> comparator = Comparator.comparing(o -> {
-            LocalDate localDate = LocalDate.MIN;
-            try {
-                localDate = LocalDate.of(o.getOrderDate().getY(), o.getOrderDate().getM(), o.getOrderDate().getD());
-            } catch (Exception ignored) {}
-            return localDate;
-        }
-                );
+        Comparator<MatOrder> comparator = Comparator.comparing(MatOrder::getSerialNum);
         comparator = comparator.reversed();
         allMatOrders.sort(comparator);
         return allMatOrders;

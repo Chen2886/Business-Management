@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -367,27 +368,28 @@ public class MatAddOrder {
 
 		// setting up all the labels
 		for (int i = 0; i < FinalConstants.matTableHeaders.length; i++) {
-			Label newLabel = new Label(FinalConstants.matTableHeaders[i]);
-			newLabel.setMaxWidth(Double.MAX_VALUE);
-			newLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white; -fx-alignment: center-left;");
+//			Label newLabel = new Label(FinalConstants.matTableHeaders[i]);
+//			newLabel.setMaxWidth(Double.MAX_VALUE);
+//			newLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white; -fx-alignment: center-left;");
 
 			// type of mat, combo box
 			if (i == 3) {
 				JFXComboBox<String> newComboBox = new JFXComboBox<>();
-				newComboBox.setPromptText("选择" + FinalConstants.matTableHeaders[i]);
+				newComboBox.setPromptText("输入" + matHeaders[i]);
 				newComboBox.getItems().setAll(FinalConstants.matOfType);
 				newComboBox.setMaxWidth(Double.MAX_VALUE);
-				newComboBox.setStyle("-fx-prompt-text-fill: white; -fx-text-fill: white; " +
-						"-jfx-focus-color: white; -jfx-unfocus-color: white");
+				newComboBox.getStyleClass().add("white-jfx-combo-box");
 				matOrderInputArray.add(newComboBox);
-				VBox temp = new VBox(newLabel, newComboBox);
-				temp.setSpacing(10);
-				infoInputVBox.getChildren().add(temp);
+				infoInputVBox.getChildren().add(newComboBox);
+				newComboBox.setPadding(new Insets(0, 25, 0, 25));
+//				VBox temp = new VBox(newLabel, newComboBox);
+//				temp.setSpacing(5);
+//				temp.setPadding(new Insets(0, 25, 0, 25));
+//				infoInputVBox.getChildren().add(temp);
 			} else if (i == FinalConstants.matPropertyHeaders.length - 1) {
 				// seller, combo box
 				JFXComboBox<String> sellerComboBox = new JFXComboBox<>();
-				sellerComboBox.setPromptText("选择" + FinalConstants.matTableHeaders[i]);
-
+				sellerComboBox.setPromptText("输入" + matHeaders[i]);
 				// getting all the company names
 				String[] allSellerCompany = new String[allMatSeller.size()];
 				for (int j = 0; j < allMatSeller.size(); j++) {
@@ -396,19 +398,20 @@ public class MatAddOrder {
 
 				sellerComboBox.getItems().setAll(allSellerCompany);
 				sellerComboBox.setMaxWidth(Double.MAX_VALUE);
-				sellerComboBox.setStyle("-fx-prompt-text-fill: white; -fx-text-fill: white; " +
-						"-jfx-focus-color: white; -jfx-unfocus-color: white");
+				sellerComboBox.getStyleClass().add("white-jfx-combo-box");
 				matOrderInputArray.add(sellerComboBox);
-
-				VBox temp = new VBox(newLabel, sellerComboBox);
-				temp.setSpacing(10);
-				infoInputVBox.getChildren().add(temp);
+				infoInputVBox.getChildren().add(sellerComboBox);
+				sellerComboBox.setPadding(new Insets(0, 25, 0, 25));
+//				VBox temp = new VBox(newLabel, sellerComboBox);
+//				temp.setPadding(new Insets(0, 25, 0, 25));
+//				temp.setSpacing(5);
+//				infoInputVBox.getChildren().add(temp);
 			} else if (i == 0 || i == 4 || i == 5 || i == 6) {
 				// dates, date picker
 				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 				JFXDatePicker datePicker = new JFXDatePicker();
+				datePicker.setPromptText("输入" + matHeaders[i]);
 				datePicker.setDefaultColor(Color.WHITE);
-				datePicker.setPromptText("选择" + FinalConstants.matTableHeaders[i]);
 				datePicker.setMaxWidth(Double.MAX_VALUE);
 
 				datePicker.setConverter(new StringConverter<>() {
@@ -426,27 +429,30 @@ public class MatAddOrder {
 				});
 				datePicker.getStyleClass().add("white-jfx-date-picker");
 				matOrderInputArray.add(datePicker);
-
-				VBox temp = new VBox(newLabel, datePicker);
-				temp.setSpacing(10);
-				infoInputVBox.getChildren().add(temp);
+				infoInputVBox.getChildren().add(datePicker);
+				datePicker.setPadding(new Insets(0, 25, 0, 25));
+//				VBox temp = new VBox(newLabel, datePicker);
+//				temp.setPadding(new Insets(0, 25, 0, 25));
+//				temp.setSpacing(5);
+//				infoInputVBox.getChildren().add(temp);
 			} else {
 				// regular text field
 				JFXTextField newTextField = new JFXTextField();
+				newTextField.setPromptText("输入" + matHeaders[i]);
 				// auto complete for name
 				if (i == 2) {
 					FinalConstants.updateAutoCompleteMatName();
 					TextFields.bindAutoCompletion(newTextField, FinalConstants.autoCompleteMatName);
 				}
 				newTextField.setMaxWidth(Double.MAX_VALUE);
-				newTextField.setPromptText("输入" + FinalConstants.matTableHeaders[i]);
-				newTextField.setStyle("-fx-prompt-text-fill: white; -fx-text-fill: white; " +
-						"-jfx-focus-color: white; -jfx-unfocus-color: white");
+				newTextField.getStyleClass().add("white-jfx-text-field");
 				matOrderInputArray.add(newTextField);
-
-				VBox temp = new VBox(newLabel, newTextField);
-				temp.setSpacing(10);
-				infoInputVBox.getChildren().add(temp);
+				infoInputVBox.getChildren().add(newTextField);
+				newTextField.setPadding(new Insets(0, 25, 0, 25));
+//				VBox temp = new VBox(newLabel, newTextField);
+//				temp.setPadding(new Insets(0, 25, 0, 25));
+//				temp.setSpacing(5);
+//				infoInputVBox.getChildren().add(temp);
 			}
 		}
 
