@@ -283,21 +283,28 @@
     -jfx-default-color: WHITE;
     -jfx-unfocus-color: WHITE;
     -jfx-focus-color: WHITE;
-    -fx-prompt-text-fill: WHITE;
+    -fx-prompt-text-fill: #c8c8c8;
     -fx-text-fill: WHITE;
     -fx-font-size: 18px;
 }
 
 .white-jfx-date-picker .month-year-pane {
+    -fx-background-color: #2e2e2e;
+}
+
+.white-jfx-date-picker .today {
     -fx-text-fill: black;
-    -fx-background-color: black;
+}
+
+.white-jfx-date-picker .today:hover {
+    -fx-text-fill: #947eb0;
 }
 
 .white-jfx-date-picker .text-field {
     -jfx-default-color: WHITE;
     -jfx-unfocus-color: WHITE;
     -jfx-focus-color: WHITE;
-    -fx-prompt-text-fill: WHITE;
+    -fx-prompt-text-fill: #c8c8c8;
     -fx-text-fill: WHITE;
     -fx-font-size: 18px;
 }
@@ -306,7 +313,7 @@
     -jfx-default-color: WHITE;
     -jfx-unfocus-color: WHITE;
     -jfx-focus-color: WHITE;
-    -fx-prompt-text-fill: WHITE;
+    -fx-prompt-text-fill: #c8c8c8;
     -fx-text-fill: WHITE;
     -fx-font-size: 18px;
 }
@@ -331,7 +338,7 @@
 }
 
 .white-jfx-text-field {
-    -fx-prompt-text-fill: white;
+    -fx-prompt-text-fill: #c8c8c8;
     -fx-text-fill: white;
     -jfx-focus-color: white;
     -jfx-unfocus-color: white;
