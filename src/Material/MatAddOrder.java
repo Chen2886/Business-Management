@@ -366,11 +366,7 @@ public class MatAddOrder {
 		Node buttonHBox = infoInputVBox.getChildren().get(1);
 		infoInputVBox.getChildren().remove(buttonHBox);
 
-		// setting up all the labels
 		for (int i = 0; i < FinalConstants.matTableHeaders.length; i++) {
-//			Label newLabel = new Label(FinalConstants.matTableHeaders[i]);
-//			newLabel.setMaxWidth(Double.MAX_VALUE);
-//			newLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white; -fx-alignment: center-left;");
 
 			// type of mat, combo box
 			if (i == 3) {
@@ -457,7 +453,7 @@ public class MatAddOrder {
 		}
 
 		TextField name = (TextField) matOrderInputArray.get(2);
-		TextField unitPrice = (TextField) matOrderInputArray.get(10);
+		TextField unitPrice = (TextField) matOrderInputArray.get(11);
 		name.textProperty().addListener((observableValue, oldValue, newValue) -> {
 			try {
 				if (DatabaseUtil.CheckIfNameExistsInMatUnitPrice(newValue))
@@ -466,6 +462,40 @@ public class MatAddOrder {
 			} catch (SQLException ignored) {
 			}
 		});
+
+		TextField unitAmount = (TextField) matOrderInputArray.get(8);
+		TextField amount = (TextField) matOrderInputArray.get(9);
+		TextField kgAmount = (TextField) matOrderInputArray.get(10);
+		TextField totalPrice = (TextField) matOrderInputArray.get(12);
+
+		unitAmount.textProperty().addListener((observable -> {
+			try {
+				kgAmount.setText(String.valueOf(Double.parseDouble(unitAmount.getText()) *
+						Double.parseDouble(amount.getText())));
+			} catch (Exception e) {
+			}
+		}));
+		amount.textProperty().addListener((observable -> {
+			try {
+				kgAmount.setText(String.valueOf(Double.parseDouble(unitAmount.getText()) *
+						Double.parseDouble(amount.getText())));
+			} catch (Exception e) {
+			}
+		}));
+		unitPrice.textProperty().addListener((observable -> {
+			try {
+				totalPrice.setText(String.valueOf(Double.parseDouble(unitPrice.getText()) *
+						Double.parseDouble(kgAmount.getText())));
+			} catch (Exception e) {
+			}
+		}));
+		kgAmount.textProperty().addListener((observable -> {
+			try {
+				totalPrice.setText(String.valueOf(Double.parseDouble(unitPrice.getText()) *
+						Double.parseDouble(kgAmount.getText())));
+			} catch (Exception e) {
+			}
+		}));
 
 		infoInputVBox.getChildren().add(buttonHBox);
 	}

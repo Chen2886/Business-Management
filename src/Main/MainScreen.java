@@ -206,7 +206,7 @@ public class MainScreen implements Initializable {
 		// inventory page
 		mainTabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
 			FinalConstants.setSelectedTab(newValue.intValue());
-			if (newValue.intValue() == 2) {
+			if (newValue.intValue() == 3) {
 				initInventory();
 			}
 		});
