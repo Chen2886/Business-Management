@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -236,7 +237,7 @@ public class MainScreen implements Initializable {
 
 			// Set up for editable table view
 			int matPropertyIndex = i;
-			newColumn.setCellFactory(stringEditableFactory);
+			newColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 			newColumn.setOnEditCommit(event -> {
 				MatSeller editingSeller = event.getRowValue();
 				try {
@@ -350,6 +351,8 @@ public class MainScreen implements Initializable {
 	 */
 	public void fillMatTable(ObservableList<MatOrder> selectedMatOrders) {
 
+		matTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
+
 		// array of columns
 		Collection<TableColumn<MatOrder, ?>> orderColumnArrayList = new ArrayList<>();
 
@@ -453,18 +456,15 @@ public class MainScreen implements Initializable {
 				int matPropertyIndex = i;
 
 				// Set up for editable table view
-				newColumn.setCellFactory(stringEditableFactory);
+				newColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 				newColumn.setOnEditCommit(event -> {
 					MatOrder editingOrder = event.getRowValue();
+
 					try {
-						Method setter;
-						setter = MatOrder.class.getDeclaredMethod("set" +
-								Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
-								matProperty[matPropertyIndex].substring(1), String.class);
-						setter.invoke(editingOrder, event.getNewValue());
+						editingOrder.setSigned(event.getNewValue());
 						DatabaseUtil.UpdateMatOrder(editingOrder);
 						matTableView.refresh();
-					} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+					} catch (SQLException e) {
 						AlertBox.display("错误", "编辑订单错误！(文字）");
 						new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 								e.getMessage(), e.getStackTrace(), false);
@@ -484,7 +484,11 @@ public class MainScreen implements Initializable {
 				// matName needs autocomplete
 				if ((i <= 14 || i == 23) && i != 3 && i != 2) {
 					int matPropertyIndex = i;
-					newColumn.setCellFactory(stringEditableFactory);
+
+					Callback<TableColumn<MatOrder, String>, TableCell<MatOrder, String>>
+							defaultTextFieldCellFactory = TextFieldTableCell.forTableColumn();
+
+					newColumn.setCellFactory(col -> defaultTextFieldCellFactory.call(col));
 					newColumn.setOnEditCommit(event -> {
 							MatOrder editingOrder = event.getRowValue();
 						try {
@@ -501,6 +505,7 @@ public class MainScreen implements Initializable {
 									e.getMessage(), e.getStackTrace(), false);
 						}
 					});
+
 				} else if (i == 15) {
 					newColumn.setCellFactory(matSellerEditableFactory);
 					newColumn.setOnEditCommit(event -> {
@@ -569,10 +574,6 @@ public class MainScreen implements Initializable {
 			}
 		});
 
-		// able to select each cell
-		matTableView.setEditable(true);
-		matTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
-
 		// filling the table
 		matTableView.getColumns().setAll(orderColumnArrayList);
 		matTableView.getItems().clear();
@@ -588,10 +589,6 @@ public class MainScreen implements Initializable {
 	public void fillProdTable(ObservableList<ProductOrder> selectedProdOrders) {
 		// array of columns
 		Collection<TableColumn<ProductOrder, ?>> productColumnArrayList = new ArrayList<>();
-
-		// Regular String callback
-		Callback<TableColumn<ProductOrder, String>, TableCell<ProductOrder, String>> stringEditableFactory =
-				p -> new EditingCellWithTextFields<>(String.class) {};
 
 		// Prod name callback with autocomplete
 		Callback<TableColumn<ProductOrder, String>, TableCell<ProductOrder, String>> prodNameEditableFactory =
@@ -741,7 +738,7 @@ public class MainScreen implements Initializable {
 					});
 				} else {
 					int prodPropertyIndex = i;
-					newColumn.setCellFactory(stringEditableFactory);
+					newColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 					newColumn.setOnEditCommit(event -> {
 						ProductOrder editingOrder = event.getRowValue();
 						try {

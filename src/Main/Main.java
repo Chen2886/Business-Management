@@ -32,7 +32,7 @@ public class Main extends Application {
 			bufferedWriter.close();
 			PrintStream printStream = new PrintStream("uncaughtError.log");
 			System.setOut(printStream);
-			System.setErr(printStream);
+//			System.setErr(printStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -39,11 +39,21 @@ public class MatAddOrder {
 
 	// mat table headers
 	private static final String[] matHeaders = new String[]{"订单日期", "订单号", "原料名称", "类别", "付款日期",
+			"到达日期", "发票日期", "发票编号", "规格", "数量", "公斤", "单价", "总价", "签收人", "供应商订单编号", "备注",
+			"供应商"};
+
+	// all mat property listed
+	private static final String[] matProperty = new String[]{"orderDate", "sku", "name", "type", "paymentDate",
+			"arrivalDate", "invoiceDate", "invoice", "unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice",
+			"signed", "skuSeller", "note", "company"};
+
+	// mat table headers
+	private static final String[] matDisplayHeaders = new String[]{"订单日期", "订单号", "原料名称", "类别", "付款日期",
 			"到达日期", "发票日期", "发票编号", "规格", "数量", "公斤", "单价", "总价", "签收人", "供应商订单编号", "供应商",
 			"联系人", "手机", "座机", "传真", "供应商账号", "供应商银行地址", "供应商地址", "备注"};
 
 	// all mat property listed
-	private static final String[] matProperty = new String[]{"orderDate", "sku", "name", "type", "paymentDate",
+	private static final String[] matDisplayProperty = new String[]{"orderDate", "sku", "name", "type", "paymentDate",
 			"arrivalDate", "invoiceDate", "invoice", "unitAmount", "amount", "kgAmount", "unitPrice", "totalPrice",
 			"signed", "skuSeller", "company", "contact", "mobile", "land", "fax", "account",
 			"bank", "address", "note"};
@@ -149,17 +159,17 @@ public class MatAddOrder {
 				p -> new EditingCellForMatSeller<>() {};
 
 		// loop to set up all regular columns
-		for (int i = 0; i < matHeaders.length; i++) {
+		for (int i = 0; i < matDisplayHeaders.length; i++) {
 			if (i == 8 || i == 9 || i == 10 || i == 11 || i == 12) {
 				// Doubles
-				TableColumn<MatOrder, Double> newColumn = new TableColumn<>(matHeaders[i]);
-				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
+				TableColumn<MatOrder, Double> newColumn = new TableColumn<>(matDisplayHeaders[i]);
+				newColumn.setCellValueFactory(new PropertyValueFactory<>(matDisplayProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
 
 				// Exclude kgAmount and TotalPrice because they are automatic
 				if (i != 10 && i != 12) {
-					int matPropertyIndex = i;
+					int matDisplayPropertyIndex = i;
 					newColumn.setCellFactory(doubleEditableFactory);
 					newColumn.setOnEditCommit(event -> {
 
@@ -172,8 +182,8 @@ public class MatAddOrder {
 						try {
 							Method setter;
 							setter = MatOrder.class.getDeclaredMethod("set" +
-									Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
-									matProperty[matPropertyIndex].substring(1), double.class);
+									Character.toUpperCase(matDisplayProperty[matDisplayPropertyIndex].charAt(0)) +
+									matDisplayProperty[matDisplayPropertyIndex].substring(1), double.class);
 							setter.invoke(editingOrder, event.getNewValue());
 							editingOrder.setKgAmount();
 							editingOrder.setTotalPrice();
@@ -189,21 +199,21 @@ public class MatAddOrder {
 				}
 			} else if (i == 0 || i == 4 || i == 5 || i == 6) {
 				// Main.Date
-				TableColumn<MatOrder, Date> newColumn = new TableColumn<>(matHeaders[i]);
-				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
+				TableColumn<MatOrder, Date> newColumn = new TableColumn<>(matDisplayHeaders[i]);
+				newColumn.setCellValueFactory(new PropertyValueFactory<>(matDisplayProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				newColumn.setMinWidth(110);
 				orderColumnArrayList.add(newColumn);
 
-				int matPropertyIndex = i;
+				int matDisplayPropertyIndex = i;
 				newColumn.setCellFactory(datePickerEditableFactory);
 				newColumn.setOnEditCommit(event -> {
 					MatOrder editingOrder = event.getRowValue();
 					try {
 						Method setter;
 						setter = MatOrder.class.getDeclaredMethod("set" +
-								Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
-								matProperty[matPropertyIndex].substring(1), Date.class);
+								Character.toUpperCase(matDisplayProperty[matDisplayPropertyIndex].charAt(0)) +
+								matDisplayProperty[matDisplayPropertyIndex].substring(1), Date.class);
 						setter.invoke(editingOrder, event.getNewValue());
 						DatabaseUtil.UpdateMatOrder(editingOrder);
 						matTableView.refresh();
@@ -216,26 +226,24 @@ public class MatAddOrder {
 				});
 			} else if (i == 13) {
 				// signed by increase column width
-				TableColumn<MatOrder, String> newColumn = new TableColumn<>(matHeaders[i]);
-				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
+
+				TableColumn<MatOrder, String> newColumn = new TableColumn<>(matDisplayHeaders[i]);
+				newColumn.setCellValueFactory(new PropertyValueFactory<>(matDisplayProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				newColumn.setMinWidth(60);
 				orderColumnArrayList.add(newColumn);
-				int matPropertyIndex = i;
+				int matDisplayPropertyIndex = i;
 
 				// Set up for editable table view
 				newColumn.setCellFactory(stringEditableFactory);
 				newColumn.setOnEditCommit(event -> {
 					MatOrder editingOrder = event.getRowValue();
 					try {
-						Method setter;
-						setter = MatOrder.class.getDeclaredMethod("set" +
-								Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
-								matProperty[matPropertyIndex].substring(1), String.class);
-						setter.invoke(editingOrder, event.getNewValue());
+						String val = event.getNewValue();
+						editingOrder.setSigned(val);
 						DatabaseUtil.UpdateMatOrder(editingOrder);
 						matTableView.refresh();
-					} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+					} catch (SQLException e) {
 						AlertBox.display("错误", "编辑订单错误！(文字）");
 						new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 								e.getMessage(), e.getStackTrace(), false);
@@ -243,8 +251,8 @@ public class MatAddOrder {
 				});
 			} else {
 				// String
-				TableColumn<MatOrder, String> newColumn = new TableColumn<>(matHeaders[i]);
-				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
+				TableColumn<MatOrder, String> newColumn = new TableColumn<>(matDisplayHeaders[i]);
+				newColumn.setCellValueFactory(new PropertyValueFactory<>(matDisplayProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
 
@@ -254,15 +262,15 @@ public class MatAddOrder {
 				// NOTES: Not allowing to edit sellers, Mat Of Type and Seller needs combo Box
 				// matName needs autocomplete
 				if ((i <= 14 || i == 23) && i != 3 && i != 2) {
-					int matPropertyIndex = i;
+					int matDisplayPropertyIndex = i;
 					newColumn.setCellFactory(stringEditableFactory);
 					newColumn.setOnEditCommit(event -> {
 						MatOrder editingOrder = event.getRowValue();
 						try {
 							Method setter;
 							setter = MatOrder.class.getDeclaredMethod("set" +
-									Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
-									matProperty[matPropertyIndex].substring(1), String.class);
+									Character.toUpperCase(matDisplayProperty[matDisplayPropertyIndex].charAt(0)) +
+									matDisplayProperty[matDisplayPropertyIndex].substring(1), String.class);
 							setter.invoke(editingOrder, event.getNewValue());
 							DatabaseUtil.UpdateMatOrder(editingOrder);
 							matTableView.refresh();
@@ -293,15 +301,15 @@ public class MatAddOrder {
 						matTableView.refresh();
 					});
 				} else if (i == 3) {
-					int matPropertyIndex = i;
+					int matDisplayPropertyIndex = i;
 					newColumn.setCellFactory(matOfTypeEditableFactory);
 					newColumn.setOnEditCommit(event -> {
 						MatOrder editingOrder = event.getRowValue();
 						try {
 							Method setter;
 							setter = MatOrder.class.getDeclaredMethod("set" +
-									Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
-									matProperty[matPropertyIndex].substring(1), String.class);
+									Character.toUpperCase(matDisplayProperty[matDisplayPropertyIndex].charAt(0)) +
+									matDisplayProperty[matDisplayPropertyIndex].substring(1), String.class);
 							setter.invoke(editingOrder, event.getNewValue());
 							DatabaseUtil.UpdateMatOrder(editingOrder);
 							matTableView.refresh();
@@ -366,12 +374,12 @@ public class MatAddOrder {
 		Node buttonHBox = infoInputVBox.getChildren().get(1);
 		infoInputVBox.getChildren().remove(buttonHBox);
 
-		for (int i = 0; i < FinalConstants.matTableHeaders.length; i++) {
+		for (int i = 0; i < matHeaders.length; i++) {
 
 			// type of mat, combo box
 			if (i == 3) {
 				JFXComboBox<String> newComboBox = new JFXComboBox<>();
-				newComboBox.setPromptText("输入" + matHeaders[i]);
+				newComboBox.setPromptText("选择" + matHeaders[i]);
 				newComboBox.getItems().setAll(FinalConstants.matOfType);
 				newComboBox.setMaxWidth(Double.MAX_VALUE);
 				newComboBox.getStyleClass().add("white-jfx-combo-box");
@@ -382,10 +390,10 @@ public class MatAddOrder {
 //				temp.setSpacing(5);
 //				temp.setPadding(new Insets(0, 25, 0, 25));
 //				infoInputVBox.getChildren().add(temp);
-			} else if (i == FinalConstants.matPropertyHeaders.length - 1) {
+			} else if (i == matHeaders.length - 1) {
 				// seller, combo box
 				JFXComboBox<String> sellerComboBox = new JFXComboBox<>();
-				sellerComboBox.setPromptText("输入" + matHeaders[i]);
+				sellerComboBox.setPromptText("选择" + matHeaders[i]);
 				// getting all the company names
 				String[] allSellerCompany = new String[allMatSeller.size()];
 				for (int j = 0; j < allMatSeller.size(); j++) {

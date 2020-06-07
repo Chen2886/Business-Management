@@ -44,7 +44,7 @@
                         </font>
                     </TextField>
                 </HBox>
-                <TableView fx:id="matTableView" VBox.vgrow="ALWAYS">
+                <TableView fx:id="matTableView" editable="true" VBox.vgrow="ALWAYS">
                     <columns>
 
                     </columns>
@@ -86,7 +86,7 @@
                         </font>
                     </TextField>
                 </HBox>
-                <TableView fx:id="prodTableView" styleClass="table-row-cell" VBox.vgrow="ALWAYS">
+                <TableView fx:id="prodTableView" editable="true" styleClass="table-row-cell" VBox.vgrow="ALWAYS">
                     <columns>
 
                     </columns>

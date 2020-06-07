@@ -6,8 +6,10 @@ import javafx.application.Platform;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +65,7 @@ public abstract class EditingCellWithTextFields<S, T> extends TableCell<S, T> {
     private void createTextField() {
         textField = new JFXTextField(getString());
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-        textField.setOnKeyPressed(t -> {
+        textField.setOnKeyTyped(t -> {
             if (t.getCode() == KeyCode.ENTER) {
                 if (this.type == Double.class) {
                     try {
@@ -96,15 +98,6 @@ public abstract class EditingCellWithTextFields<S, T> extends TableCell<S, T> {
                 }
             }
         });
-//        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-//            if (!newValue && textField != null) {
-//                try {
-//                    commitEdit((T) textField.getText());
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
     }
     private String getString() {
         return getItem() == null ? "" : getItem().toString();
