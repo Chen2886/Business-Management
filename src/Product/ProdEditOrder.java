@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-@Deprecated
 public class ProdEditOrder {
 
     // prod table headers

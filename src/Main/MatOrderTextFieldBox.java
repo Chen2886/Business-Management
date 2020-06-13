@@ -2,29 +2,37 @@ package Main;
 
 // from my other packages
 
+import Material.MatOrder;
 import com.jfoenix.controls.JFXTextField;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class TextFieldBox {
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+
+public class MatOrderTextFieldBox extends TableCell {
 
 	//Create variable
 	static String answer;
 	private static final String mediumFont = "-fx-font: 18 arial;";
 	private static JFXTextField textField;
 
-	public static String display(String title, String message, String yesButtonMessage, String noButtonMessage) {
+	public static void display(String title, String message, String yesButtonMessage, String noButtonMessage,
+							   Method setter, MatOrder order) {
 		Stage window = new Stage();
 
 		textField = new JFXTextField();
+		textField.setPadding(new Insets(20, 10, 10, 10));
 		textField.setPromptText(message);
 		textField.setStyle(mediumFont);
 
@@ -42,18 +50,46 @@ public class TextFieldBox {
 		buttonHBox.setPadding(new Insets(10, 10, 10, 10));
 
 		//Clicking will set answer and close window
-		yesButton.setOnKeyPressed(keyEvent -> {
+		textField.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode().equals(KeyCode.ENTER)) {
-				answer = textField.getText();
+				try {
+					setter.invoke(order, textField.getText());
+					DatabaseUtil.UpdateMatOrder(order);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException | SQLException e) {
+					e.printStackTrace();
+				}
 				window.close();
 			}
 		});
-		yesButton.setOnAction(e -> {
-			answer = textField.getText();
+		yesButton.setOnKeyPressed(keyEvent -> {
+			if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+				try {
+					setter.invoke(order, textField.getText());
+					DatabaseUtil.UpdateMatOrder(order);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException | SQLException e) {
+					e.printStackTrace();
+				}
+				window.close();
+			}
+		});
+		yesButton.setOnAction(event -> {
+			try {
+				setter.invoke(order, textField.getText());
+				DatabaseUtil.UpdateMatOrder(order);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			window.close();
 		});
 		noButton.setOnAction(e -> {
-			answer = "CANCELED PRESSED";
 			window.close();
 		});
 
@@ -64,10 +100,7 @@ public class TextFieldBox {
 		layout.setAlignment(Pos.CENTER);
 		Scene scene = new Scene(layout);
 		window.setScene(scene);
-		window.showAndWait();
-
-		//Make sure to return answer
-		return answer;
+		window.show();
 	}
 
 }

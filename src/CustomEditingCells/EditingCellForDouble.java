@@ -13,12 +13,10 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class EditingCellWithTextFields<S, T> extends TableCell<S, T> {
+public abstract class EditingCellForDouble<S, T> extends TableCell<S, T> {
     private JFXTextField textField;
-    private final Class<T> type;
 
-    public EditingCellWithTextFields(Class<T> type) {
-        this.type = type;
+    public EditingCellForDouble() {
     }
 
     @Override
@@ -67,30 +65,22 @@ public abstract class EditingCellWithTextFields<S, T> extends TableCell<S, T> {
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.setOnKeyTyped(t -> {
             if (t.getCode() == KeyCode.ENTER) {
-                if (this.type == Double.class) {
-                    try {
-                        Double val = Double.parseDouble(textField.getText());
-                        commitEdit((T) val);
-                    } catch (Exception e) {
-                        cancelEdit();
-                        AlertBox.display("错误", "数字输入错误，即将还原！");
-                    }
-                } else {
-                    commitEdit((T) textField.getText());
+                try {
+                    Double val = Double.parseDouble(textField.getText());
+                    commitEdit((T) val);
+                } catch (Exception e) {
+                    cancelEdit();
+                    AlertBox.display("错误", "数字输入错误，即将还原！");
                 }
             } else if (t.getCode() == KeyCode.ESCAPE) {
                 cancelEdit();
             } else if (t.getCode() == KeyCode.TAB) {
-                if (this.type == Double.class) {
-                    try {
-                        Double val = Double.parseDouble(textField.getText());
-                        commitEdit((T) val);
-                    } catch (Exception e) {
-                        cancelEdit();
-                        AlertBox.display("错误", "数字输入错误，即将还原！");
-                    }
-                } else {
-                    commitEdit((T) textField.getText());
+                try {
+                    Double val = Double.parseDouble(textField.getText());
+                    commitEdit((T) val);
+                } catch (Exception e) {
+                    cancelEdit();
+                    AlertBox.display("错误", "数字输入错误，即将还原！");
                 }
                 TableColumn nextColumn = getNextColumn(!t.isShiftDown());
                 if (nextColumn != null) {
