@@ -126,6 +126,7 @@ public class MainScreen implements Initializable {
 			// if selected tab is material
 			if (mainTabPane.getSelectionModel().getSelectedItem().equals(matTab)) addMatOrder();
 				// if selected tab is product
+			else if (mainTabPane.getSelectionModel().getSelectedItem().equals(matSeller)) addMatSeller();
 			else addProdOrder();
 		});
 
@@ -232,39 +233,13 @@ public class MainScreen implements Initializable {
 			newColumn.setCellValueFactory(new PropertyValueFactory<>(FinalConstants.matSellerPropertyHeaders[i]));
 			newColumn.setStyle("-fx-alignment: CENTER;");
 			matSellerColumnArrayList.add(newColumn);
-
-			// Set up for editable table view
-			int matPropertyIndex = i;
-			newColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-			newColumn.setOnEditCommit(event -> {
-				MatSeller editingSeller = event.getRowValue();
-				try {
-					Method setter;
-					setter = MatSeller.class.getDeclaredMethod("set" +
-							Character.toUpperCase(FinalConstants.matSellerPropertyHeaders[matPropertyIndex].charAt(0)) +
-							FinalConstants.matSellerPropertyHeaders[matPropertyIndex].substring(1), String.class);
-					setter.invoke(editingSeller, event.getNewValue());
-					DatabaseUtil.UpdateMatSellerInSeller(editingSeller);
-					DatabaseUtil.UpdateMatSellerInMain(editingSeller);
-					resetTable();
-				} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-					AlertBox.display("错误", "编辑订单错误！(文字）");
-					new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-							e.getMessage(), e.getStackTrace(), false);
-				}
-			});
 		}
 
 		// if backspace or delete, delete the order
 		matSellerTableView.setOnKeyPressed(keyEvent -> {
-			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE) {
+			if (keyEvent.getCode() == KeyCode.BACK_SPACE || keyEvent.getCode() == KeyCode.DELETE)
 				deleteMatSeller(matSellerTableView.getSelectionModel().getSelectedItem());
-			}
 		});
-
-		// able to select each cell
-		matSellerTableView.setEditable(true);
-		matSellerTableView.getSelectionModel().cellSelectionEnabledProperty().set(true);
 
 		// filling the table
 		matSellerTableView.getColumns().setAll(matSellerColumnArrayList);
@@ -277,6 +252,7 @@ public class MainScreen implements Initializable {
 	 * Fill the inventory page
 	 */
 	private void initInventory() {
+
 		try {
 			ArrayList<MatOrder> allMatOrders = new ArrayList<>(DatabaseUtil.GetAllMatOrders());
 			ArrayList<ProductOrder> allProdOrders = new ArrayList<>(DatabaseUtil.GetAllProdOrders());
@@ -562,6 +538,30 @@ public class MainScreen implements Initializable {
 			Main.mainStage.show();
 		} catch (Exception e) {
 			AlertBox.display("错误", "添加原料窗口错误！");
+			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+					e.getMessage(), e.getStackTrace(), false);
+		}
+	}
+
+	/**
+	 * Helper function to set up window to add a mat seller
+	 */
+	private void addMatSeller() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			InputStream fileInputStream = getClass().getResourceAsStream(Main.fxmlPath + "MatAddSeller.fxml");
+			Parent newScene = loader.load(fileInputStream);
+
+			MatAddSeller matAddSeller = loader.getController();
+			matAddSeller.initData(Main.mainStage);
+
+			Main.mainStage.setTitle("添加供应商");
+			Scene scene = new Scene(newScene);
+			scene.getStylesheets().add(Main.class.getResource(Main.styleSheetPath).toURI().toString());
+			Main.mainStage.setScene(scene);
+			Main.mainStage.show();
+		} catch (Exception e) {
+			AlertBox.display("错误", "添加供应商窗口错误！");
 			new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
 					e.getMessage(), e.getStackTrace(), false);
 		}

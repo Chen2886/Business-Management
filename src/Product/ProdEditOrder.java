@@ -2,6 +2,7 @@ package Product;
 
 import Main.*;
 
+import com.jfoenix.controls.JFXToggleButton;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -21,11 +22,11 @@ public class ProdEditOrder {
 
     // prod table headers
     private static final String[] prodHeaders = new String[]{"订单日期", "送货单号", "\u3000\u3000客户", "产品名称",
-            "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注"};
+            "\u3000\u3000规格", "\u3000\u3000数量", "\u3000\u3000单价", "\u3000\u3000备注", "张家港生产"};
 
     // all prod property listed
     private static final String[] prodProperty = new String[]{"OrderDate", "Sku", "Customer", "Name",
-            "UnitAmount", "Amount", "UnitPrice", "Note"};
+            "UnitAmount", "Amount", "UnitPrice", "Note", "Remote"};
 
     @FXML
     GridPane prodEditOrderGrid;
@@ -76,7 +77,7 @@ public class ProdEditOrder {
                     "-fx-alignment: center-right;");
             GridPane.setConstraints(newLabel, col, row++);
             prodOrderLabelArray.add(newLabel);
-            if ((i + 5) % 4 == 0) {
+            if ((i + 4) % 3 == 0) {
                 row = 1;
                 col += 2;
             }
@@ -121,6 +122,13 @@ public class ProdEditOrder {
                 prodOrderInputArray.add(datePicker);
             }
 
+            else if (i == 8) {
+                JFXToggleButton toggleButton = new JFXToggleButton();
+                toggleButton.selectedProperty().set(selectedOrder.getRemoteInt() != 0);
+                GridPane.setConstraints(toggleButton, col, row++);
+                prodOrderInputArray.add(toggleButton);
+            }
+
             // regular text field
             else {
                 TextField newTextField = new TextField();
@@ -145,7 +153,7 @@ public class ProdEditOrder {
                 prodOrderInputArray.add(newTextField);
             }
 
-            if ((i + 5) % 4 == 0) {
+            if ((i + 4) % 3 == 0) {
                 row = 1;
                 col += 2;
             }
@@ -194,19 +202,23 @@ public class ProdEditOrder {
         Method setter;
 
         for (int i = 1; i < prodOrderInputArray.size(); i++) {
-            TextField currentTextField = (TextField) prodOrderInputArray.get(i);
-            try {
-                if (i == 4 || i == 5 || i == 6) {
-                    setter = ProductOrder.class.getDeclaredMethod("set" + prodProperty[i], double.class);
-                    setter.invoke(newOrder, Double.parseDouble(currentTextField.getText()));
-                } else {
-                    setter = ProductOrder.class.getDeclaredMethod("set" + prodProperty[i], String.class);
-                    setter.invoke(newOrder, currentTextField.getText());
+            if (i != 8) {
+                TextField currentTextField = (TextField) prodOrderInputArray.get(i);
+                try {
+                    if (i == 4 || i == 5 || i == 6) {
+                        setter = ProductOrder.class.getDeclaredMethod("set" + prodProperty[i], double.class);
+                        setter.invoke(newOrder, Double.parseDouble(currentTextField.getText()));
+                    } else {
+                        setter = ProductOrder.class.getDeclaredMethod("set" + prodProperty[i], String.class);
+                        setter.invoke(newOrder, currentTextField.getText());
+                    }
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    AlertBox.display("错误", "无法更新");
+                    new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
+                            e.getMessage(), e.getStackTrace(), false);
                 }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                AlertBox.display("错误", "无法更新");
-                new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-                        e.getMessage(), e.getStackTrace(), false);
+            } else {
+                newOrder.setRemote(((JFXToggleButton) prodOrderInputArray.get(i)).selectedProperty().get() ? 1 : 0);
             }
         }
 

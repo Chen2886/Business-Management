@@ -130,17 +130,7 @@ public class MatAddOrder {
 
 		Collection<TableColumn<MatOrder, ?>> orderColumnArrayList = new ArrayList<>();
 
-		// Date Picker callback
-		Callback<TableColumn<MatOrder, Date>, TableCell<MatOrder, Date>> datePickerEditableFactory =
-				p -> new EditingCellWithDatePicker<>() {};
-
-		// Double callback
-		Callback<TableColumn<MatOrder, Double>, TableCell<MatOrder, Double>> doubleEditableFactory =
-				p -> new EditingCellForDouble<>() {};
-
 		for (int i = 0; i < matHeaders.length; i++) {
-
-			int matPropertyIndex = i;
 
 			if (i == 8 || i == 9 || i == 10 || i == 11 || i == 12) {
 				// Doubles
@@ -148,37 +138,6 @@ public class MatAddOrder {
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
-
-				// Exclude kgAmount and TotalPrice because they are automatic
-				if (i != 10 && i != 12) {
-					newColumn.setCellFactory(doubleEditableFactory);
-					newColumn.setOnEditCommit(event -> {
-
-						if (event.getNewValue().equals(Double.MAX_VALUE)) {
-							AlertBox.display("错误", "数字输入格式错误！");
-							return;
-						}
-
-						MatOrder editingOrder = event.getRowValue();
-						try {
-							Method setter;
-							setter = MatOrder.class.getDeclaredMethod("set" +
-									Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
-									matProperty[matPropertyIndex].substring(1), double.class);
-							setter.invoke(editingOrder, event.getNewValue());
-							editingOrder.setKgAmount();
-							editingOrder.setTotalPrice();
-							DatabaseUtil.UpdateMatOrder(editingOrder);
-							matTableView.refresh();
-						} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-							e.printStackTrace();
-							AlertBox.display("错误", "编辑订单错误！(数字）");
-							new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-									e.getMessage(), e.getStackTrace(), false);
-						}
-					});
-				}
-
 			} else if (i == 0 || i == 4 || i == 5 || i == 6) {
 				// Main.Date
 				TableColumn<MatOrder, Date> newColumn = new TableColumn<>(matHeaders[i]);
@@ -186,25 +145,6 @@ public class MatAddOrder {
 				newColumn.setCellValueFactory(new PropertyValueFactory<>(matProperty[i]));
 				newColumn.setStyle("-fx-alignment: CENTER;");
 				orderColumnArrayList.add(newColumn);
-
-				newColumn.setCellFactory(datePickerEditableFactory);
-				newColumn.setOnEditCommit(event -> {
-					MatOrder editingOrder = event.getRowValue();
-					try {
-						Method setter;
-						setter = MatOrder.class.getDeclaredMethod("set" +
-								Character.toUpperCase(matProperty[matPropertyIndex].charAt(0)) +
-								matProperty[matPropertyIndex].substring(1), Date.class);
-						setter.invoke(editingOrder, event.getNewValue());
-						DatabaseUtil.UpdateMatOrder(editingOrder);
-						matTableView.refresh();
-					} catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-						AlertBox.display("错误", "编辑订单错误！(日期）");
-						e.printStackTrace();
-						new HandleError(getClass().getName(), Thread.currentThread().getStackTrace()[1].getMethodName(),
-								e.getMessage(), e.getStackTrace(), false);
-					}
-				});
 
 			} else {
 				TableColumn<MatOrder, String> newColumn = new TableColumn<>(matHeaders[i]);
@@ -439,7 +379,7 @@ public class MatAddOrder {
 
 		// mat type
 		try {
-			newOrder.setType(((ComboBox) matOrderInputArray.get(i++)).getValue().toString());
+			newOrder.setType(((JFXComboBox) matOrderInputArray.get(i++)).getValue().toString());
 		} catch (NullPointerException ignored) {
 		}
 
@@ -491,7 +431,7 @@ public class MatAddOrder {
 		} catch (Exception e) {
 			AlertBox.display("错误", "数量格式输入错误, 数字默认0");
 		}
-		i++;
+		i += 2;
 
 		try {
 			newOrder.setUnitPrice(Double.parseDouble(((TextField) matOrderInputArray.get(i)).getText().equals("") ? "0.0" : ((TextField) matOrderInputArray.get(i)).getText()));
@@ -500,7 +440,7 @@ public class MatAddOrder {
 		} catch (Exception e) {
 			AlertBox.display("错误", "单价格式输入错误, 数字默认0");
 		}
-		i++;
+		i += 2;
 
 		newOrder.setKgAmount();
 		newOrder.setTotalPrice();
@@ -521,7 +461,7 @@ public class MatAddOrder {
 		}
 
 		try {
-			newOrder.setSeller(findSeller(((ComboBox) matOrderInputArray.get(i)).getValue().toString()));
+			newOrder.setSeller(findSeller(((JFXComboBox) matOrderInputArray.get(i)).getValue().toString()));
 		} catch (NullPointerException ignored) {
 		}
 

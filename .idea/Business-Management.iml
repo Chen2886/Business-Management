@@ -43,9 +43,7 @@
         <CLASSES>
           <root url="file://$MODULE_DIR$/lib" />
         </CLASSES>
-        <JAVADOC>
-          <root url="file://$MODULE_DIR$/lib/poi-4.1.2/docs/apidocs/dev" />
-        </JAVADOC>
+        <JAVADOC />
         <SOURCES />
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
